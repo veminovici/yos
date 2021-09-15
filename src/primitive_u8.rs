@@ -37,13 +37,13 @@ impl Bitwise for u8 {
     }
 
     fn reset_low(&mut self, n: usize) {
-        for ndx in 0 .. n {
+        for ndx in 0..n {
             self.reset(ndx);
         }
     }
 
     fn reset_high(&mut self, n: usize) {
-        for ndx in (7 - n) .. 7 {
+        for ndx in (7 - n)..7 {
             self.reset(ndx);
         }
     }
