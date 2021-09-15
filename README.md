@@ -2,6 +2,10 @@
 Just another rust crate.
 
 ![rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
+[![CI.Build](https://github.com/veminovici/yos/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/build.yml)
+[![CI.Clippy](https://github.com/veminovici/yos/actions/workflows/clippy.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/clippy.yml)
+[![CI.Fmt](https://github.com/veminovici/yos/actions/workflows/fmt.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/fmt.yml)
+[![CI.Tests](https://github.com/veminovici/yos/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/test.yml)
 [![Last commit](https://img.shields.io/github/last-commit/veminovici/yos)](https://github.com/veminovici/yos)
 [![Repo size](https://img.shields.io/github/repo-size/veminovici/yos)](https://github.com/veminovici/yos)
 
