@@ -8,3 +8,7 @@
 /// Bitwise functionality
 mod traits;
 pub use crate::traits::Bitwise;
+
+/// Bitwise implementation for numberic values
+mod primitive_u8;
+pub use crate::primitive_u8::*;
