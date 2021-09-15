@@ -2,11 +2,7 @@
 
 Just another rust crate.
 
-[![CI.Build](https://github.com/veminovici/yos/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/build.yml)
-[![CI.Clippy](https://github.com/veminovici/yos/actions/workflows/clippy.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/clippy.yml)
-[![CI.Coverage](https://github.com/veminovici/yos/actions/workflows/coveralls.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/coveralls.yml)
-[![CI.Fmt](https://github.com/veminovici/yos/actions/workflows/fmt.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/fmt.yml)
-[![CI.Tests](https://github.com/veminovici/yos/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/test.yml)
+[![ci pipeline](https://github.com/veminovici/yos/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/veminovici/yos/badge.svg)](https://coveralls.io/github/veminovici/yos)
 [![Last commit](https://img.shields.io/github/last-commit/veminovici/yos)](https://github.com/veminovici/yos)
 [![Repo size](https://img.shields.io/github/repo-size/veminovici/yos)](https://github.com/veminovici/yos)
