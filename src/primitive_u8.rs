@@ -1,4 +1,4 @@
-use crate::Bitwise;
+use crate::{Bitwise, BitwiseDebug};
 
 fn mask(ndx: usize) -> u8 {
     1 << ndx
@@ -26,6 +26,13 @@ impl Bitwise for u8 {
         } else {
             1
         }
+    }
+}
+
+impl BitwiseDebug for u8 {
+    fn debug(&self) -> String {
+        let str = format!("{:#010b}", *self);
+        format!("u8:{}", str.strip_prefix("0b").unwrap())
     }
 }
 
@@ -65,5 +72,12 @@ mod utest {
 
         let b = v.get(2);
         assert_eq!(b, 1);
+    }
+
+    #[test]
+    fn debug() {
+        let v = 5u8;
+        let str = v.debug();
+        assert_eq!(str.len(), 11);
     }
 }

@@ -12,3 +12,9 @@ pub trait Bitwise {
     /// Returns the value of a bit at a given index
     fn get(&self, ndx: usize) -> u8;
 }
+
+/// The debug representation of a bitwise structure.
+pub trait BitwiseDebug {
+    /// Returns the debug representation
+    fn debug(&self) -> String;
+}
