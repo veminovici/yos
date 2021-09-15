@@ -64,7 +64,7 @@ impl Bitwise for u8 {
 impl BitwiseDebug for u8 {
     fn debug(&self) -> String {
         let str = format!("{:#010b}", *self);
-        format!("u8:{}", str.strip_prefix("0b").unwrap())
+        format!("u8|{}|", str.strip_prefix("0b").unwrap())
     }
 }
 
@@ -112,7 +112,7 @@ mod utest {
     fn debug() {
         let v = 5u8;
         let str = v.debug();
-        assert_eq!(str.len(), 11);
+        assert_eq!(str.len(), 12);
     }
 
     #[test]

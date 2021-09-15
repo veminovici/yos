@@ -31,6 +31,9 @@ pub trait Bitwise {
 
     /// Reset the high indexed bits
     fn reset_high(&mut self, n: usize);
+
+    /// Returns the list of u8 values.
+    fn ueights(&self) -> Vec<u8>;
 }
 ```
 

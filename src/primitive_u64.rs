@@ -64,6 +64,11 @@ impl Bitwise for u64 {
     }
 }
 
+fn u8_debug(u: &u8) -> String {
+    let str = format!("{:#010b}", u);
+    str.strip_prefix("0b").unwrap().to_string()
+}
+
 /// # Examples
 ///
 /// ```
@@ -74,8 +79,18 @@ impl Bitwise for u64 {
 /// ```
 impl BitwiseDebug for u64 {
     fn debug(&self) -> String {
-        let str = format!("{:#066b}", *self);
-        format!("u64:{}", str.strip_prefix("0b").unwrap())
+        let ueights = self.ueights().iter().map(u8_debug).collect::<Vec<String>>();
+        format!(
+            "u64|{}|{}|{}|{}|{}|{}|{}|{}|",
+            ueights[7],
+            ueights[6],
+            ueights[5],
+            ueights[4],
+            ueights[3],
+            ueights[2],
+            ueights[1],
+            ueights[0]
+        )
     }
 }
 
@@ -122,7 +137,7 @@ mod utest {
     fn debug() {
         let v = 5u64;
         let str = v.debug();
-        assert_eq!(str.len(), 68);
+        assert_eq!(str.len(), 76);
     }
 
     #[test]
