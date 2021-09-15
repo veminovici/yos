@@ -5,6 +5,14 @@ fn mask(ndx: usize) -> u8 {
 }
 
 /// Implementation of the bitwise trait for the u8.
+/// # Examples
+///
+/// ```
+/// use yos::{Bitwise, BitwiseDebug};
+/// let mut v = 5u8;
+/// v.reset(0);
+///
+/// ```
 impl Bitwise for u8 {
     fn set(&mut self, ndx: usize) {
         self.reset(ndx);
@@ -29,6 +37,14 @@ impl Bitwise for u8 {
     }
 }
 
+/// # Examples
+///
+/// ```
+/// use yos::{Bitwise, BitwiseDebug};
+/// let mut v = 5u8;
+/// v.reset(0);
+/// println!("v={}", v.debug());
+/// ```
 impl BitwiseDebug for u8 {
     fn debug(&self) -> String {
         let str = format!("{:#010b}", *self);
