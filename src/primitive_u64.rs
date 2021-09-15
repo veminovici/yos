@@ -10,8 +10,12 @@ fn mask(ndx: usize) -> u64 {
 ///
 /// ```
 /// use yos::{Bitwise, BitwiseDebug};
+///
 /// let mut v = 5u64;
 /// v.reset(0);
+/// assert_eq!(4, v);
+///
+/// println!("v={}", v.debug());
 /// ```
 impl Bitwise for u64 {
     fn set(&mut self, ndx: usize) {
@@ -73,8 +77,11 @@ fn u8_debug(u: &u8) -> String {
 ///
 /// ```
 /// use yos::{Bitwise, BitwiseDebug};
+///
 /// let mut v = 5u64;
 /// v.reset(0);
+/// assert_eq!(4, v);
+///
 /// println!("v={}", v.debug());
 /// ```
 impl BitwiseDebug for u64 {
