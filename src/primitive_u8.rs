@@ -35,29 +35,35 @@ mod utest {
 
     #[test]
     fn set_bit() {
-        let mut v = 0u8;
-        v.set(0);
-        assert_eq!(v, 1);
+        let mut v = 5u8;
+        v.set(1);
+        assert_eq!(v, 7);
     }
 
     #[test]
     fn reset_bit() {
-        let mut v = 1u8;
-        v.reset(0);
-        assert_eq!(v, 0);
+        let mut v = 7u8;
+        v.reset(1);
+        assert_eq!(v, 5);
     }
 
     #[test]
     fn flip_bit() {
-        let mut v = 1u8;
-        v.flip(0);
-        assert_eq!(v, 0);
+        let mut v = 7u8;
+        v.flip(1);
+        assert_eq!(v, 5);
+
+        v.flip(1);
+        assert_eq!(v, 7);
     }
 
     #[test]
     fn get_bit() {
-        let v = 1u8;
-        let b = v.get(0);
+        let v = 5u8;
+        let b = v.get(1);
+        assert_eq!(b, 0);
+
+        let b = v.get(2);
         assert_eq!(b, 1);
     }
 }
