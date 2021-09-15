@@ -11,7 +11,6 @@ fn mask(ndx: usize) -> u8 {
 /// use yos::{Bitwise, BitwiseDebug};
 /// let mut v = 5u8;
 /// v.reset(0);
-///
 /// ```
 impl Bitwise for u8 {
     fn set(&mut self, ndx: usize) {
