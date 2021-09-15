@@ -55,18 +55,9 @@ jobs:
       run: cargo fmt -- --check
 
   Tests:
+    needs: Build
     runs-on: ubuntu-latest
     steps:
-
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: stable
-        override: true
 
     - name: Build tests
       run: cargo test --verbose --no-run
@@ -75,10 +66,9 @@ jobs:
       run: cargo test --verbose --no-fail-fast -- --test-threads=1
 
   Coverage:
+    needs: Tests
     runs-on: ubuntu-latest
     steps:
-
-    - uses: actions/checkout@v2
 
     - name: Push to coveralls.io
       env:
