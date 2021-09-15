@@ -20,6 +20,21 @@ pub trait Bitwise {
 
     /// Returns the list of u8 values.
     fn ueights(&self) -> Vec<u8>;
+
+    /// Generate a bit string with the first-low len bits set to 1.
+    fn low_mask(len: usize) -> Self
+    where
+        Self: Sized;
+
+    /// Generate a bit string with the last-high len bits set to 1.
+    fn high_mask(len: usize) -> Self
+    where
+        Self: Sized;
+
+    /// Splits the bit string into a head and tail
+    fn split(&self, cut: usize) -> (Self, Self)
+    where
+        Self: Sized;
 }
 
 /// The debug representation of a bitwise structure.

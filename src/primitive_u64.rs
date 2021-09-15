@@ -66,6 +66,43 @@ impl Bitwise for u64 {
 
         vec![u0, u1, u2, u3, u4, u5, u6, u7]
     }
+
+    fn split(&self, _cut: usize) -> (Self, Self)
+    where
+        Self: Sized,
+    {
+        todo!("Not implemented yet!")
+    }
+
+    fn low_mask(len: usize) -> Self
+    where
+        Self: Sized,
+    {
+        if len == 0 {
+            0
+        } else {
+            let mut v = 1u64;
+            for _ in 0..len - 1 {
+                v <<= 1;
+                v += 1;
+            }
+
+            v
+        }
+    }
+
+    fn high_mask(len: usize) -> Self
+    where
+        Self: Sized,
+    {
+        if len == 0 {
+            0
+        } else {
+            let mut v = Self::low_mask(len);
+            v <<= 64 - len;
+            v
+        }
+    }
 }
 
 fn u8_debug(u: &u8) -> String {
@@ -166,5 +203,25 @@ mod utest {
         let ueights = val.ueights();
         let u0 = (val & 255) as u8;
         (ueights.len() == 8) && (ueights[0] == u0)
+    }
+
+    #[test]
+    fn test_low_mask() {
+        assert_eq!(u64::low_mask(0), 0);
+        assert_eq!(u64::low_mask(1), 1);
+        assert_eq!(u64::low_mask(2), 3);
+        assert_eq!(u64::low_mask(3), 7);
+        assert_eq!(u64::low_mask(4), 15);
+        assert_eq!(u64::low_mask(5), 31);
+        assert_eq!(u64::low_mask(6), 63);
+        assert_eq!(u64::low_mask(7), 127);
+        assert_eq!(u64::low_mask(8), 255);
+    }
+
+    #[test]
+    fn test_high_mask() {
+        assert_eq!(u64::high_mask(0), 0);
+        assert_eq!(u64::high_mask(63), 18446744073709551614);
+        assert_eq!(u64::high_mask(64), 18446744073709551615);
     }
 }

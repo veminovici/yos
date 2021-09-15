@@ -54,6 +54,43 @@ impl Bitwise for u8 {
     fn ueights(&self) -> Vec<u8> {
         vec![*self]
     }
+
+    fn split(&self, _cut: usize) -> (Self, Self)
+    where
+        Self: Sized,
+    {
+        todo!("Not implemented yet!")
+    }
+
+    fn low_mask(len: usize) -> Self
+    where
+        Self: Sized,
+    {
+        if len == 0 {
+            0
+        } else {
+            let mut v = 1u8;
+            for _ in 0..len - 1 {
+                v <<= 1;
+                v += 1;
+            }
+
+            v
+        }
+    }
+
+    fn high_mask(len: usize) -> Self
+    where
+        Self: Sized,
+    {
+        if len == 0 {
+            0
+        } else {
+            let mut v = Self::low_mask(len);
+            v <<= 8 - len;
+            v
+        }
+    }
 }
 
 /// # Examples
@@ -70,7 +107,7 @@ impl Bitwise for u8 {
 impl BitwiseDebug for u8 {
     fn debug(&self) -> String {
         let str = format!("{:#010b}", *self);
-        format!("u8|{}|", str.strip_prefix("0b").unwrap())
+        format!("u8:{:3}|{}|", self, str.strip_prefix("0b").unwrap())
     }
 }
 
@@ -118,7 +155,7 @@ mod utest {
     fn debug() {
         let v = 5u8;
         let str = v.debug();
-        assert_eq!(str.len(), 12);
+        assert_eq!(str.len(), 16);
     }
 
     #[test]
@@ -139,5 +176,24 @@ mod utest {
     fn prop_ueights(val: u8) -> bool {
         let ueights = val.ueights();
         !ueights.is_empty() && (ueights[0] == val)
+    }
+
+    #[test]
+    fn test_low_mask() {
+        assert_eq!(u8::low_mask(0), 0);
+        assert_eq!(u8::low_mask(1), 1);
+        assert_eq!(u8::low_mask(2), 3);
+        assert_eq!(u8::low_mask(3), 7);
+        assert_eq!(u8::low_mask(4), 15);
+        assert_eq!(u8::low_mask(5), 31);
+        assert_eq!(u8::low_mask(6), 63);
+        assert_eq!(u8::low_mask(7), 127);
+        assert_eq!(u8::low_mask(8), 255);
+    }
+
+    #[test]
+    fn test_high_mask() {
+        assert_eq!(u8::high_mask(0), 0);
+        assert_eq!(u8::high_mask(8), 255);
     }
 }
