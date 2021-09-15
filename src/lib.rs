@@ -1,7 +1,10 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+//! A crate for some stuff
+
+#![crate_type = "lib"]
+#![crate_name = "yos"]
+#![deny(missing_docs)]
+#![deny(unreachable_code)]
+
+/// Bitwise functionality
+mod traits;
+pub use crate::traits::Bitwise;
