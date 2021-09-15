@@ -13,6 +13,42 @@ Just another rust crate.
 
 [![Github Actions](https://buildstats.info/github/chart/veminovici/yos)](https://github.com/veminovici/yos)
 
+### Bitwise Trait
+The **Bitwise** trait defines the behavior that control a sequence of bits.
+
+```rust
+pub trait Bitwise {
+    /// Set the bit to a given index
+    fn set(&mut self, ndx: usize);
+
+    /// Reset the bit to a given index
+    fn reset(&mut self, ndx: usize);
+
+    /// Flip the value for a bit at a given index
+    fn flip(&mut self, ndx: usize);
+
+    /// Returns the value of a bit at a given index
+    fn get(&self, ndx: usize) -> u8;
+
+    /// Reset the low indexed bits
+    fn reset_low(&mut self, n: usize);
+
+    /// Reset the high indexed bits
+    fn reset_high(&mut self, n: usize);
+}
+```
+
+### Extending u8, u64
+The crate extends the functionality of **u8**, and **u64** primitive data types by implementing the **Bitewise** trait on those data types.
+
+```rust
+use yos::*;
+
+let mut v = 5u8;
+v.reset(1);
+assert_eq!(v, 4);
+println!("v={}", v.debug());
+```
 
 ### Thank you!!!
 

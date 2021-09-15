@@ -11,6 +11,12 @@ pub trait Bitwise {
 
     /// Returns the value of a bit at a given index
     fn get(&self, ndx: usize) -> u8;
+
+    /// Reset the low indexed bits
+    fn reset_low(&mut self, n: usize);
+
+    /// Reset the high indexed bits
+    fn reset_high(&mut self, n: usize);
 }
 
 /// The debug representation of a bitwise structure.

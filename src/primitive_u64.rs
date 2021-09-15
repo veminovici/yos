@@ -35,6 +35,18 @@ impl Bitwise for u64 {
             1
         }
     }
+
+    fn reset_low(&mut self, n: usize) {
+        for ndx in 0 .. n {
+            self.reset(ndx);
+        }
+    }
+
+    fn reset_high(&mut self, n: usize) {
+        for ndx in (63 - n) .. 63 {
+            self.reset(ndx);
+        }
+    }
 }
 
 /// # Examples
@@ -95,5 +107,19 @@ mod utest {
         let v = 5u64;
         let str = v.debug();
         assert_eq!(str.len(), 68);
+    }
+
+    #[test]
+    fn reset_low() {
+        let mut v = 5u64;
+        v.reset_low(2);
+        assert_eq!(v, 4);
+    }
+
+    #[test]
+    fn reset_high() {
+        let mut v = 5u64;
+        v.reset_high(62);
+        assert_eq!(v, 1);
     }
 }
