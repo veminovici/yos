@@ -27,3 +27,9 @@ pub trait BitwiseDebug {
     /// Returns the debug representation
     fn debug(&self) -> String;
 }
+
+/// Defines the evolution functions.
+pub trait Evolution {
+    /// Mutates a bit in a bit string at the given index
+    fn mutate(bstr: &mut dyn Bitwise, ndx: usize);
+}
