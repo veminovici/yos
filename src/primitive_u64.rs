@@ -1,5 +1,6 @@
 use crate::{Bitwise, BitwiseDebug};
 
+#[inline(always)]
 fn mask(ndx: usize) -> u64 {
     1 << ndx
 }
@@ -46,6 +47,21 @@ impl Bitwise for u64 {
             self.reset(ndx);
         }
     }
+
+    fn ueights(&self) -> Vec<u8> {
+        let msk = 255u64;
+
+        let u0 = (*self & msk) as u8;
+        let u1 = ((*self & (msk << 8)) >> 8) as u8;
+        let u2 = ((*self & (msk << 16)) >> 16) as u8;
+        let u3 = ((*self & (msk << 24)) >> 24) as u8;
+        let u4 = ((*self & (msk << 32)) >> 32) as u8;
+        let u5 = ((*self & (msk << 40)) >> 40) as u8;
+        let u6 = ((*self & (msk << 48)) >> 48) as u8;
+        let u7 = ((*self & (msk << 56)) >> 56) as u8;
+
+        vec![u0, u1, u2, u3, u4, u5, u6, u7]
+    }
 }
 
 /// # Examples
@@ -66,6 +82,7 @@ impl BitwiseDebug for u64 {
 #[cfg(test)]
 mod utest {
     use super::*;
+    use quickcheck_macros::quickcheck;
 
     #[test]
     fn set_bit() {
@@ -120,5 +137,12 @@ mod utest {
         let mut v = 5u64;
         v.reset_high(62);
         assert_eq!(v, 1);
+    }
+
+    #[quickcheck]
+    fn prop_ueights(val: u64) -> bool {
+        let ueights = val.ueights();
+        let u0 = (val & 255) as u8;
+        (ueights.len() == 8) && (ueights[0] == u0)
     }
 }
