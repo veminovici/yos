@@ -1,7 +1,7 @@
-# Simplee.Yos
+# ![rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white) Simplee.Yos 
+
 Just another rust crate.
 
-![rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 [![CI.Build](https://github.com/veminovici/yos/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/build.yml)
 [![CI.Clippy](https://github.com/veminovici/yos/actions/workflows/clippy.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/clippy.yml)
 [![CI.Coverage](https://github.com/veminovici/yos/actions/workflows/coveralls.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/coveralls.yml)
