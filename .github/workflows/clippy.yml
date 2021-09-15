@@ -1,4 +1,4 @@
-name: CI.Clippy
+name: clippy
 on: [push, pull_request]
 
 jobs:

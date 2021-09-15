@@ -1,4 +1,4 @@
-name: CI.Fmt
+name: fmt
 on: [push, pull_request]
 
 jobs:
