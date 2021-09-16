@@ -1,18 +1,18 @@
-use crate::{Bitwise, Evolution};
+use crate::{Bitstring, Evolution};
 
 /// Standard evolution
 pub struct Standard {}
 
-impl<A: Bitwise + Sized> Evolution<A> for Standard {
+impl<A: Bitstring + Sized> Evolution<A> for Standard {
     fn mutate(bstr: &mut A, ndx: usize) {
-        bstr.flip(ndx)
+        bstr.bflip(ndx)
     }
 
     fn crossover(a: &mut A, b: &mut A, cut: usize) {
-        let (mut al, ah) = a.split(cut);
-        let (mut bl, bh) = b.split(cut);
-        al.add(&bh);
-        bl.add(&ah);
+        let (mut al, ah) = a.bsplit(cut);
+        let (mut bl, bh) = b.bsplit(cut);
+        al.bcombine(&bh);
+        bl.bcombine(&ah);
 
         *a = al;
         *b = bl;
@@ -33,7 +33,7 @@ mod utest {
     #[test]
     fn test_crossover() {
         let x = 5u8;
-        let (mut xl, mut xh) = x.split(4);
+        let (mut xl, mut xh) = x.bsplit(4);
         Standard::crossover(&mut xl, &mut xh, 4);
         assert_eq!(xl + xh, x);
     }

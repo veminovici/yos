@@ -1,43 +1,122 @@
+/// The values allowed into a bit
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Bit {
+    /// Zero
+    Zero,
+    /// One
+    One,
+}
+
 /// The bitewise operations
-pub trait Bitwise {
-    /// Set the bit to a given index
-    fn set(&mut self, ndx: usize);
+pub trait Bitstring {
+    /// Build a bitstring that represents zero
+    fn bzero() -> Self;
+
+    /// Build a bitstring that represents one
+    fn bone() -> Self;
+
+    /// Build a bistring with all low bits set to one
+    fn bone_low(len: usize) -> Self;
+
+    /// Build a bitstring with all high bits set to one
+    fn bone_high(len: usize) -> Self
+    where
+        Self: Sized,
+    {
+        if len == 0 {
+            Self::bzero()
+        } else {
+            let mut v = Self::bone_low(len);
+            v.blshift(v.blen() - len);
+            v
+        }
+    }
+
+    /// The length of the bit string
+    fn blen(&self) -> usize;
+
+    /// AND bitwise operation between two bitstrings
+    fn band(&mut self, other: &Self);
+
+    /// OR bitwise operation between two bitstrings
+    fn bor(&mut self, other: &Self);
+
+    /// Neg bitwise operation on a bitstring
+    fn bneg(&mut self);
+
+    /// XOR bitwise operation between two bitstring
+    fn bxor(&mut self, other: &Self);
+
+    /// Shift the bit string to the left
+    fn blshift(&mut self, len: usize);
+
+    /// Builds a bitstring representing a power of 2
+    fn bpow2(p: usize) -> Self;
 
     /// Reset the bit to a given index
-    fn reset(&mut self, ndx: usize);
+    fn brst(&mut self, ndx: usize)
+    where
+        Self: Sized,
+    {
+        let mut m = Self::bpow2(ndx);
+        m.bneg();
+        self.band(&m);
+    }
 
-    /// Flip the value for a bit at a given index
-    fn flip(&mut self, ndx: usize);
+    /// Sets the bit to a given index
+    fn bset(&mut self, ndx: usize)
+    where
+        Self: Sized,
+    {
+        self.brst(ndx);
+        self.bor(&Self::bpow2(ndx));
+    }
+
+    /// Flips the value of the bit at a given index
+    fn bflip(&mut self, ndx: usize)
+    where
+        Self: Sized,
+    {
+        self.bxor(&Self::bpow2(ndx));
+    }
 
     /// Returns the value of a bit at a given index
-    fn get(&self, ndx: usize) -> u8;
+    fn bget(&self, ndx: usize) -> Bit;
 
-    /// Reset the low indexed bits
-    fn reset_low(&mut self, n: usize);
+    /// Reset the lowest n bits
+    fn brst_low(&mut self, len: usize)
+    where
+        Self: Sized,
+    {
+        for i in 0..len {
+            self.brst(i);
+        }
+    }
 
-    /// Reset the high indexed bits
-    fn reset_high(&mut self, n: usize);
+    /// Reset the highest n bits
+    fn brst_high(&mut self, len: usize)
+    where
+        Self: Sized,
+    {
+        let blen = self.blen();
+        for i in (blen - len)..blen {
+            self.brst(i);
+        }
+    }
 
-    /// Returns the list of u8 values.
-    fn ueights(&self) -> Vec<u8>;
-
-    /// Generate a bit string with the first-low len bits set to 1.
-    fn low_mask(len: usize) -> Self
+    /// Split a bitstring into string at a cutting point
+    fn bsplit(&self, cut: usize) -> (Self, Self)
     where
         Self: Sized;
 
-    /// Generate a bit string with the last-high len bits set to 1.
-    fn high_mask(len: usize) -> Self
-    where
-        Self: Sized;
+    /// The list of u8 components from low to high
+    fn bueights(&self) -> Vec<u8>;
 
-    /// Splits the bit string into a head and tail
-    fn split(&self, cut: usize) -> (Self, Self)
-    where
-        Self: Sized;
-
-    /// Adds to the current bit string a given bit string
-    fn add(&mut self, other: &Self);
+    /// Combine two bitstring (by applying an OR operation)
+    fn bcombine(&mut self, other: &Self) {
+        self.bor(other);
+    }
 }
 
 /// The debug representation of a bitwise structure.
@@ -47,7 +126,7 @@ pub trait BitwiseDebug {
 }
 
 /// Defines the evolution functions.
-pub trait Evolution<A: Bitwise + Sized> {
+pub trait Evolution<A: Bitstring + Sized> {
     /// Mutates a bit in a bit string at the given index
     fn mutate(bstr: &mut A, ndx: usize);
 

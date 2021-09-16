@@ -1,58 +1,82 @@
-use crate::{Bitwise, BitwiseDebug};
+use crate::{Bit, Bitstring, BitwiseDebug};
 
-#[inline(always)]
-fn mask(ndx: usize) -> u64 {
-    1 << ndx
-}
-
-/// Implementation of the bitwise trait for the u8.
+/// Implementation of the bitstring trait for the u8.
 /// # Examples
 ///
 /// ```
-/// use yos::{Bitwise, BitwiseDebug};
+/// use yos::{Bitstring, BitwiseDebug};
 ///
 /// let mut v = 5u64;
-/// v.reset(0);
+/// v.brst(0);
 /// assert_eq!(4, v);
 ///
 /// println!("v={}", v.debug());
 /// ```
-impl Bitwise for u64 {
-    fn set(&mut self, ndx: usize) {
-        self.reset(ndx);
-        *self |= mask(ndx);
+impl Bitstring for u64 {
+    fn band(&mut self, other: &Self) {
+        *self &= *other
     }
 
-    fn reset(&mut self, ndx: usize) {
-        *self &= !mask(ndx);
-    }
+    fn bget(&self, ndx: usize) -> Bit {
+        let mut v = *self;
+        v.band(&Self::bpow2(ndx));
 
-    fn flip(&mut self, ndx: usize) {
-        *self ^= mask(ndx);
-    }
-
-    fn get(&self, ndx: usize) -> u8 {
-        let v = *self & mask(ndx);
         if v == 0 {
+            Bit::Zero
+        } else {
+            Bit::One
+        }
+    }
+
+    fn blen(&self) -> usize {
+        64
+    }
+
+    fn bneg(&mut self) {
+        *self = !*self
+    }
+
+    fn bone() -> Self {
+        1
+    }
+
+    fn bone_low(len: usize) -> Self {
+        if len == 0 {
             0
         } else {
-            1
+            let mut v = 1u64;
+            for _ in 0..len - 1 {
+                v <<= 1;
+                v += 1;
+            }
+
+            v
         }
     }
 
-    fn reset_low(&mut self, n: usize) {
-        for ndx in 0..n {
-            self.reset(ndx);
-        }
+    fn bor(&mut self, other: &Self) {
+        *self |= *other
     }
 
-    fn reset_high(&mut self, n: usize) {
-        for ndx in (63 - n)..63 {
-            self.reset(ndx);
-        }
+    fn bpow2(p: usize) -> Self {
+        1 << p
     }
 
-    fn ueights(&self) -> Vec<u8> {
+    fn blshift(&mut self, len: usize) {
+        *self <<= len;
+    }
+
+    fn bsplit(&self, cut: usize) -> (Self, Self)
+    where
+        Self: Sized,
+    {
+        let len = self.blen();
+        let l = self & Self::bone_low(cut);
+        let h = self & Self::bone_high(len - cut);
+        (l, h)
+    }
+
+    fn bueights(&self) -> Vec<u8> {
         let msk = 255u64;
 
         let u0 = (*self & msk) as u8;
@@ -67,47 +91,12 @@ impl Bitwise for u64 {
         vec![u0, u1, u2, u3, u4, u5, u6, u7]
     }
 
-    fn split(&self, cut: usize) -> (Self, Self)
-    where
-        Self: Sized,
-    {
-        let l = self & u64::low_mask(cut);
-        let h = self & u64::high_mask(64 - cut);
-        (l, h)
+    fn bxor(&mut self, other: &Self) {
+        *self ^= *other
     }
 
-    fn low_mask(len: usize) -> Self
-    where
-        Self: Sized,
-    {
-        if len == 0 {
-            0
-        } else {
-            let mut v = 1u64;
-            for _ in 0..len - 1 {
-                v <<= 1;
-                v += 1;
-            }
-
-            v
-        }
-    }
-
-    fn high_mask(len: usize) -> Self
-    where
-        Self: Sized,
-    {
-        if len == 0 {
-            0
-        } else {
-            let mut v = Self::low_mask(len);
-            v <<= 64 - len;
-            v
-        }
-    }
-
-    fn add(&mut self, other: &Self) {
-        *self += *other;
+    fn bzero() -> Self {
+        0
     }
 }
 
@@ -121,17 +110,21 @@ fn u8_debug(u: &u8) -> String {
 /// # Examples
 ///
 /// ```
-/// use yos::{Bitwise, BitwiseDebug};
+/// use yos::{Bitstring, BitwiseDebug};
 ///
 /// let mut v = 5u64;
-/// v.reset(0);
+/// v.brst(0);
 /// assert_eq!(4, v);
 ///
 /// println!("v={}", v.debug());
 /// ```
 impl BitwiseDebug for u64 {
     fn debug(&self) -> String {
-        let ueights = self.ueights().iter().map(u8_debug).collect::<Vec<String>>();
+        let ueights = self
+            .bueights()
+            .iter()
+            .map(u8_debug)
+            .collect::<Vec<String>>();
         format!(
             "u64:{:20}|{}|{}|{}|{}|{}|{}|{}|{}|",
             self,
@@ -150,108 +143,167 @@ impl BitwiseDebug for u64 {
 #[cfg(test)]
 mod utest {
     use super::*;
+
     use quickcheck_macros::quickcheck;
 
     #[test]
-    fn set_bit() {
-        let mut v = 5u64;
-        v.set(1);
-        assert_eq!(v, 7);
+    fn test_blen() {
+        let a = 5u64;
+        assert_eq!(a.blen(), 64);
     }
 
     #[test]
-    fn reset_bit() {
+    fn test_bor() {
+        let mut a = 5u64;
+        let b = 2u64;
+        a.bor(&b);
+        assert_eq!(a, 7);
+    }
+
+    #[test]
+    fn test_band() {
+        let mut a = 5u64;
+        let b = 3u64;
+        a.band(&b);
+        assert_eq!(a, 1);
+    }
+
+    #[test]
+    fn test_bneg() {
+        let mut a = 5u64;
+        a.bneg();
+        a.bneg();
+        assert_eq!(a, 5);
+    }
+
+    #[test]
+    fn test_bxor() {
+        let mut a = 5u8;
+        let b = 3u8;
+        a.bxor(&b);
+        assert_eq!(a, 6);
+    }
+
+    #[test]
+    fn test_blshift() {
+        let mut x = 1u64;
+        x.blshift(2);
+        assert_eq!(x, 4);
+    }
+
+    #[test]
+    fn test_bpow2() {
+        assert_eq!(u64::bpow2(0), 1);
+        assert_eq!(u64::bpow2(1), 2);
+        assert_eq!(u64::bpow2(2), 4);
+        assert_eq!(u64::bpow2(3), 8);
+    }
+
+    #[test]
+    fn test_brst() {
         let mut v = 7u64;
-        v.reset(1);
+        v.brst(1);
         assert_eq!(v, 5);
     }
 
     #[test]
-    fn flip_bit() {
-        let mut v = 7u64;
-        v.flip(1);
-        assert_eq!(v, 5);
-
-        v.flip(1);
+    fn test_bset() {
+        let mut v = 5u64;
+        v.bset(1);
         assert_eq!(v, 7);
     }
 
     #[test]
-    fn get_bit() {
-        let v = 5u64;
-        let b = v.get(1);
-        assert_eq!(b, 0);
+    fn test_bflip() {
+        let mut v = 7u64;
+        v.bflip(1);
+        assert_eq!(v, 5);
 
-        let b = v.get(2);
-        assert_eq!(b, 1);
+        v.bflip(1);
+        assert_eq!(v, 7);
     }
 
     #[test]
-    fn debug() {
+    fn test_bget() {
         let v = 5u64;
-        let str = v.debug();
-        assert_eq!(str.len(), 97);
+        let b = v.bget(1);
+        assert_eq!(b, Bit::Zero);
+
+        let b = v.bget(2);
+        assert_eq!(b, Bit::One);
+
+        assert_eq!(v, 5);
     }
 
     #[test]
-    fn reset_low() {
+    fn test_brst_low() {
         let mut v = 5u64;
-        v.reset_low(2);
+        v.brst_low(2);
         assert_eq!(v, 4);
     }
 
     #[test]
-    fn reset_high() {
+    fn test_brst_high() {
         let mut v = 5u64;
-        v.reset_high(62);
+        v.brst_high(62);
         assert_eq!(v, 1);
     }
 
     #[quickcheck]
-    fn prop_ueights(val: u64) -> bool {
-        let ueights = val.ueights();
+    fn prop_bueights(val: u64) -> bool {
+        let ueights = val.bueights();
         let u0 = (val & 255) as u8;
         (ueights.len() == 8) && (ueights[0] == u0)
     }
 
     #[test]
-    fn test_low_mask() {
-        assert_eq!(u64::low_mask(0), 0);
-        assert_eq!(u64::low_mask(1), 1);
-        assert_eq!(u64::low_mask(2), 3);
-        assert_eq!(u64::low_mask(3), 7);
-        assert_eq!(u64::low_mask(4), 15);
-        assert_eq!(u64::low_mask(5), 31);
-        assert_eq!(u64::low_mask(6), 63);
-        assert_eq!(u64::low_mask(7), 127);
-        assert_eq!(u64::low_mask(8), 255);
+    fn test_bzero() {
+        assert_eq!(u64::bzero(), 0);
     }
 
     #[test]
-    fn test_high_mask() {
-        assert_eq!(u64::high_mask(0), 0);
-        assert_eq!(u64::high_mask(63), 18446744073709551614);
-        assert_eq!(u64::high_mask(64), 18446744073709551615);
+    fn test_bone() {
+        assert_eq!(u64::bone(), 1);
     }
 
     #[test]
-    fn test_split() {
+    fn test_bone_low() {
+        assert_eq!(u64::bone_low(0), 0);
+        assert_eq!(u64::bone_low(1), 1);
+        assert_eq!(u64::bone_low(2), 3);
+        assert_eq!(u64::bone_low(3), 7);
+        assert_eq!(u64::bone_low(4), 15);
+        assert_eq!(u64::bone_low(5), 31);
+        assert_eq!(u64::bone_low(6), 63);
+        assert_eq!(u64::bone_low(7), 127);
+        assert_eq!(u64::bone_low(8), 255);
+    }
+
+    #[test]
+    fn test_bone_high() {
+        assert_eq!(u64::bone_high(0), 0);
+        assert_eq!(u64::bone_high(63), 18446744073709551614);
+        assert_eq!(u64::bone_high(64), 18446744073709551615);
+    }
+
+    #[test]
+    fn test_bsplit() {
         let x = 56u64;
 
         for i in 0..65 {
-            let (h, t) = x.split(i);
+            let (h, t) = x.bsplit(i);
             assert_eq!(h + t, x);
         }
     }
 
     #[test]
-    fn test_add() {
+    fn test_bcombine() {
         let x = 56u64;
 
         for i in 0..65 {
-            let (mut h, t) = x.split(i);
+            let (mut h, t) = x.bsplit(i);
             assert_eq!(h + t, x);
-            h.add(&t);
+            h.bcombine(&t);
             assert_eq!(h, x);
         }
     }

@@ -44,7 +44,7 @@ The crate extends the functionality of **u8**, and **u64** primitive data types 
 use yos::*;
 
 let mut v = 5u8;
-v.reset(1);
+v.brst(1);
 assert_eq!(v, 4);
 println!("v={}", v.debug());
 ```

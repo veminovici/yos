@@ -20,15 +20,15 @@ fn main() {
     let x = 56u8;
     println!("x={}", x.debug());
 
-    let (h, t) = x.split(0);
+    let (h, t) = x.bsplit(0);
     println!("h0={}", h.debug());
     println!("t0={}", t.debug());
 
-    let (h, t) = x.split(4);
+    let (h, t) = x.bsplit(4);
     println!("h4={}", h.debug());
     println!("t4={}", t.debug());
 
-    let (h, t) = x.split(8);
+    let (h, t) = x.bsplit(8);
     println!("h4={}", h.debug());
     println!("t4={}", t.debug());
 }
