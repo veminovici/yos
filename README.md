@@ -11,7 +11,7 @@ Just another rust crate, this one implements some bit-strings.
 
 </br>
 
-## Bitstring & BitstrigDebug Traits
+## Bitstring & BitstringDebug Traits
 The **Bitstring** trait defines the behavior that controls a sequence of bits, such *OR*, *AND*, *XOR* bitewise operations. For a complete list of functions, see the [source](https://github.com/veminovici/yos/blob/main/src/traits.rs) code.
 
 ```rust
