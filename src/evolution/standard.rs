@@ -16,3 +16,20 @@ pub fn crossover<B: Bitstring>(a: &mut B, b: &mut B, cut: usize) {
 pub fn mutate<B: Bitstring>(bstr: &mut B, ndx: usize) {
     bstr.bflip(ndx)
 }
+
+#[cfg(test)]
+mod utest {
+    use super::*;
+
+    use quickcheck_macros::quickcheck;
+
+    #[quickcheck]
+    fn prop_mutate(x: u8) -> bool {
+        let mut y = x;
+
+        mutate(&mut y, 2);
+        mutate(&mut y, 2);
+
+        y == x
+    }
+}
