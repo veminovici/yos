@@ -1,6 +1,9 @@
 //! A crate for some stuff
 #![deny(missing_docs)]
 #![deny(unreachable_code)]
+#![feature(test)]
+
+extern crate test;
 
 /// Bitwise and evolutionary functionality
 mod traits;

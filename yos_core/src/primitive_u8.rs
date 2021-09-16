@@ -254,4 +254,11 @@ mod utest {
             assert_eq!(h, x);
         }
     }
+
+    use test::Bencher;
+
+    #[bench]
+    fn bench_bcombine(b: &mut Bencher) {
+        b.iter(test_bcombine);
+    }
 }
