@@ -2,7 +2,7 @@
 
 Just another rust crate, this one implements some bit-strings.
 
-[![ci pipeline](https://github.com/veminovici/yos/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/veminovici/yos/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/check.yml)
 [![Coverage Status](https://coveralls.io/repos/github/veminovici/yos/badge.svg)](https://coveralls.io/github/veminovici/yos)
 [![Last commit](https://img.shields.io/github/last-commit/veminovici/yos)](https://github.com/veminovici/yos)
 [![Repo size](https://img.shields.io/github/repo-size/veminovici/yos)](https://github.com/veminovici/yos)
