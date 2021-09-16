@@ -1,0 +1,19 @@
+[package]
+name = "yos"
+version = "0.1.0"
+authors = ["Vlad Eminovici veminovici@hotmail.com", "The Simplee Developers"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/veminovici/yos"
+description = """
+Bit-string operations.
+"""
+edition = "2018"
+keywords = ["bitwise", "bit", "evolution"]
+categories = ["algorithms"]
+
+[dependencies]
+
+[dev-dependencies]
+quickcheck = "1.0"
+quickcheck_macros = "1.0"
