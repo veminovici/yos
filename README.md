@@ -1,6 +1,6 @@
-# ![rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white) Simplee.Yos 
+# ![rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white) Simplee...Yos... 
 
-Just another rust crate.
+Just another rust crate, this one implements some bit-strings.
 
 [![ci pipeline](https://github.com/veminovici/yos/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/veminovici/yos/badge.svg)](https://coveralls.io/github/veminovici/yos)
@@ -9,36 +9,79 @@ Just another rust crate.
 
 [![Github Actions](https://buildstats.info/github/chart/veminovici/yos)](https://github.com/veminovici/yos)
 
-### Bitwise Trait
-The **Bitwise** trait defines the behavior that control a sequence of bits.
+</br>
+
+### Bitstring Trait
+The **Bitstring** trait defines the behavior that control a sequence of bits.
 
 ```rust
-pub trait Bitwise {
-    /// Set the bit to a given index
-    fn set(&mut self, ndx: usize);
+pub trait Bitstring {
+    /// Build a bitstring that represents zero
+    fn bzero() -> Self;
+
+    /// Build a bitstring that represents one
+    fn bone() -> Self;
+
+    /// Build a bistring with all low bits set to one
+    fn bone_low(len: usize) -> Self;
+
+    /// Build a bitstring with all high bits set to one
+    fn bone_high(len: usize) -> Self;
+
+    /// The length of the bit string
+    fn blen(&self) -> usize;
+
+    /// AND bitwise operation between two bitstrings
+    fn band(&mut self, other: &Self);
+
+    /// OR bitwise operation between two bitstrings
+    fn bor(&mut self, other: &Self);
+
+    /// Neg bitwise operation on a bitstring
+    fn bneg(&mut self);
+
+    /// XOR bitwise operation between two bitstring
+    fn bxor(&mut self, other: &Self);
+
+    /// Shift the bit string to the left
+    fn blshift(&mut self, len: usize);
+
+    /// Builds a bitstring representing a power of 2
+    fn bpow2(p: usize) -> Self;
 
     /// Reset the bit to a given index
-    fn reset(&mut self, ndx: usize);
+    fn brst(&mut self, ndx: usize);
 
-    /// Flip the value for a bit at a given index
-    fn flip(&mut self, ndx: usize);
+    /// Sets the bit to a given index
+    fn bset(&mut self, ndx: usize);
+
+    /// Flips the value of the bit at a given index
+    fn bflip(&mut self, ndx: usize);
 
     /// Returns the value of a bit at a given index
-    fn get(&self, ndx: usize) -> u8;
+    fn bget(&self, ndx: usize) -> Bit;
 
-    /// Reset the low indexed bits
-    fn reset_low(&mut self, n: usize);
+    /// Reset the lowest n bits
+    fn brst_low(&mut self, len: usize);
 
-    /// Reset the high indexed bits
-    fn reset_high(&mut self, n: usize);
+    /// Reset the highest n bits
+    fn brst_high(&mut self, len: usize);
 
-    /// Returns the list of u8 values.
-    fn ueights(&self) -> Vec<u8>;
+    /// Split a bitstring into string at a cutting point
+    fn bsplit(&self, cut: usize) -> (Self, Self);
+
+    /// The list of u8 components from low to high
+    fn bueights(&self) -> Vec<u8>;
+
+    /// Combine two bitstring (by applying an OR operation)
+    fn bcombine(&mut self, other: &Self);
 }
 ```
 
+</br>
+
 ### Extending u8, u64
-The crate extends the functionality of **u8**, and **u64** primitive data types by implementing the **Bitewise** trait on those data types.
+The crate extends the functionality of **u8**, and **u64** primitive data types by implementing the **Bitstring** trait on those data types.
 
 ```rust
 use yos::*;
@@ -48,6 +91,8 @@ v.brst(1);
 assert_eq!(v, 4);
 println!("v={}", v.debug());
 ```
+
+</br>
 
 ### Thank you!!!
 
