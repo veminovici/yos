@@ -1,5 +1,19 @@
 use crate::{Bit, Bitstring, BitstringDebug};
 
+fn shift_and_add(v: &mut u8) {
+    *v <<= 1;
+    *v += 1;
+}
+
+/// # Examples
+///
+/// ```
+/// use yos::{Bit, Bitstring, BitstringDebug};
+///
+/// let mut x = 5u8;
+/// x.bflip(1);
+/// assert_eq!(x, 7);
+/// ```
 impl Bitstring for u8 {
     fn bzero() -> Self {
         0
@@ -15,8 +29,7 @@ impl Bitstring for u8 {
         } else {
             let mut v = 1u8;
             for _ in 0..len - 1 {
-                v <<= 1;
-                v += 1;
+                shift_and_add(&mut v);
             }
 
             v
@@ -77,6 +90,14 @@ impl Bitstring for u8 {
     }
 }
 
+/// # Examples
+///
+/// ```
+/// use yos::{Bit, Bitstring, BitstringDebug};
+///
+/// let mut x = 5u8;
+/// println!("x={}", x.bdebug());
+/// ```
 impl BitstringDebug for u8 {
     fn bdebug(&self) -> String {
         let str = format!("{:#010b}", *self);
