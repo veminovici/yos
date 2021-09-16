@@ -18,17 +18,17 @@ fn main() {
     // }
 
     let x = 56u8;
-    println!("x={}", x.debug());
+    println!("x={}", x.bdebug());
 
     let (h, t) = x.bsplit(0);
-    println!("h0={}", h.debug());
-    println!("t0={}", t.debug());
+    println!("h0={}", h.bdebug());
+    println!("t0={}", t.bdebug());
 
     let (h, t) = x.bsplit(4);
-    println!("h4={}", h.debug());
-    println!("t4={}", t.debug());
+    println!("h4={}", h.bdebug());
+    println!("t4={}", t.bdebug());
 
     let (h, t) = x.bsplit(8);
-    println!("h4={}", h.debug());
-    println!("t4={}", t.debug());
+    println!("h4={}", h.bdebug());
+    println!("t4={}", t.bdebug());
 }

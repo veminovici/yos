@@ -120,9 +120,9 @@ pub trait Bitstring {
 }
 
 /// The debug representation of a bitwise structure.
-pub trait BitwiseDebug {
+pub trait BitstringDebug {
     /// Returns the debug representation
-    fn debug(&self) -> String;
+    fn bdebug(&self) -> String;
 }
 
 /// Defines the evolution functions.

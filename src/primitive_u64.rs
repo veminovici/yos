@@ -1,16 +1,16 @@
-use crate::{Bit, Bitstring, BitwiseDebug};
+use crate::{Bit, Bitstring, BitstringDebug};
 
 /// Implementation of the bitstring trait for the u8.
 /// # Examples
 ///
 /// ```
-/// use yos::{Bitstring, BitwiseDebug};
+/// use yos::{Bitstring, BitstringDebug};
 ///
 /// let mut v = 5u64;
 /// v.brst(0);
 /// assert_eq!(4, v);
 ///
-/// println!("v={}", v.debug());
+/// println!("v={}", v.bdebug());
 /// ```
 impl Bitstring for u64 {
     fn band(&mut self, other: &Self) {
@@ -110,16 +110,16 @@ fn u8_debug(u: &u8) -> String {
 /// # Examples
 ///
 /// ```
-/// use yos::{Bitstring, BitwiseDebug};
+/// use yos::{Bitstring, BitstringDebug};
 ///
 /// let mut v = 5u64;
 /// v.brst(0);
 /// assert_eq!(4, v);
 ///
-/// println!("v={}", v.debug());
+/// println!("v={}", v.bdebug());
 /// ```
-impl BitwiseDebug for u64 {
-    fn debug(&self) -> String {
+impl BitstringDebug for u64 {
+    fn bdebug(&self) -> String {
         let ueights = self
             .bueights()
             .iter()

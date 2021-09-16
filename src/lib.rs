@@ -7,7 +7,7 @@
 
 /// Bitwise and evolutionary functionality
 mod traits;
-pub use crate::traits::{Bit, Bitstring, BitwiseDebug, Evolution};
+pub use crate::traits::{Bit, Bitstring, BitstringDebug, Evolution};
 
 /// Bitwise implementation for u8
 mod primitive_u8;
