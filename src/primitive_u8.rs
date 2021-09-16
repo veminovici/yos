@@ -12,27 +12,8 @@ use crate::{Bit, Bitstring, BitstringDebug};
 ///
 /// ```
 impl Bitstring for u8 {
-    fn band(&mut self, other: &Self) {
-        *self &= *other
-    }
-
-    fn bget(&self, ndx: usize) -> Bit {
-        let mut v = *self;
-        v.band(&Self::bpow2(ndx));
-
-        if v == 0 {
-            Bit::Zero
-        } else {
-            Bit::One
-        }
-    }
-
-    fn blen(&self) -> usize {
-        8
-    }
-
-    fn bneg(&mut self) {
-        *self = !*self
+    fn bzero() -> Self {
+        0
     }
 
     fn bone() -> Self {
@@ -53,16 +34,43 @@ impl Bitstring for u8 {
         }
     }
 
+    fn blen(&self) -> usize {
+        8
+    }
+
+    fn band(&mut self, other: &Self) {
+        *self &= *other
+    }
+
     fn bor(&mut self, other: &Self) {
         *self |= *other
+    }
+
+    fn bneg(&mut self) {
+        *self = !*self
+    }
+
+    fn bxor(&mut self, other: &Self) {
+        *self ^= *other
+    }
+
+    fn blshift(&mut self, len: usize) {
+        *self <<= len;
     }
 
     fn bpow2(p: usize) -> Self {
         1 << p
     }
 
-    fn blshift(&mut self, len: usize) {
-        *self <<= len;
+    fn bget(&self, ndx: usize) -> Bit {
+        let mut v = *self;
+        v.band(&Self::bpow2(ndx));
+
+        if v == 0 {
+            Bit::Zero
+        } else {
+            Bit::One
+        }
     }
 
     fn bsplit(&self, cut: usize) -> (Self, Self)
@@ -77,14 +85,6 @@ impl Bitstring for u8 {
 
     fn bueights(&self) -> Vec<u8> {
         vec![*self]
-    }
-
-    fn bxor(&mut self, other: &Self) {
-        *self ^= *other
-    }
-
-    fn bzero() -> Self {
-        0
     }
 }
 
@@ -111,6 +111,11 @@ mod utest {
     use super::*;
 
     use quickcheck_macros::quickcheck;
+
+    #[quickcheck]
+    fn prop_bdebug(x: u8) -> bool {
+        !x.bdebug().is_empty()
+    }
 
     #[test]
     fn test_blen() {

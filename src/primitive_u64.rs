@@ -13,27 +13,8 @@ use crate::{Bit, Bitstring, BitstringDebug};
 /// println!("v={}", v.bdebug());
 /// ```
 impl Bitstring for u64 {
-    fn band(&mut self, other: &Self) {
-        *self &= *other
-    }
-
-    fn bget(&self, ndx: usize) -> Bit {
-        let mut v = *self;
-        v.band(&Self::bpow2(ndx));
-
-        if v == 0 {
-            Bit::Zero
-        } else {
-            Bit::One
-        }
-    }
-
-    fn blen(&self) -> usize {
-        64
-    }
-
-    fn bneg(&mut self) {
-        *self = !*self
+    fn bzero() -> Self {
+        0
     }
 
     fn bone() -> Self {
@@ -54,16 +35,43 @@ impl Bitstring for u64 {
         }
     }
 
+    fn blen(&self) -> usize {
+        64
+    }
+
+    fn band(&mut self, other: &Self) {
+        *self &= *other
+    }
+
     fn bor(&mut self, other: &Self) {
         *self |= *other
+    }
+
+    fn bneg(&mut self) {
+        *self = !*self
+    }
+
+    fn bxor(&mut self, other: &Self) {
+        *self ^= *other
+    }
+
+    fn blshift(&mut self, len: usize) {
+        *self <<= len;
     }
 
     fn bpow2(p: usize) -> Self {
         1 << p
     }
 
-    fn blshift(&mut self, len: usize) {
-        *self <<= len;
+    fn bget(&self, ndx: usize) -> Bit {
+        let mut v = *self;
+        v.band(&Self::bpow2(ndx));
+
+        if v == 0 {
+            Bit::Zero
+        } else {
+            Bit::One
+        }
     }
 
     fn bsplit(&self, cut: usize) -> (Self, Self)
@@ -90,18 +98,9 @@ impl Bitstring for u64 {
 
         vec![u0, u1, u2, u3, u4, u5, u6, u7]
     }
-
-    fn bxor(&mut self, other: &Self) {
-        *self ^= *other
-    }
-
-    fn bzero() -> Self {
-        0
-    }
 }
 
-/// Prints in binary format an u8 value
-/// without the 0b prefix.
+/// Prints in binary format an u8 value without the 0b prefix.
 fn u8_debug(u: &u8) -> String {
     let str = format!("{:#010b}", u);
     str.strip_prefix("0b").unwrap().to_string()
@@ -145,6 +144,11 @@ mod utest {
     use super::*;
 
     use quickcheck_macros::quickcheck;
+
+    #[quickcheck]
+    fn prop_bdebug(x: u64) -> bool {
+        !x.bdebug().is_empty()
+    }
 
     #[test]
     fn test_blen() {
