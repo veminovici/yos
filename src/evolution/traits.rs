@@ -1,7 +1,7 @@
 use crate::Bitstring;
 
 /// Defines the evolution functions.
-pub trait Evolution<A: Bitstring + Sized> {
+pub trait Evolution<A: Bitstring> {
     /// Mutates a bit in a bit string at the given index
     fn mutate(bstr: &mut A, ndx: usize);
 

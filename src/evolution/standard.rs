@@ -6,7 +6,7 @@ use crate::Bitstring;
 /// Standard evolution
 pub struct Standard {}
 
-impl<A: Bitstring + Sized> Evolution<A> for Standard {
+impl<A: Bitstring> Evolution<A> for Standard {
     fn mutate(bstr: &mut A, ndx: usize) {
         bstr.bflip(ndx)
     }
