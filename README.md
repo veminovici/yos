@@ -40,6 +40,8 @@ let v = 56u8;
 println!("v={}", v.debug()); // u8: 56|00111000|
 ```
 
+You can find more examples of how to use **u8** and **u64** as bitstring at the [example](https://github.com/veminovici/yos/blob/main/examples/bitstring.rs) code.
+
 </br>
 
 ## Evolution
