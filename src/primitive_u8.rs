@@ -1,16 +1,5 @@
 use crate::{Bit, Bitstring, BitstringDebug};
 
-/// Implementation of the bitstring trait for the u8.
-/// # Examples
-///
-/// ```
-/// use yos::Bitstring;
-///
-/// let mut v = 5u8;
-/// v.brst(0);
-/// assert_eq!(4, v);
-///
-/// ```
 impl Bitstring for u8 {
     fn bzero() -> Self {
         0
@@ -88,17 +77,6 @@ impl Bitstring for u8 {
     }
 }
 
-/// # Examples
-///
-/// ```
-/// use yos::{Bitstring, BitstringDebug};
-///
-/// let mut v = 5u8;
-/// v.brst(0);
-/// assert_eq!(4, v);
-///
-/// println!("v={}", v.bdebug());
-/// ```
 impl BitstringDebug for u8 {
     fn bdebug(&self) -> String {
         let str = format!("{:#010b}", *self);
