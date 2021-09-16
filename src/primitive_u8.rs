@@ -198,4 +198,14 @@ mod utest {
         assert_eq!(u8::high_mask(0), 0);
         assert_eq!(u8::high_mask(8), 255);
     }
+
+    #[test]
+    fn test_split() {
+        let x = 56u8;
+
+        for i in 0..9 {
+            let (h, t) = x.split(i);
+            assert_eq!(h + t, x);
+        }
+    }
 }

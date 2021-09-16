@@ -67,11 +67,13 @@ impl Bitwise for u64 {
         vec![u0, u1, u2, u3, u4, u5, u6, u7]
     }
 
-    fn split(&self, _cut: usize) -> (Self, Self)
+    fn split(&self, cut: usize) -> (Self, Self)
     where
         Self: Sized,
     {
-        todo!("Not implemented yet!")
+        let l = self & u64::low_mask(cut);
+        let h = self & u64::high_mask(64 - cut);
+        (l, h)
     }
 
     fn low_mask(len: usize) -> Self
@@ -105,6 +107,8 @@ impl Bitwise for u64 {
     }
 }
 
+/// Prints in binary format an u8 value
+/// without the 0b prefix.
 fn u8_debug(u: &u8) -> String {
     let str = format!("{:#010b}", u);
     str.strip_prefix("0b").unwrap().to_string()
@@ -225,4 +229,15 @@ mod utest {
         assert_eq!(u64::high_mask(63), 18446744073709551614);
         assert_eq!(u64::high_mask(64), 18446744073709551615);
     }
+
+    #[test]
+    fn test_split() {
+        let x = 56u64;
+
+        for i in 0..65 {
+            let (h, t) = x.split(i);
+            assert_eq!(h + t, x);
+        }
+    }
+
 }
