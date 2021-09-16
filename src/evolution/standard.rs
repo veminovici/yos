@@ -1,4 +1,7 @@
-use crate::{Bitstring, Evolution};
+//! A crate for some stuff
+
+use super::Evolution;
+use crate::Bitstring;
 
 /// Standard evolution
 pub struct Standard {}

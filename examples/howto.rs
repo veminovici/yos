@@ -1,4 +1,4 @@
-use yos::*;
+use yos::{Bitstring, BitstringDebug};
 
 fn main() {
     // for i in 0..9 {

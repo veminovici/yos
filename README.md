@@ -11,86 +11,35 @@ Just another rust crate, this one implements some bit-strings.
 
 </br>
 
-### Bitstring Trait
-The **Bitstring** trait defines the behavior that control a sequence of bits.
+### Bitstring & BitstrigDebug Traits
+The **Bitstring** trait defines the behavior that control a sequence of bits, such *OR*, *AND*, *XOR* bitewise operations. For a complete list of functions, see the [source](https://github.com/veminovici/yos/blob/main/src/traits.rs) code.
 
 ```rust
 pub trait Bitstring {
-    /// Build a bitstring that represents zero
-    fn bzero() -> Self;
-
-    /// Build a bitstring that represents one
-    fn bone() -> Self;
-
-    /// Build a bistring with all low bits set to one
-    fn bone_low(len: usize) -> Self;
-
-    /// Build a bitstring with all high bits set to one
-    fn bone_high(len: usize) -> Self;
-
-    /// The length of the bit string
-    fn blen(&self) -> usize;
-
     /// AND bitwise operation between two bitstrings
     fn band(&mut self, other: &Self);
 
     /// OR bitwise operation between two bitstrings
     fn bor(&mut self, other: &Self);
 
-    /// Neg bitwise operation on a bitstring
-    fn bneg(&mut self);
-
-    /// XOR bitwise operation between two bitstring
-    fn bxor(&mut self, other: &Self);
-
-    /// Shift the bit string to the left
-    fn blshift(&mut self, len: usize);
-
-    /// Builds a bitstring representing a power of 2
-    fn bpow2(p: usize) -> Self;
-
-    /// Reset the bit to a given index
-    fn brst(&mut self, ndx: usize);
-
-    /// Sets the bit to a given index
-    fn bset(&mut self, ndx: usize);
-
-    /// Flips the value of the bit at a given index
-    fn bflip(&mut self, ndx: usize);
-
-    /// Returns the value of a bit at a given index
-    fn bget(&self, ndx: usize) -> Bit;
-
-    /// Reset the lowest n bits
-    fn brst_low(&mut self, len: usize);
-
-    /// Reset the highest n bits
-    fn brst_high(&mut self, len: usize);
-
-    /// Split a bitstring into string at a cutting point
-    fn bsplit(&self, cut: usize) -> (Self, Self);
-
-    /// The list of u8 components from low to high
-    fn bueights(&self) -> Vec<u8>;
-
-    /// Combine two bitstring (by applying an OR operation)
-    fn bcombine(&mut self, other: &Self);
+    // many more ...
 }
 ```
+
+The **BitstringDebug** trait defines the function **bdebug** that prints a bit-string into a friendly format.
 
 </br>
 
 ### Extending u8, u64
-The crate extends the functionality of **u8**, and **u64** primitive data types by implementing the **Bitstring** trait on those data types.
+The crate extends the functionality of **u8**, and **u64** primitive data types by implementing the **Bitstring** and **BitstringDebig** traits on those data types.
 
 ```rust
-use yos::*;
+use yos::{Bitstring, BitstringDebug};
 
-let mut v = 5u8;
-v.brst(1);
-assert_eq!(v, 4);
-println!("v={}", v.debug());
+let v = 56u8;
+println!("v={}", v.debug()); // u8: 56|00111000|
 ```
+
 
 </br>
 
