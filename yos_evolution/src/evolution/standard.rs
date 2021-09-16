@@ -1,5 +1,7 @@
 //! A crate for some stuff
-use crate::Bitstring;
+
+//! A crate for some stuff
+use yos::Bitstring;
 
 /// Crossovers two bitstring.
 pub fn crossover<B: Bitstring>(a: &mut B, b: &mut B, cut: usize) {

@@ -1,4 +1,5 @@
 [workspace]
 members = [
     "yos_core",
+    "yos_evolution",
 ]

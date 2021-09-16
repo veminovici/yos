@@ -1,12 +1,6 @@
 //! A crate for some stuff
-
-#![crate_type = "lib"]
-#![crate_name = "yos"]
 #![deny(missing_docs)]
 #![deny(unreachable_code)]
-
-/// Public modules
-pub mod evolution;
 
 /// Bitwise and evolutionary functionality
 mod traits;
