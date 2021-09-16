@@ -43,7 +43,7 @@ println!("v={}", v.debug()); // u8: 56|00111000|
 </br>
 
 ## Evolution
-A module witch exposes **Evolution** trait and **Standard**, an implementation for the trait.
+A module witch exposes different evolutionary functions on bitstrings. Each set of functions is encapsulated under specific sub-modules.
 
 </br>
 
