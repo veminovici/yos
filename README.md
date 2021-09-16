@@ -11,8 +11,8 @@ Just another rust crate, this one implements some bit-strings.
 
 </br>
 
-### Bitstring & BitstrigDebug Traits
-The **Bitstring** trait defines the behavior that control a sequence of bits, such *OR*, *AND*, *XOR* bitewise operations. For a complete list of functions, see the [source](https://github.com/veminovici/yos/blob/main/src/traits.rs) code.
+## Bitstring & BitstrigDebug Traits
+The **Bitstring** trait defines the behavior that controls a sequence of bits, such *OR*, *AND*, *XOR* bitewise operations. For a complete list of functions, see the [source](https://github.com/veminovici/yos/blob/main/src/traits.rs) code.
 
 ```rust
 pub trait Bitstring {
@@ -31,7 +31,7 @@ The **BitstringDebug** trait defines the function **bdebug** that prints a bit-s
 </br>
 
 ### Extending u8, u64
-The crate extends the functionality of **u8**, and **u64** primitive data types by implementing the **Bitstring** and **BitstringDebig** traits on those data types.
+The crate extends the functionality of **u8**, and **u64** data types by implementing the **Bitstring** and **BitstringDebig** traits on those data types.
 
 ```rust
 use yos::{Bitstring, BitstringDebug};
@@ -40,6 +40,10 @@ let v = 56u8;
 println!("v={}", v.debug()); // u8: 56|00111000|
 ```
 
+</br>
+
+## Evolution
+A module withi exposes **Evolution** trait and **Standard**, an implementation for the trait.
 
 </br>
 
