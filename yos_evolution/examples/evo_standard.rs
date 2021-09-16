@@ -1,5 +1,5 @@
-use yos::evolution::standard::*;
 use yos::BitstringDebug;
+use yos_evolution::evolution::standard::*;
 
 fn show_mutate() {
     let cut = 1;
