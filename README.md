@@ -49,6 +49,10 @@ A module witch exposes different evolutionary functions on bitstrings. Each set 
 
 </br>
 
+### License
+
+</br>
+
 ### Thank you!!!
 
 > You can contact me at veminovici@hotmail.com. Code designed and written in Päädu, on the beautiful island of [**Saaremaa**](https://goo.gl/maps/DmB9ewY2R3sPGFnTA), Estonia.
