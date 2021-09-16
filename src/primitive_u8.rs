@@ -55,11 +55,13 @@ impl Bitwise for u8 {
         vec![*self]
     }
 
-    fn split(&self, _cut: usize) -> (Self, Self)
+    fn split(&self, cut: usize) -> (Self, Self)
     where
         Self: Sized,
     {
-        todo!("Not implemented yet!")
+        let l = self & u8::low_mask(cut);
+        let h = self & u8::high_mask(8 - cut);
+        (l, h)
     }
 
     fn low_mask(len: usize) -> Self

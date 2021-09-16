@@ -125,7 +125,8 @@ impl BitwiseDebug for u64 {
     fn debug(&self) -> String {
         let ueights = self.ueights().iter().map(u8_debug).collect::<Vec<String>>();
         format!(
-            "u64|{}|{}|{}|{}|{}|{}|{}|{}|",
+            "u64:{:20}|{}|{}|{}|{}|{}|{}|{}|{}|",
+            self,
             ueights[7],
             ueights[6],
             ueights[5],
@@ -181,7 +182,7 @@ mod utest {
     fn debug() {
         let v = 5u64;
         let str = v.debug();
-        assert_eq!(str.len(), 76);
+        assert_eq!(str.len(), 97);
     }
 
     #[test]
