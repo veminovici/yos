@@ -105,6 +105,10 @@ impl Bitwise for u64 {
             v
         }
     }
+
+    fn add(&mut self, other: &Self) {
+        *self += *other;
+    }
 }
 
 /// Prints in binary format an u8 value
@@ -240,4 +244,15 @@ mod utest {
         }
     }
 
+    #[test]
+    fn test_add() {
+        let x = 56u64;
+
+        for i in 0..65 {
+            let (mut h, t) = x.split(i);
+            assert_eq!(h + t, x);
+            h.add(&t);
+            assert_eq!(h, x);
+        }
+    }
 }

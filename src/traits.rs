@@ -35,6 +35,9 @@ pub trait Bitwise {
     fn split(&self, cut: usize) -> (Self, Self)
     where
         Self: Sized;
+
+    /// Adds to the current bit string a given bit string
+    fn add(&mut self, other: &Self);
 }
 
 /// The debug representation of a bitwise structure.
@@ -44,7 +47,10 @@ pub trait BitwiseDebug {
 }
 
 /// Defines the evolution functions.
-pub trait Evolution {
+pub trait Evolution<A: Bitwise + Sized> {
     /// Mutates a bit in a bit string at the given index
-    fn mutate(bstr: &mut dyn Bitwise, ndx: usize);
+    fn mutate(bstr: &mut A, ndx: usize);
+
+    /// Crossovers two bit strings at a given cutting point
+    fn crossover(a: &mut A, b: &mut A, cut: usize);
 }

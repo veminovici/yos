@@ -93,6 +93,10 @@ impl Bitwise for u8 {
             v
         }
     }
+
+    fn add(&mut self, other: &Self) {
+        *self += *other;
+    }
 }
 
 /// # Examples
@@ -206,6 +210,18 @@ mod utest {
         for i in 0..9 {
             let (h, t) = x.split(i);
             assert_eq!(h + t, x);
+        }
+    }
+
+    #[test]
+    fn test_add() {
+        let x = 56u8;
+
+        for i in 0..9 {
+            let (mut h, t) = x.split(i);
+            assert_eq!(h + t, x);
+            h.add(&t);
+            assert_eq!(h, x);
         }
     }
 }
