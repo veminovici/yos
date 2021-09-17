@@ -511,7 +511,7 @@ mod utests {
 
     #[test]
     fn test_bstr_into_bits() {
-        let x = 5u8;
+        let x = 5u64;
         let bits = x.to_bits();
         assert_eq!(bits.len(), 8);
         assert_eq!(bits[0], Bit::One);
