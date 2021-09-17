@@ -126,6 +126,10 @@ impl BitstringOps for u8 {
     fn set_high(&mut self, len: usize) {
         *self |= HIGH_ONES[len]
     }
+
+    fn to_u8s(&self) -> Vec<u8> {
+        vec![*self]
+    }
 }
 
 #[cfg(test)]
@@ -229,8 +233,8 @@ mod utests {
         x.flip(1);
         assert_eq!(x, 4);
 
-        //x.flip(1);
-        //assert_eq!(x, 6);
+        x.flip(1);
+        assert_eq!(x, 6);
     }
 
     #[test]
@@ -318,5 +322,11 @@ mod ptests {
         a.rst(1);
         a.set(1);
         a == y
+    }
+
+    #[quickcheck]
+    fn prop_bueights(val: u8) -> bool {
+        let ueights = val.to_u8s();
+        !ueights.is_empty() && (ueights[0] == val)
     }
 }

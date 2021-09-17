@@ -81,4 +81,7 @@ pub trait BitstringOps {
 
     /// Set all the high bits
     fn set_high(&mut self, len: usize);
+
+    /// List of u8 components,from low to high
+    fn to_u8s(&self) -> Vec<u8>;
 }
