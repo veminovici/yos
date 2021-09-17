@@ -39,6 +39,9 @@ pub trait BitstringConstructor<A: Bitstring> {
 
     /// Build a bitstring with all high bits set to 1
     fn high_ones(len: usize) -> A;
+
+    /// Splt a bitstring in two at a given position
+    fn split(&self, pos: usize) -> (A, A);
 }
 
 /// The debug representation of a bitwise structure.

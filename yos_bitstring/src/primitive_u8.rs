@@ -73,6 +73,12 @@ impl BitstringConstructor<u8> for u8 {
     fn high_ones(len: usize) -> Self {
         HIGH_ONES[len]
     }
+
+    fn split(&self, pos: usize) -> (u8, u8) {
+        let l = self & LOW_ONES[pos];
+        let h = self & HIGH_ONES[8 - pos];
+        (l, h)
+    }
 }
 
 impl BitstringDebug for u8 {
@@ -298,6 +304,16 @@ mod utests {
     fn test_bstr_constructor_high_ones() {
         let x = u8::high_ones(7);
         assert_eq!(x, 254);
+    }
+
+    #[test]
+    fn test_bstr_contructor_split() {
+        let x = 56u8;
+
+        for i in 0..9 {
+            let (h, t) = x.split(i);
+            assert_eq!(h + t, x);
+        }
     }
 }
 

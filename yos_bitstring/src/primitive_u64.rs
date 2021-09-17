@@ -199,6 +199,12 @@ impl BitstringConstructor<u64> for u64 {
     fn high_ones(len: usize) -> Self {
         HIGH_ONES[len]
     }
+
+    fn split(&self, pos: usize) -> (u64, u64) {
+        let l = self & LOW_ONES[pos];
+        let h = self & HIGH_ONES[64 - pos];
+        (l, h)
+    }
 }
 
 /// Prints in binary format an u8 value without the 0b prefix.
@@ -452,6 +458,16 @@ mod utests {
     fn test_bstr_constructor_high_ones() {
         let x = u64::high_ones(63);
         assert_eq!(x, HIGH_ONES[64] - 1);
+    }
+
+    #[test]
+    fn test_bstr_contructor_split() {
+        let x = 56u64;
+
+        for i in 0..65 {
+            let (h, t) = x.split(i);
+            assert_eq!(h + t, x);
+        }
     }
 }
 
