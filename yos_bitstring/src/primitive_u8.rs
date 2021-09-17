@@ -66,11 +66,11 @@ impl BitstringConstructor<u8> for u8 {
         pow2(power)
     }
 
-    fn low_ones(len: usize) -> u8 {
+    fn low_ones(len: usize) -> Self {
         LOW_ONES[len]
     }
 
-    fn high_ones(len: usize) -> u8 {
+    fn high_ones(len: usize) -> Self {
         HIGH_ONES[len]
     }
 }
