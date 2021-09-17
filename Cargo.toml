@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "yos_bitstring",
     "yos_core",
     "yos_evolution",
 ]
