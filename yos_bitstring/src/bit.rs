@@ -263,10 +263,17 @@ mod ptests {
     }
 
     #[quickcheck]
-    fn prop_from_to_ref_u8(u: u8) -> bool {
+    fn prop_from_ref_u8(u: u8) -> bool {
         let bit = Bit::from(&u);
         let a: bool = (&bit).into();
         a == (u > 0)
+    }
+
+    #[quickcheck]
+    fn prop_to_ref_u8(bit: Bit) -> bool {
+        let a: u64 = (&bit).into();
+        let b: u64 = bit.into();
+        a == b
     }
 
     #[quickcheck]
@@ -284,10 +291,17 @@ mod ptests {
     }
 
     #[quickcheck]
-    fn prop_from_to_ref_u64(u: u64) -> bool {
+    fn prop_from_ref_u64(u: u64) -> bool {
         let bit = Bit::from(&u);
         let a: bool = (&bit).into();
         a == (u > 0)
+    }
+
+    #[quickcheck]
+    fn prop_to_ref_u64(bit: Bit) -> bool {
+        let a: u64 = (&bit).into();
+        let b: u64 = bit.into();
+        a == b
     }
 
     #[quickcheck]
