@@ -178,6 +178,12 @@ mod ptests {
         }
     }
 
+    #[test]
+    fn test_arbitrary_shrink() {
+        let bit = Bit::One;
+        let _biter = bit.shrink();
+    }
+
     #[quickcheck]
     fn prop_display(bit: Bit) -> bool {
         let s = format!("{}", bit);
