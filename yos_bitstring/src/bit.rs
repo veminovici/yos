@@ -302,4 +302,10 @@ mod ptests {
         let b = !a;
         a & b == Bit::Zero
     }
+
+    #[quickcheck]
+    fn prop_default(a: Bit) -> bool {
+        let b = Bit::default();
+        a & b == Bit::Zero
+    }
 }
