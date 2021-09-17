@@ -261,7 +261,7 @@ mod utests {
 
     #[test]
     fn test_bstr_range_rst_high() {
-        let mut x = 255u8;
+        let mut x = u8::MAX;
         x.rst_high(7);
         assert_eq!(x, 1);
     }
@@ -277,7 +277,7 @@ mod utests {
     fn test_bstr_range_set_high() {
         let mut x = 1u8;
         x.set_high(7);
-        assert_eq!(x, 255);
+        assert_eq!(x, u8::MAX);
     }
 
     #[test]

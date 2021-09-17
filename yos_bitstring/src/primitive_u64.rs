@@ -415,7 +415,7 @@ mod utests {
 
     #[test]
     fn test_bstr_range_rst_high() {
-        let mut x = HIGH_ONES[64];
+        let mut x = u64::MAX;
         x.rst_high(63);
         assert_eq!(x, 1);
     }
@@ -431,7 +431,7 @@ mod utests {
     fn test_bstr_range_set_high() {
         let mut x = 1u64;
         x.set_high(63);
-        assert_eq!(x, HIGH_ONES[64]);
+        assert_eq!(x, u64::MAX);
     }
 
     #[test]
@@ -466,7 +466,7 @@ mod utests {
     #[test]
     fn test_bstr_constructor_high_ones() {
         let x = u64::high_ones(63);
-        assert_eq!(x, HIGH_ONES[64] - 1);
+        assert_eq!(x, u64::MAX - 1);
     }
 
     #[test]
