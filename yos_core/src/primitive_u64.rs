@@ -5,15 +5,6 @@ fn shift_and_add(v: &mut u64) {
     *v += 1;
 }
 
-/// # Examples
-///
-/// ```
-/// use yos::{Bit, Bitstring, BitstringDebug};
-///
-/// let mut x = 5u64;
-/// x.bflip(1);
-/// assert_eq!(x, 7);
-/// ```
 impl Bitstring for u64 {
     fn bzero() -> Self {
         0
@@ -107,14 +98,6 @@ fn u8_debug(u: &u8) -> String {
     str.strip_prefix("0b").unwrap().to_string()
 }
 
-/// # Examples
-///
-/// ```
-/// use yos::{Bit, Bitstring, BitstringDebug};
-///
-/// let mut x = 5u64;
-/// println!("x={}", x.bdebug());
-/// ```
 impl BitstringDebug for u64 {
     fn bdebug(&self) -> String {
         let ueights = self
