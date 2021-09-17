@@ -128,7 +128,7 @@ impl From<&u8> for Bit {
 
 impl From<u64> for Bit {
     fn from(u: u64) -> Self {
-        if u % 2 == 0 {
+        if u == 0 {
             Bit::Zero
         } else {
             Bit::One
@@ -272,8 +272,8 @@ mod ptests {
     #[quickcheck]
     fn prop_from_to_u64(u: u64) -> bool {
         let bit = Bit::from(u);
-        let a: u64 = bit.into();
-        a == (u % 2)
+        let a: bool = bit.into();
+        a == (u > 0)
     }
 
     #[quickcheck]
@@ -286,8 +286,8 @@ mod ptests {
     #[quickcheck]
     fn prop_from_to_ref_u64(u: u64) -> bool {
         let bit = Bit::from(&u);
-        let a: u64 = (&bit).into();
-        a == (u % 2)
+        let a: bool = (&bit).into();
+        a == (u > 0)
     }
 
     #[quickcheck]

@@ -14,7 +14,7 @@ fn main() {
     x.flip(1);
     println!("and flip back the 1st bit - {}", x.bdebug());
 
-    let x = 5u8;
+    let x = 5u64;
     let bits = x.to_bits();
     println!("bits={:?}", &bits);
 }
