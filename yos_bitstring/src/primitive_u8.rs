@@ -1,6 +1,6 @@
 use super::traits::{
-    Bit, Bitstring, BitstringConstructor, BitstringDebug, BitstringInto, BitstringOps,
-    BitstringRange, BitstringShift,
+    Bit, Bitstring, BitstringCombinators, BitstringConstructor, BitstringDebug, BitstringInto,
+    BitstringOps, BitstringRange, BitstringShift,
 };
 
 const LOW_ONES: [u8; 9] = [
@@ -76,12 +76,6 @@ impl BitstringConstructor<u8> for u8 {
     fn high_ones(len: usize) -> Self {
         HIGH_ONES[len]
     }
-
-    fn split(&self, pos: usize) -> (u8, u8) {
-        let l = self & LOW_ONES[pos];
-        let h = self & HIGH_ONES[8 - pos];
-        (l, h)
-    }
 }
 
 impl BitstringDebug for u8 {
@@ -106,10 +100,6 @@ impl BitstringOps for u8 {
 
     fn neg(&mut self) {
         *self = !*self
-    }
-
-    fn flip(&mut self, pos: usize) {
-        *self ^= pow2(pos)
     }
 }
 
@@ -138,6 +128,22 @@ impl BitstringRange<u8> for u8 {
 
     fn set_high(&mut self, len: usize) {
         *self |= HIGH_ONES[len]
+    }
+}
+
+impl BitstringCombinators<u8> for u8 {
+    fn combine(&mut self, other: &u8) {
+        self.or(other);
+    }
+
+    fn flip(&mut self, pos: usize) {
+        *self ^= pow2(pos)
+    }
+
+    fn split(&self, pos: usize) -> (u8, u8) {
+        let l = self & LOW_ONES[pos];
+        let h = self & HIGH_ONES[8 - pos];
+        (l, h)
     }
 }
 
@@ -243,16 +249,6 @@ mod utests {
     }
 
     #[test]
-    fn test_bstr_ops_flip() {
-        let mut x = 6u8;
-        x.flip(1);
-        assert_eq!(x, 4);
-
-        x.flip(1);
-        assert_eq!(x, 6);
-    }
-
-    #[test]
     fn test_bstr_range_rst_low() {
         let mut x = 7u8;
         x.rst_low(2);
@@ -316,12 +312,34 @@ mod utests {
     }
 
     #[test]
-    fn test_bstr_contructor_split() {
+    fn test_bstr_combinators_split() {
         let x = 56u8;
 
         for i in 0..9 {
             let (h, t) = x.split(i);
             assert_eq!(h + t, x);
+        }
+    }
+
+    #[test]
+    fn test_bstr_combinators_flip() {
+        let mut x = 6u8;
+        x.flip(1);
+        assert_eq!(x, 4);
+
+        x.flip(1);
+        assert_eq!(x, 6);
+    }
+
+    #[test]
+    fn test_bstr_combinators_combine() {
+        let x = 56u8;
+
+        for i in 0..9 {
+            let (mut h, t) = x.split(i);
+            assert_eq!(h + t, x);
+            h.combine(&t);
+            assert_eq!(h, x);
         }
     }
 }

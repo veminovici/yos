@@ -1,6 +1,6 @@
 use super::traits::{
-    Bit, Bitstring, BitstringConstructor, BitstringDebug, BitstringInto, BitstringOps,
-    BitstringRange, BitstringShift,
+    Bit, Bitstring, BitstringCombinators, BitstringConstructor, BitstringDebug, BitstringInto,
+    BitstringOps, BitstringRange, BitstringShift,
 };
 
 const LOW_ONES: [u64; 65] = [
@@ -202,12 +202,6 @@ impl BitstringConstructor<u64> for u64 {
     fn high_ones(len: usize) -> Self {
         HIGH_ONES[len]
     }
-
-    fn split(&self, pos: usize) -> (u64, u64) {
-        let l = self & LOW_ONES[pos];
-        let h = self & HIGH_ONES[64 - pos];
-        (l, h)
-    }
 }
 
 /// Prints in binary format an u8 value without the 0b prefix.
@@ -250,10 +244,6 @@ impl BitstringOps for u64 {
     fn neg(&mut self) {
         *self = !*self
     }
-
-    fn flip(&mut self, pos: usize) {
-        *self ^= pow2(pos)
-    }
 }
 
 impl BitstringRange<u64> for u64 {
@@ -281,6 +271,22 @@ impl BitstringShift<u64> for u64 {
 
     fn shift_right(&mut self, with: usize) {
         *self >>= with;
+    }
+}
+
+impl BitstringCombinators<u64> for u64 {
+    fn split(&self, pos: usize) -> (u64, u64) {
+        let l = self & LOW_ONES[pos];
+        let h = self & HIGH_ONES[64 - pos];
+        (l, h)
+    }
+
+    fn flip(&mut self, pos: usize) {
+        *self ^= pow2(pos)
+    }
+
+    fn combine(&mut self, other: &u64) {
+        self.or(other);
     }
 }
 
@@ -397,16 +403,6 @@ mod utests {
     }
 
     #[test]
-    fn test_bstr_ops_flip() {
-        let mut x = 6u64;
-        x.flip(1);
-        assert_eq!(x, 4);
-
-        x.flip(1);
-        assert_eq!(x, 6);
-    }
-
-    #[test]
     fn test_bstr_range_rst_low() {
         let mut x = 7u64;
         x.rst_low(2);
@@ -470,12 +466,34 @@ mod utests {
     }
 
     #[test]
-    fn test_bstr_contructor_split() {
+    fn test_bstr_combinators_split() {
         let x = 56u64;
 
         for i in 0..65 {
             let (h, t) = x.split(i);
             assert_eq!(h + t, x);
+        }
+    }
+
+    #[test]
+    fn test_bstr_combinators_flip() {
+        let mut x = 6u64;
+        x.flip(1);
+        assert_eq!(x, 4);
+
+        x.flip(1);
+        assert_eq!(x, 6);
+    }
+
+    #[test]
+    fn test_bstr_combinators_combine() {
+        let x = 56u64;
+
+        for i in 0..65 {
+            let (mut h, t) = x.split(i);
+            assert_eq!(h + t, x);
+            h.combine(&t);
+            assert_eq!(h, x);
         }
     }
 }

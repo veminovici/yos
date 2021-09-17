@@ -39,9 +39,6 @@ pub trait BitstringConstructor<A: Bitstring> {
 
     /// Build a bitstring with all high bits set to 1
     fn high_ones(len: usize) -> A;
-
-    /// Splt a bitstring in two at a given position
-    fn split(&self, pos: usize) -> (A, A);
 }
 
 /// The debug representation of a bitwise structure.
@@ -63,9 +60,6 @@ pub trait BitstringOps {
 
     /// Apply a bitwise NEG operation
     fn neg(&mut self);
-
-    /// Flips a bit value at a given position
-    fn flip(&mut self, pos: usize);
 }
 
 /// Defines the shift operations
@@ -96,4 +90,16 @@ pub trait BitstringRange<A: Bitstring> {
 pub trait BitstringInto<A: Bitstring> {
     /// List of u8 components,from low to high
     fn to_u8s(&self) -> Vec<u8>;
+}
+
+/// Different combinators
+pub trait BitstringCombinators<A: Bitstring> {
+    /// Combine two bitstring
+    fn combine(&mut self, other: &A);
+
+    /// Flips a bit value at a given position
+    fn flip(&mut self, pos: usize);
+
+    /// Splt a bitstring in two at a given position
+    fn split(&self, pos: usize) -> (A, A);
 }
