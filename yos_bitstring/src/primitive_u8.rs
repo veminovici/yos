@@ -108,7 +108,7 @@ impl BitstringOps for u8 {
     }
 
     fn flip(&mut self, pos: usize) {
-        *self |= pow2(pos)
+        *self ^= pow2(pos)
     }
 
     fn rst_low(&mut self, len: usize) {
@@ -174,6 +174,14 @@ mod utests {
     }
 
     #[test]
+    fn test_bstr_get() {
+        let x = 3u8;
+        assert_eq!(x.get(0), Bit::One);
+        assert_eq!(x.get(1), Bit::One);
+        assert_eq!(x.get(2), Bit::Zero);
+    }
+
+    #[test]
     fn test_bstr_ops_and() {
         let mut x = 5u8;
         x.and(&3);
@@ -213,6 +221,16 @@ mod utests {
         let mut x = 6u8;
         x.shift_right(1);
         assert_eq!(x, 3);
+    }
+
+    #[test]
+    fn test_bstr_ops_flip() {
+        let mut x = 6u8;
+        x.flip(1);
+        assert_eq!(x, 4);
+
+        //x.flip(1);
+        //assert_eq!(x, 6);
     }
 
     #[test]
