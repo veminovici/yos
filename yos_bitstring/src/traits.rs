@@ -82,6 +82,9 @@ pub trait BitstringRange<A: Bitstring> {
 pub trait BitstringInto<A: Bitstring> {
     /// List of u8 components,from low to high
     fn to_u8s(&self) -> Vec<u8>;
+
+    /// List of bits from low to high
+    fn to_bits(&self) -> Vec<Bit>;
 }
 
 /// Different combinators

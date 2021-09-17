@@ -1,4 +1,4 @@
-use yos_bitstring::{BitstringCombinators, BitstringDebug, BitstringRange};
+use yos_bitstring::{BitstringCombinators, BitstringDebug, BitstringInto, BitstringRange};
 
 fn main() {
     let mut x = 7u8;
@@ -13,4 +13,8 @@ fn main() {
     println!("and flip the 1st bit - {}", x.bdebug());
     x.flip(1);
     println!("and flip back the 1st bit - {}", x.bdebug());
+
+    let x = 5u8;
+    let bits = x.to_bits();
+    println!("bits={:?}", &bits);
 }

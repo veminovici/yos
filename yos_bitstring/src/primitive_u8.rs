@@ -152,6 +152,17 @@ impl BitstringInto<u8> for u8 {
     fn to_u8s(&self) -> Vec<u8> {
         vec![*self]
     }
+
+    fn to_bits(&self) -> Vec<Bit> {
+        let mut bits = Vec::new();
+        for i in 0..8 {
+            let m = pow2(i as usize);
+            let b = Bit::from(self & m);
+            bits.push(b)
+        }
+
+        bits
+    }
 }
 
 #[cfg(test)]
@@ -342,6 +353,17 @@ mod utests {
             h.combine(&t);
             assert_eq!(h, x);
         }
+    }
+
+    #[test]
+    fn test_bstr_into_bits() {
+        let x = 5u8;
+        let bits = x.to_bits();
+        assert_eq!(bits.len(), 8);
+        assert_eq!(bits[0], Bit::One);
+        assert_eq!(bits[1], Bit::Zero);
+        assert_eq!(bits[2], Bit::One);
+        assert_eq!(bits[3], Bit::Zero)
     }
 }
 

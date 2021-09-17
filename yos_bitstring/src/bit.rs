@@ -112,7 +112,7 @@ impl From<&bool> for Bit {
 
 impl From<u8> for Bit {
     fn from(u: u8) -> Self {
-        if u % 2 == 0 {
+        if u == 0 {
             Bit::Zero
         } else {
             Bit::One
@@ -122,6 +122,22 @@ impl From<u8> for Bit {
 
 impl From<&u8> for Bit {
     fn from(u: &u8) -> Self {
+        Bit::from(*u)
+    }
+}
+
+impl From<u64> for Bit {
+    fn from(u: u64) -> Self {
+        if u % 2 == 0 {
+            Bit::Zero
+        } else {
+            Bit::One
+        }
+    }
+}
+
+impl From<&u64> for Bit {
+    fn from(u: &u64) -> Self {
         Bit::from(*u)
     }
 }
@@ -151,6 +167,21 @@ impl From<Bit> for u8 {
 }
 
 impl From<&Bit> for u8 {
+    fn from(b: &Bit) -> Self {
+        (*b).into()
+    }
+}
+
+impl From<Bit> for u64 {
+    fn from(b: Bit) -> Self {
+        match b {
+            Bit::Zero => 0,
+            Bit::One => 1,
+        }
+    }
+}
+
+impl From<&Bit> for u64 {
     fn from(b: &Bit) -> Self {
         (*b).into()
     }
@@ -220,8 +251,8 @@ mod ptests {
     #[quickcheck]
     fn prop_from_to_u8(u: u8) -> bool {
         let bit = Bit::from(u);
-        let a: u8 = bit.into();
-        a == (u % 2)
+        let a: bool = bit.into();
+        a == (u > 0)
     }
 
     #[quickcheck]
@@ -234,7 +265,28 @@ mod ptests {
     #[quickcheck]
     fn prop_from_to_ref_u8(u: u8) -> bool {
         let bit = Bit::from(&u);
-        let a: u8 = (&bit).into();
+        let a: bool = (&bit).into();
+        a == (u > 0)
+    }
+
+    #[quickcheck]
+    fn prop_from_to_u64(u: u64) -> bool {
+        let bit = Bit::from(u);
+        let a: u64 = bit.into();
+        a == (u % 2)
+    }
+
+    #[quickcheck]
+    fn prop_to_from_u64(bit: Bit) -> bool {
+        let b: u64 = bit.into();
+        let a = Bit::from(b);
+        bit == a
+    }
+
+    #[quickcheck]
+    fn prop_from_to_ref_u64(u: u64) -> bool {
+        let bit = Bit::from(&u);
+        let a: u64 = (&bit).into();
         a == (u % 2)
     }
 
