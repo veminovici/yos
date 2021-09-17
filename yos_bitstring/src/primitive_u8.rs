@@ -1,4 +1,7 @@
-use super::traits::{Bit, Bitstring, BitstringConstructor, BitstringDebug, BitstringOps};
+use super::traits::{
+    Bit, Bitstring, BitstringConstructor, BitstringDebug, BitstringInto, BitstringOps,
+    BitstringRange, BitstringShift,
+};
 
 const LOW_ONES: [u8; 9] = [
     0b00000000, 0b00000001, 0b00000011, 0b00000111, 0b00001111, 0b00011111, 0b00111111, 0b01111111,
@@ -105,6 +108,12 @@ impl BitstringOps for u8 {
         *self = !*self
     }
 
+    fn flip(&mut self, pos: usize) {
+        *self ^= pow2(pos)
+    }
+}
+
+impl BitstringShift<u8> for u8 {
     fn shift_left(&mut self, with: usize) {
         *self <<= with;
     }
@@ -112,11 +121,9 @@ impl BitstringOps for u8 {
     fn shift_right(&mut self, with: usize) {
         *self >>= with;
     }
+}
 
-    fn flip(&mut self, pos: usize) {
-        *self ^= pow2(pos)
-    }
-
+impl BitstringRange<u8> for u8 {
     fn rst_low(&mut self, len: usize) {
         *self &= HIGH_ONES[8 - len]
     }
@@ -132,7 +139,9 @@ impl BitstringOps for u8 {
     fn set_high(&mut self, len: usize) {
         *self |= HIGH_ONES[len]
     }
+}
 
+impl BitstringInto<u8> for u8 {
     fn to_u8s(&self) -> Vec<u8> {
         vec![*self]
     }
@@ -220,14 +229,14 @@ mod utests {
     }
 
     #[test]
-    fn test_bstr_ops_shift_left() {
+    fn test_bstr_shift_left() {
         let mut x = 3u8;
         x.shift_left(1);
         assert_eq!(x, 6);
     }
 
     #[test]
-    fn test_bstr_ops_shift_right() {
+    fn test_bstr_shift_right() {
         let mut x = 6u8;
         x.shift_right(1);
         assert_eq!(x, 3);
@@ -244,28 +253,28 @@ mod utests {
     }
 
     #[test]
-    fn test_bstr_ops_rst_low() {
+    fn test_bstr_range_rst_low() {
         let mut x = 7u8;
         x.rst_low(2);
         assert_eq!(x, 4);
     }
 
     #[test]
-    fn test_bstr_ops_rst_high() {
+    fn test_bstr_range_rst_high() {
         let mut x = 255u8;
         x.rst_high(7);
         assert_eq!(x, 1);
     }
 
     #[test]
-    fn test_bstr_ops_set_low() {
+    fn test_bstr_range_set_low() {
         let mut x = 4u8;
         x.set_low(2);
         assert_eq!(x, 7);
     }
 
     #[test]
-    fn test_bstr_ops_set_high() {
+    fn test_bstr_range_set_high() {
         let mut x = 1u8;
         x.set_high(7);
         assert_eq!(x, 255);
@@ -341,7 +350,7 @@ mod ptests {
     }
 
     #[quickcheck]
-    fn prop_bueights(val: u8) -> bool {
+    fn prop_into_u8s(val: u8) -> bool {
         let ueights = val.to_u8s();
         !ueights.is_empty() && (ueights[0] == val)
     }

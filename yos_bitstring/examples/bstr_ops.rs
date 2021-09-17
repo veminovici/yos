@@ -1,4 +1,4 @@
-use yos_bitstring::{BitstringDebug, BitstringOps};
+use yos_bitstring::{BitstringDebug, BitstringOps, BitstringRange};
 
 fn main() {
     let mut x = 7u8;

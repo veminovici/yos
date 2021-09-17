@@ -12,4 +12,7 @@ mod traits;
 
 pub use crate::primitive_u64::*;
 pub use crate::primitive_u8::*;
-pub use crate::traits::{Bit, Bitstring, BitstringConstructor, BitstringDebug, BitstringOps};
+pub use crate::traits::{
+    Bit, Bitstring, BitstringConstructor, BitstringDebug, BitstringInto, BitstringOps,
+    BitstringRange, BitstringShift,
+};

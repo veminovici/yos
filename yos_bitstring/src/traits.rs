@@ -64,15 +64,21 @@ pub trait BitstringOps {
     /// Apply a bitwise NEG operation
     fn neg(&mut self);
 
+    /// Flips a bit value at a given position
+    fn flip(&mut self, pos: usize);
+}
+
+/// Defines the shift operations
+pub trait BitstringShift<A: Bitstring> {
     /// Apply a shift to the left
     fn shift_left(&mut self, with: usize);
 
     /// Apply a shift to the right
     fn shift_right(&mut self, with: usize);
+}
 
-    /// Flips a bit value at a given position
-    fn flip(&mut self, pos: usize);
-
+/// Range operations
+pub trait BitstringRange<A: Bitstring> {
     /// Reset all low bits
     fn rst_low(&mut self, len: usize);
 
@@ -84,7 +90,10 @@ pub trait BitstringOps {
 
     /// Set all the high bits
     fn set_high(&mut self, len: usize);
+}
 
+/// Converts a bitstring into a vecotr of u8 values
+pub trait BitstringInto<A: Bitstring> {
     /// List of u8 components,from low to high
     fn to_u8s(&self) -> Vec<u8>;
 }
