@@ -271,8 +271,8 @@ mod ptests {
 
     #[quickcheck]
     fn prop_to_ref_u8(bit: Bit) -> bool {
-        let a: u64 = (&bit).into();
-        let b: u64 = bit.into();
+        let a: u8 = (&bit).into();
+        let b: u8 = bit.into();
         a == b
     }
 
