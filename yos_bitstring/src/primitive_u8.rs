@@ -1,5 +1,6 @@
+use super::bit::Bit;
 use super::traits::{
-    Bit, Bitstring, BitstringCombinators, BitstringConstructor, BitstringDebug, BitstringInto,
+    Bitstring, BitstringCombinators, BitstringConstructor, BitstringDebug, BitstringInto,
     BitstringOps, BitstringRange, BitstringShift,
 };
 

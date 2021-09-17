@@ -1,12 +1,4 @@
-/// The values allowed into a bit
-#[repr(u8)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Bit {
-    /// Zero
-    Zero,
-    /// One
-    One,
-}
+use super::bit::Bit;
 
 /// A bit-string is a collection of bits
 pub trait Bitstring {
