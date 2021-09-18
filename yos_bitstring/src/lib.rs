@@ -5,6 +5,7 @@
 // Nested modules
 
 mod bit;
+mod bu64;
 mod bu8;
 mod primitive_u64;
 mod primitive_u8;

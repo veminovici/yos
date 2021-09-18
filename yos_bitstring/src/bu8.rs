@@ -93,14 +93,14 @@ pub mod formatting {
         use quickcheck_macros::quickcheck;
 
         #[quickcheck]
-        fn prop_display(bit: Bit) -> bool {
-            let s = format!("{}", bit);
+        fn prop_display(x: Bu8) -> bool {
+            let s = format!("{}", x);
             !s.is_empty()
         }
 
         #[quickcheck]
-        fn prop_debug(bit: Bit) -> bool {
-            let s = format!("{:?}", bit);
+        fn prop_debug(x: Bu8) -> bool {
+            let s = format!("{:?}", x);
             !s.is_empty()
         }
     }
