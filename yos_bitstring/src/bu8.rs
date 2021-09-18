@@ -43,6 +43,18 @@ mod bits {
         use super::*;
 
         #[test]
+        fn test_pow2() {
+            assert_eq!(pow2(0), 1);
+            assert_eq!(pow2(1), 2);
+            assert_eq!(pow2(2), 4);
+            assert_eq!(pow2(3), 8);
+            assert_eq!(pow2(4), 16);
+            assert_eq!(pow2(5), 32);
+            assert_eq!(pow2(6), 64);
+            assert_eq!(pow2(7), 128);
+        }
+
+        #[test]
         fn test_rst() {
             let y = rst(3, 0);
             assert_eq!(y, 2);
@@ -60,6 +72,49 @@ mod bits {
             assert_eq!(get(x, 0), 1);
             assert_eq!(get(x, 1), 2);
             assert_eq!(get(x, 2), 0);
+        }
+    }
+
+    #[cfg(test)]
+    mod ptests {
+        use super::*;
+        use quickcheck_macros::quickcheck;
+
+        #[quickcheck]
+        fn prop_pow2(x: u8) -> bool {
+            let p = x % 8;
+            assert_eq!(pow2(p as usize), 2u8.pow(p as u32) as u8);
+            pow2(p as usize) == (2u8.pow(p as u32) as u8)
+        }
+
+        #[quickcheck]
+        fn prop_rst(x: u8, ndx: usize) -> bool {
+            let ndx = ndx % 8;
+
+            let y = rst(x, ndx);
+            let z = rst(y, ndx);
+
+            y == z
+        }
+
+        #[quickcheck]
+        fn prop_set(x: u8, ndx: usize) -> bool {
+            let ndx = ndx % 8;
+
+            let y = set(x, ndx);
+            let z = set(y, ndx);
+
+            y == z
+        }
+
+        #[quickcheck]
+        fn prop_get(x: u8, ndx: usize) -> bool {
+            let ndx = ndx % 8;
+
+            let y = get(x, ndx);
+            let z = get(y, ndx);
+
+            y == z
         }
     }
 }
@@ -95,13 +150,21 @@ pub mod formatting {
         #[quickcheck]
         fn prop_display(x: Bu8) -> bool {
             let s = format!("{}", x);
-            !s.is_empty()
+            s.len() == 17
         }
 
         #[quickcheck]
         fn prop_debug(x: Bu8) -> bool {
             let s = format!("{:?}", x);
-            !s.is_empty()
+            s.len() == 17
+        }
+
+        #[quickcheck]
+        fn prop_display_debug(x: u8) -> bool {
+            let x = Bu8::from(x);
+            let d1 = format!("{}", x);
+            let d2 = format!("{:?}", x);
+            d1 == d2
         }
     }
 }
@@ -258,77 +321,77 @@ pub mod bitwise {
         use crate::bu8::*;
 
         #[test]
-        fn prop_and() {
+        fn test_and() {
             let x = Bu8::from(5);
             let y = x & Bu8::from(3);
             assert_eq!(y.0, 1);
         }
 
         #[test]
-        fn prop_and_assign() {
+        fn test_and_assign() {
             let mut x = Bu8::from(5);
             x &= Bu8::from(3);
             assert_eq!(x.0, 1);
         }
 
         #[test]
-        fn prop_or() {
+        fn test_or() {
             let x = Bu8::from(5);
             let y = x | Bu8::from(3);
             assert_eq!(y.0, 7);
         }
 
         #[test]
-        fn prop_or_assign() {
+        fn test_or_assign() {
             let mut x = Bu8::from(5);
             x |= Bu8::from(3);
             assert_eq!(x.0, 7);
         }
 
         #[test]
-        fn prop_xor() {
+        fn test_xor() {
             let x = Bu8::from(5);
             let y = x ^ Bu8::from(3);
             assert_eq!(y.0, 6);
         }
 
         #[test]
-        fn prop_xor_assign() {
+        fn test_xor_assign() {
             let mut x = Bu8::from(5);
             x ^= Bu8::from(3);
             assert_eq!(x.0, 6);
         }
 
         #[test]
-        fn prop_not_assign() {
+        fn test_not_assign() {
             let x = Bu8::from(LOW_ONES[1]);
             let y = !x;
             assert_eq!(y.0, HIGH_ONES[7])
         }
 
         #[test]
-        fn prop_shr() {
+        fn test_shr() {
             let x = Bu8::from(5);
             let y = x >> 1;
             assert_eq!(y.0, 2);
         }
 
         #[test]
-        fn prop_shr_assign() {
+        fn test_shr_assign() {
             let mut x = Bu8::from(5);
             x >>= 1;
             assert_eq!(x.0, 2);
         }
 
         #[test]
-        fn prop_shl() {
+        fn test_shl() {
             let x = Bu8::from(3);
             let y = x << 1;
             assert_eq!(y.0, 6);
         }
 
         #[test]
-        fn prop_shl_assign() {
+        fn test_shl_assign() {
             let mut x = Bu8::from(3);
             x <<= 1;
             assert_eq!(x.0, 6);
@@ -368,7 +431,7 @@ pub mod constructors {
 
     #[cfg(test)]
     mod utests {
-        use super::*;
+        use crate::bu8::*;
 
         #[test]
         fn test_zero() {
@@ -426,7 +489,7 @@ pub mod bitstring {
 
     #[cfg(test)]
     mod utests {
-        use super::*;
+        use crate::bu8::*;
 
         #[test]
         fn test_len() {
@@ -484,7 +547,7 @@ pub mod range {
 
     #[cfg(test)]
     mod utests {
-        use super::*;
+        use crate::bu8::*;
 
         #[test]
         fn test_rst_low() {
@@ -543,7 +606,7 @@ pub mod combinators {
         use crate::bu8::*;
 
         #[test]
-        fn test_bstr_combinators_split() {
+        fn test_combinators_split() {
             let x = Bu8::from(56u8);
 
             for i in 0..9 {
@@ -553,7 +616,7 @@ pub mod combinators {
         }
 
         #[test]
-        fn test_bstr_combinators_flip() {
+        fn test_combinators_flip() {
             let mut x = Bu8::from(6u8);
             x.flip(1);
             assert_eq!(x.0, 4);
@@ -563,7 +626,7 @@ pub mod combinators {
         }
 
         #[test]
-        fn test_bstr_combinators_combine() {
+        fn test_combinators_combine() {
             let x = Bu8::from(56u8);
             for i in 0..9 {
                 let (mut h, t) = x.split(i);

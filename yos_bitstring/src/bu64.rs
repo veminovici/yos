@@ -168,6 +168,18 @@ mod bits {
         use super::*;
 
         #[test]
+        fn test_pow2() {
+            assert_eq!(pow2(0), 1);
+            assert_eq!(pow2(1), 2);
+            assert_eq!(pow2(2), 4);
+            assert_eq!(pow2(3), 8);
+            assert_eq!(pow2(4), 16);
+            assert_eq!(pow2(5), 32);
+            assert_eq!(pow2(6), 64);
+            assert_eq!(pow2(7), 128);
+        }
+
+        #[test]
         fn test_rst() {
             let y = rst(3, 0);
             assert_eq!(y, 2);
@@ -425,77 +437,77 @@ pub mod bitwise {
         use crate::bu64::*;
 
         #[test]
-        fn prop_and() {
+        fn test_and() {
             let x = Bu64::from(5);
             let y = x & Bu64::from(3);
             assert_eq!(y.0, 1);
         }
 
         #[test]
-        fn prop_and_assign() {
+        fn test_and_assign() {
             let mut x = Bu64::from(5);
             x &= Bu64::from(3);
             assert_eq!(x.0, 1);
         }
 
         #[test]
-        fn prop_or() {
+        fn test_or() {
             let x = Bu64::from(5);
             let y = x | Bu64::from(3);
             assert_eq!(y.0, 7);
         }
 
         #[test]
-        fn prop_or_assign() {
+        fn test_or_assign() {
             let mut x = Bu64::from(5);
             x |= Bu64::from(3);
             assert_eq!(x.0, 7);
         }
 
         #[test]
-        fn prop_xor() {
+        fn test_xor() {
             let x = Bu64::from(5);
             let y = x ^ Bu64::from(3);
             assert_eq!(y.0, 6);
         }
 
         #[test]
-        fn prop_xor_assign() {
+        fn test_xor_assign() {
             let mut x = Bu64::from(5);
             x ^= Bu64::from(3);
             assert_eq!(x.0, 6);
         }
 
         #[test]
-        fn prop_not_assign() {
+        fn test_not_assign() {
             let x = Bu64::from(LOW_ONES[1]);
             let y = !x;
             assert_eq!(y.0, HIGH_ONES[63])
         }
 
         #[test]
-        fn prop_shr() {
+        fn test_shr() {
             let x = Bu64::from(5);
             let y = x >> 1;
             assert_eq!(y.0, 2);
         }
 
         #[test]
-        fn prop_shr_assign() {
+        fn test_shr_assign() {
             let mut x = Bu64::from(5);
             x >>= 1;
             assert_eq!(x.0, 2);
         }
 
         #[test]
-        fn prop_shl() {
+        fn test_shl() {
             let x = Bu64::from(3);
             let y = x << 1;
             assert_eq!(y.0, 6);
         }
 
         #[test]
-        fn prop_shl_assign() {
+        fn test_shl_assign() {
             let mut x = Bu64::from(3);
             x <<= 1;
             assert_eq!(x.0, 6);
@@ -710,7 +722,7 @@ pub mod combinators {
         use crate::bu64::*;
 
         #[test]
-        fn test_bstr_combinators_split() {
+        fn test_combinators_split() {
             let x = Bu64::from(56u64);
 
             for i in 0..65 {
@@ -720,7 +732,7 @@ pub mod combinators {
         }
 
         #[test]
-        fn test_bstr_combinators_flip() {
+        fn test_combinators_flip() {
             let mut x = Bu64::from(6u64);
             x.flip(1);
             assert_eq!(x.0, 4);
@@ -730,7 +742,7 @@ pub mod combinators {
         }
 
         #[test]
-        fn test_bstr_combinators_combine() {
+        fn test_combinators_combine() {
             let x = Bu64::from(56u64);
 
             for i in 0..65 {
