@@ -329,9 +329,9 @@ pub mod bitwise {
 
         #[test]
         fn prop_shl_assign() {
-            let x = Bu8::from(3);
-            let y = x << 1;
-            assert_eq!(y.0, 6);
+            let mut x = Bu8::from(3);
+            x <<= 1;
+            assert_eq!(x.0, 6);
         }
     }
 }
@@ -372,12 +372,12 @@ pub mod constructors {
 
         #[test]
         fn test_zero() {
-            assert_eq!(Bu8::from(0).0, 0);
+            assert_eq!(Bu8::zero().0, 0);
         }
 
         #[test]
         fn test_one() {
-            assert_eq!(Bu8::from(1).0, 1);
+            assert_eq!(Bu8::one().0, 1);
         }
 
         #[test]
