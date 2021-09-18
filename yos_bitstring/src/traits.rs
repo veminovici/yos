@@ -15,6 +15,12 @@ pub trait Bitstring {
     fn rst(&mut self, ndx: usize);
 }
 
+pub trait BstrConstructor {
+    type Output;
+
+    fn zero() -> Self::Output;
+}
+
 /// Constants for bitstring
 pub trait BitstringConstructor<A: Bitstring> {
     /// Return a bistring representing 0
