@@ -543,6 +543,28 @@ pub mod constructors {
         pub fn high_ones(len: usize) -> Bu64 {
             Bu64(HIGH_ONES[len])
         }
+
+        /// Builds a bit-string which has set on 1 the bits
+        /// within a range starting at a given position with
+        /// a given length.
+        pub fn range_ones(pos: usize, len: usize) -> Bu64 {
+            let mut mask = Bu64::low_ones(len);
+            mask <<= pos;
+            mask
+        }
+
+        /// Builds a bit-string which has set on 0 the bts
+        /// within a range starting at a given position with
+        /// a given length.
+        pub fn range_zeros(pos: usize, len: usize) -> Bu64 {
+            let mut mask = Bu64::zero();
+            if pos > 0 {
+                mask = Bu64::low_ones(pos);
+            }
+
+            mask |= Bu64::high_ones(64 - pos - len);
+            mask
+        }
     }
 
     #[cfg(test)]
@@ -572,6 +594,21 @@ pub mod constructors {
         #[test]
         fn test_high_ones() {
             assert_eq!(Bu64::high_ones(63).0, HIGH_ONES[63]);
+        }
+
+        #[test]
+        fn test_range_ones() {
+            assert_eq!(Bu64::range_ones(0, 0).0, 0);
+            assert_eq!(Bu64::range_ones(2, 1).0, 4);
+            assert_eq!(Bu64::range_ones(2, 2).0, 12);
+            assert_eq!(Bu64::range_ones(0, 8).0, 255);
+        }
+
+        #[test]
+        fn test_range_zeros() {
+            assert_eq!(Bu64::range_zeros(0, 64).0, 0);
+            assert_eq!(Bu64::range_zeros(0, 0).0, LOW_ONES[64]);
+            assert_eq!(Bu64::range_zeros(1, 62).0, 2u64.pow(63) + 1);
         }
     }
 }
