@@ -683,6 +683,66 @@ pub mod range {
     }
 }
 
+pub mod combinators {
+    use super::*;
+
+    impl Bu64 {
+        /// Splits a bitstring
+        pub fn split(&self, pos: usize) -> (Bu64, Bu64) {
+            let l = self.0 & LOW_ONES[pos];
+            let h = self.0 & HIGH_ONES[64 - pos];
+            (Bu64::from(l), Bu64::from(h))
+        }
+
+        /// Flips a bit value
+        pub fn flip(&mut self, pos: usize) {
+            *self ^= Bu64::pow2(pos)
+        }
+
+        /// Combines two bit strings.
+        pub fn combine(&mut self, other: &Bu64) {
+            *self |= *other;
+        }
+    }
+
+    #[cfg(test)]
+    mod utests {
+        use crate::bu64::*;
+
+        #[test]
+        fn test_bstr_combinators_split() {
+            let x = Bu64::from(56u64);
+
+            for i in 0..65 {
+                let (h, t) = x.split(i);
+                assert_eq!(h.0 + t.0, x.0);
+            }
+        }
+
+        #[test]
+        fn test_bstr_combinators_flip() {
+            let mut x = Bu64::from(6u64);
+            x.flip(1);
+            assert_eq!(x.0, 4);
+
+            x.flip(1);
+            assert_eq!(x.0, 6);
+        }
+
+        #[test]
+        fn test_bstr_combinators_combine() {
+            let x = Bu64::from(56u64);
+
+            for i in 0..65 {
+                let (mut h, t) = x.split(i);
+                assert_eq!(h.0 + t.0, x.0);
+                h.combine(&t);
+                assert_eq!(h, x);
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod arbitrary {
     use super::*;
