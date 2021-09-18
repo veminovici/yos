@@ -516,6 +516,65 @@ pub mod range {
     }
 }
 
+pub mod combinators {
+    use super::*;
+
+    impl Bu8 {
+        /// Combines the bitstring with a second one.
+        pub fn combine(&mut self, other: &Self) {
+            *self |= *other;
+        }
+
+        /// Flips the bit at a given position
+        pub fn flip(&mut self, pos: usize) {
+            *self ^= Self::pow2(pos)
+        }
+
+        /// Splits the bistring in two bitstrings
+        pub fn split(&self, pos: usize) -> (Self, Self) {
+            let l = self.0 & LOW_ONES[pos];
+            let h = self.0 & HIGH_ONES[8 - pos];
+            (Bu8::from(l), Bu8::from(h))
+        }
+    }
+
+    #[cfg(test)]
+    mod utests {
+        use crate::bu8::*;
+
+        #[test]
+        fn test_bstr_combinators_split() {
+            let x = Bu8::from(56u8);
+
+            for i in 0..9 {
+                let (h, t) = x.split(i);
+                assert_eq!(h.0 + t.0, x.0);
+            }
+        }
+
+        #[test]
+        fn test_bstr_combinators_flip() {
+            let mut x = Bu8::from(6u8);
+            x.flip(1);
+            assert_eq!(x.0, 4);
+
+            x.flip(1);
+            assert_eq!(x.0, 6);
+        }
+
+        #[test]
+        fn test_bstr_combinators_combine() {
+            let x = Bu8::from(56u8);
+            for i in 0..9 {
+                let (mut h, t) = x.split(i);
+                assert_eq!(h.0 + t.0, x.0);
+                h.combine(&t);
+                assert_eq!(h, x);
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod arbitrary {
     use super::*;
