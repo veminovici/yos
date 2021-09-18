@@ -33,4 +33,10 @@ fn main() {
 
     x.rst_high(1);
     println!("x={:?}", x);
+
+    let x = Bu8::range_ones(2, 4);
+    println!("x={:?}", x);
+
+    let x = Bu8::range_zeros(1, 6);
+    println!("x={:?}", x);
 }
