@@ -47,7 +47,10 @@ jobs:
           args: --ignore "../*, /../../../../../usr/*"
 
       - name: Checkpoint 2
-        run: echo "VLD - trying to upload data to codecov"
+        run: 
+          echo "::group::My title"
+          echo "Inside group"
+          echo "::endgroup::"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
