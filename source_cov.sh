@@ -18,8 +18,8 @@ cargo build
 cargo test
 
 # Generate a HTML report in the coverage/ directory.
-grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./coverage/
+grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./target/coverage/
 
 # Generate a LCOV report and upload it to codecov.io.
-grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing -o ./lcov.info
+grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing -o ./coverage/lcov.info
 bash <(curl -s https://codecov.io/bash) -f lcov.info

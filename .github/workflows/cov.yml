@@ -37,7 +37,10 @@ jobs:
           RUSTDOCFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
 
       - name: Checkpoint 1
-        run: echo "::debug::Gather the coverage data!"
+        run: |
+          echo "::group::My title"
+          echo "Inside group"
+          echo "::endgroup::"
 
       # gather the coverage gata
       - name: Gather coverage data
@@ -45,12 +48,6 @@ jobs:
         uses: actions-rs/grcov@v0.1
         with:
           args: --ignore "../*, /../../../../../usr/*"
-
-      - name: Checkpoint 2
-        run: 
-          echo "::group::My title"
-          echo "Inside group"
-          echo "::endgroup::"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
