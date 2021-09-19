@@ -1,0 +1,35 @@
+on: [push, pull_request]
+
+name: Coverage
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Install the tool chain, nigtly.
+      # https://github.com/actions-rs/grcov
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          profile: minimal
+
+      # clean up the build files.
+      - name: Cleanup the build files
+        uses: actions-rs/cargo@v1
+        with:
+          command: clean
+
+      - name: Execute tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-features --no-fail-fast  # Customize args for your own needs
+        env:
+          CARGO_INCREMENTAL: '0'
+          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+          RUSTDOCFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
