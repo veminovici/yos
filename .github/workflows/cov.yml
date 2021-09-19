@@ -1,9 +1,9 @@
 on: [push, pull_request]
 
-name: Coverage
+name: Pub Coverage
 
 jobs:
-  Tests:
+  Coverage:
     runs-on: ubuntu-latest
 
     steps:
