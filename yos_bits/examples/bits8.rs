@@ -1,7 +1,14 @@
-use yos_bitstring::{Bitstring, Bits8};
+use yos_bitstring::{Bits8, Bitstring};
 
 fn main() {
     println!("zero={:?}", Bits8::zero());
+    for b in Bits8::one() {
+        println!("bit={}", b);
+    }
+
+    for (ndx, b) in Bits8::from(7u8).into_iter().enumerate() {
+        println!("bit {}:{:?}", ndx, b);
+    }
 
     let mut x = Bits8::from(5u8);
     println!("x={:?}", x);

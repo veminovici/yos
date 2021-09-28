@@ -802,6 +802,113 @@ pub mod combinators {
     }
 }
 
+pub mod iterator {
+    use super::*;
+    use std::iter::FromIterator;
+
+    pub struct IterBits64 {
+        bits: Bits64,
+        ndx: usize,
+    }
+
+    impl IterBits64 {
+        /// Builds a new instance of the Bits8 iterator
+        pub fn new(bits: Bits64) -> Self {
+            Self { bits, ndx: 0 }
+        }
+    }
+
+    impl Iterator for IterBits64 {
+        type Item = Bit;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            if self.ndx == Bits64::len() {
+                None
+            } else {
+                let v = self.bits.get(self.ndx);
+                self.ndx += 1;
+                Some(v)
+            }
+        }
+    }
+
+    impl IntoIterator for Bits64 {
+        type Item = Bit;
+        type IntoIter = IterBits64;
+
+        fn into_iter(self) -> Self::IntoIter {
+            IterBits64::new(self)
+        }
+    }
+
+    impl FromIterator<Bit> for Bits64 {
+        fn from_iter<T: IntoIterator<Item = Bit>>(iter: T) -> Self {
+            let mut us: Vec<u8> = Vec::with_capacity(64);
+            for b in iter {
+                us.push(b.into())
+            }
+
+            Self::from(us)
+        }
+    }
+
+    #[cfg(test)]
+    mod utests {
+        use super::IterBits64;
+        use crate::bits64::*;
+        use std::iter::FromIterator;
+
+        #[test]
+        fn test_iter() {
+            let bits = Bits64::one();
+            let mut iter = IterBits64::new(bits);
+
+            assert_eq!(Some(Bit::One), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+        }
+
+        #[test]
+        fn test_into_iter() {
+            let bits = Bits64::one();
+            let mut iter = bits.into_iter();
+
+            assert_eq!(Some(Bit::One), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+        }
+
+        #[test]
+        fn test_enumerate() {
+            let bits = Bits64::one();
+            for (ndx, b) in bits.into_iter().enumerate() {
+                if ndx == 0 {
+                    assert_eq!(Bit::One, b);
+                } else {
+                    assert_eq!(Bit::Zero, b);
+                }
+            }
+        }
+
+        #[test]
+        fn test_from_iter() {
+            let bits = Bits64::one();
+            let bits1 = Bits64::from_iter(bits.into_iter());
+            assert_eq!(bits, bits1);
+        }
+    }
+}
+
 #[cfg(test)]
 mod arbitrary {
     use super::*;
