@@ -1,3 +1,4 @@
+use std::iter::FromIterator;
 use yos_bitstring::{Bits8, Bitstring};
 
 fn main() {
@@ -48,4 +49,9 @@ fn main() {
 
     let x = Bits8::range_zeros(1, 6);
     println!("x={:?}", x);
+
+    let x = Bits8::from(2);
+    let y = Bits8::from_iter(x.into_iter());
+    println!("x={:?}", x);
+    println!("y={:?}", y);
 }
