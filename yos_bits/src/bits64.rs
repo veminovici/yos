@@ -258,8 +258,96 @@ pub mod formatting {
     }
 }
 
+pub mod iterator {
+    use super::*;
+
+    pub struct IterBits64 {
+        bits: Bits64,
+        ndx: usize,
+    }
+
+    impl IterBits64 {
+        /// Builds a new instance of the Bits8 iterator
+        pub fn new(bits: Bits64) -> Self {
+            Self { bits, ndx: 0 }
+        }
+    }
+
+    impl Iterator for IterBits64 {
+        type Item = Bit;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            if self.ndx == Bits64::len() {
+                return None;
+            }
+
+            let v = self.bits.get(self.ndx);
+            self.ndx += 1;
+            Some(v)
+        }
+    }
+
+    impl IntoIterator for Bits64 {
+        type Item = Bit;
+        type IntoIter = IterBits64;
+
+        fn into_iter(self) -> Self::IntoIter {
+            IterBits64::new(self)
+        }
+    }
+
+    #[cfg(test)]
+    mod utests {
+        use super::IterBits64;
+        use crate::bits64::*;
+
+        #[test]
+        fn test_iter() {
+            let bits = Bits64::one();
+            let mut iter = IterBits64::new(bits);
+
+            assert_eq!(Some(Bit::One), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+        }
+
+        #[test]
+        fn test_into_iter() {
+            let bits = Bits64::one();
+            let mut iter = bits.into_iter();
+
+            assert_eq!(Some(Bit::One), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+            assert_eq!(Some(Bit::Zero), iter.next());
+        }
+
+        #[test]
+        fn test_enumerate() {
+            let bits = Bits64::one();
+            for (ndx, b) in bits.into_iter().enumerate() {
+                if ndx == 0 {
+                    assert_eq!(Bit::One, b);
+                } else {
+                    assert_eq!(Bit::Zero, b);
+                }
+            }
+        }
+    }
+}
+
 pub mod conversions {
     use super::*;
+    use std::iter::FromIterator;
 
     impl From<u64> for Bits64 {
         fn from(x: u64) -> Self {
@@ -290,22 +378,20 @@ pub mod conversions {
         }
     }
 
-    impl From<Vec<u8>> for Bits64 {
-        fn from(xs: Vec<u8>) -> Self {
-            let u0 = xs[0] as u64;
-            let u1 = (xs[1] as u64) << 8;
-            let u2 = (xs[2] as u64) << 16;
-            let u3 = (xs[3] as u64) << 24;
-            let u4 = (xs[4] as u64) << 32;
-            let u5 = (xs[5] as u64) << 40;
-            let u6 = (xs[6] as u64) << 48;
-            let u7 = (xs[7] as u64) << 56;
-            Bits64(u0 + u1 + u2 + u3 + u4 + u5 + u6 + u7)
+    impl FromIterator<Bit> for Bits64 {
+        fn from_iter<T: IntoIterator<Item = Bit>>(iter: T) -> Self {
+            let mut us: Vec<u8> = Vec::with_capacity(64);
+            for b in iter {
+                us.push(b.into())
+            }
+
+            Self::from_iter(us)
         }
     }
 
-    impl From<&[u8]> for Bits64 {
-        fn from(xs: &[u8]) -> Self {
+    impl FromIterator<u8> for Bits64 {
+        fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
+            let xs = iter.into_iter().take(8).collect::<Vec<u8>>();
             let u0 = xs[0] as u64;
             let u1 = (xs[1] as u64) << 8;
             let u2 = (xs[2] as u64) << 16;
@@ -332,17 +418,22 @@ pub mod conversions {
 
         #[quickcheck]
         fn prop_form_to_vecu8(x: u8) -> bool {
-            let bstr = Bits64::from(vec![x; 8]);
+            let bstr = Bits64::from_iter(vec![x; 8]);
             let y: Vec<u8> = bstr.into();
             (bstr.0 as u8) == x && y.len() == 8 && x == y[0]
         }
+    }
 
-        #[quickcheck]
-        fn prop_from_slice_u8(x: u8) -> bool {
-            let xs = &*(vec![x; 8]);
-            let bstr = Bits64::from(xs);
-            let y: Vec<u8> = bstr.into();
-            (bstr.0 as u8) == x && y.len() == 8 && x == y[0]
+    #[cfg(test)]
+    mod utests {
+        use super::*;
+        use std::iter::FromIterator;
+
+        #[test]
+        fn test_from_iter() {
+            let bits = Bits64::one();
+            let bits1 = Bits64::from_iter(bits.into_iter());
+            assert_eq!(bits, bits1);
         }
     }
 }
@@ -798,113 +889,6 @@ pub mod combinators {
                 h.combine(&t);
                 assert_eq!(h, x);
             }
-        }
-    }
-}
-
-pub mod iterator {
-    use super::*;
-    use std::iter::FromIterator;
-
-    pub struct IterBits64 {
-        bits: Bits64,
-        ndx: usize,
-    }
-
-    impl IterBits64 {
-        /// Builds a new instance of the Bits8 iterator
-        pub fn new(bits: Bits64) -> Self {
-            Self { bits, ndx: 0 }
-        }
-    }
-
-    impl Iterator for IterBits64 {
-        type Item = Bit;
-
-        fn next(&mut self) -> Option<Self::Item> {
-            if self.ndx == Bits64::len() {
-                None
-            } else {
-                let v = self.bits.get(self.ndx);
-                self.ndx += 1;
-                Some(v)
-            }
-        }
-    }
-
-    impl IntoIterator for Bits64 {
-        type Item = Bit;
-        type IntoIter = IterBits64;
-
-        fn into_iter(self) -> Self::IntoIter {
-            IterBits64::new(self)
-        }
-    }
-
-    impl FromIterator<Bit> for Bits64 {
-        fn from_iter<T: IntoIterator<Item = Bit>>(iter: T) -> Self {
-            let mut us: Vec<u8> = Vec::with_capacity(64);
-            for b in iter {
-                us.push(b.into())
-            }
-
-            Self::from(us)
-        }
-    }
-
-    #[cfg(test)]
-    mod utests {
-        use super::IterBits64;
-        use crate::bits64::*;
-        use std::iter::FromIterator;
-
-        #[test]
-        fn test_iter() {
-            let bits = Bits64::one();
-            let mut iter = IterBits64::new(bits);
-
-            assert_eq!(Some(Bit::One), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-        }
-
-        #[test]
-        fn test_into_iter() {
-            let bits = Bits64::one();
-            let mut iter = bits.into_iter();
-
-            assert_eq!(Some(Bit::One), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-            assert_eq!(Some(Bit::Zero), iter.next());
-        }
-
-        #[test]
-        fn test_enumerate() {
-            let bits = Bits64::one();
-            for (ndx, b) in bits.into_iter().enumerate() {
-                if ndx == 0 {
-                    assert_eq!(Bit::One, b);
-                } else {
-                    assert_eq!(Bit::Zero, b);
-                }
-            }
-        }
-
-        #[test]
-        fn test_from_iter() {
-            let bits = Bits64::one();
-            let bits1 = Bits64::from_iter(bits.into_iter());
-            assert_eq!(bits, bits1);
         }
     }
 }
