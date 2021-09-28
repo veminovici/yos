@@ -48,7 +48,6 @@ pub trait BitsRange {
     fn with_range_zeros(pos: usize, len: usize) -> Self::Output;
 }
 
-
 /// A bit-string is a collection of bits
 pub trait Bitstring {
     /// Return the total number of bits

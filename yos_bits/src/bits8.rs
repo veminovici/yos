@@ -810,7 +810,6 @@ pub mod range {
             assert_eq!(Bits8::with_range_zeros(1, 7).0, 1);
             assert_eq!(Bits8::with_range_zeros(1, 6).0, 129);
         }
-
     }
 }
 
