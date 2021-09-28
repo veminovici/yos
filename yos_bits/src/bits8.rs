@@ -413,6 +413,11 @@ pub mod constructors {
             Bits8(1)
         }
 
+        /// Builds a bitstring where all bits are set.
+        pub fn ones() -> Bits8 {
+            Bits8::from(LOW_ONES[8])
+        }
+
         /// Build a power of 2 value
         pub fn pow2(power: usize) -> Bits8 {
             Bits8(bits::pow2(power))
@@ -463,6 +468,11 @@ pub mod constructors {
         #[test]
         fn test_one() {
             assert_eq!(Bits8::one().0, 1);
+        }
+
+        #[test]
+        fn test_ones() {
+            assert_eq!(Bits8::ones().0, LOW_ONES[8]);
         }
 
         #[test]

@@ -529,6 +529,11 @@ pub mod constructors {
             Bits64(1)
         }
 
+        /// Builds a bitstring where all bits are set.
+        pub fn ones() -> Bits64 {
+            Bits64::from(LOW_ONES[64])
+        }
+
         /// Build a power of 2 value
         pub fn pow2(power: usize) -> Bits64 {
             Bits64(bits::pow2(power))
@@ -579,6 +584,11 @@ pub mod constructors {
         #[test]
         fn test_one() {
             assert_eq!(Bits64::one().0, 1);
+        }
+
+        #[test]
+        fn test_ones() {
+            assert_eq!(Bits64::ones().0, LOW_ONES[64]);
         }
 
         #[test]
