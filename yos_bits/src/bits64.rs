@@ -711,6 +711,12 @@ pub mod constructors {
         fn with_high_ones(len: usize) -> Self::Output {
             Bits64(HIGH_ONES[len])
         }
+
+        fn split_at(&self, pos: usize) -> (Self::Output, Self::Output) {
+            let l = self.0 & LOW_ONES[pos];
+            let h = self.0 & HIGH_ONES[64 - pos];
+            (Bits64::from(l), Bits64::from(h))
+        }
     }
 
     #[cfg(test)]
@@ -746,6 +752,16 @@ pub mod constructors {
         #[test]
         fn test_with_high_ones() {
             assert_eq!(Bits64::with_high_ones(63).0, HIGH_ONES[63]);
+        }
+
+        #[test]
+        fn test_split_at() {
+            let x = Bits64::from(56u64);
+
+            for i in 0..65 {
+                let (h, t) = x.split_at(i);
+                assert_eq!(h.0 + t.0, x.0);
+            }
         }
     }
 }
@@ -901,17 +917,9 @@ pub mod range {
 }
 
 pub mod combinators {
-    use super::constants::*;
     use super::*;
 
     impl Bits64 {
-        /// Splits a bitstring
-        pub fn split(&self, pos: usize) -> (Bits64, Bits64) {
-            let l = self.0 & LOW_ONES[pos];
-            let h = self.0 & HIGH_ONES[64 - pos];
-            (Bits64::from(l), Bits64::from(h))
-        }
-
         /// Flips a bit value
         pub fn flip(&mut self, pos: usize) {
             *self ^= Bits64::pow2(pos)
@@ -928,16 +936,6 @@ pub mod combinators {
         use crate::bits64::*;
 
         #[test]
-        fn test_combinators_split() {
-            let x = Bits64::from(56u64);
-
-            for i in 0..65 {
-                let (h, t) = x.split(i);
-                assert_eq!(h.0 + t.0, x.0);
-            }
-        }
-
-        #[test]
         fn test_combinators_flip() {
             let mut x = Bits64::from(6u64);
             x.flip(1);
@@ -952,7 +950,7 @@ pub mod combinators {
             let x = Bits64::from(56u64);
 
             for i in 0..65 {
-                let (mut h, t) = x.split(i);
+                let (mut h, t) = x.split_at(i);
                 assert_eq!(h.0 + t.0, x.0);
                 h.combine(&t);
                 assert_eq!(h, x);

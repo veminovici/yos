@@ -624,6 +624,12 @@ pub mod constructors {
         fn with_high_ones(len: usize) -> Self::Output {
             Bits8(HIGH_ONES[len])
         }
+
+        fn split_at(&self, pos: usize) -> (Self::Output, Self::Output) {
+            let l = self.0 & LOW_ONES[pos];
+            let h = self.0 & HIGH_ONES[8 - pos];
+            (Bits8::from(l), Bits8::from(h))
+        }
     }
 
     #[cfg(test)]
@@ -659,6 +665,16 @@ pub mod constructors {
         #[test]
         fn test_with_high_ones() {
             assert_eq!(Bits8::with_high_ones(7).0, 254);
+        }
+
+        #[test]
+        fn test_split_at() {
+            let x = Bits8::from(56u8);
+
+            for i in 0..9 {
+                let (h, t) = x.split_at(i);
+                assert_eq!(h.0 + t.0, x.0);
+            }
         }
     }
 }
@@ -814,7 +830,6 @@ pub mod range {
 }
 
 pub mod combinators {
-    use super::constants::*;
     use super::*;
 
     impl Bits8 {
@@ -827,28 +842,11 @@ pub mod combinators {
         pub fn flip(&mut self, pos: usize) {
             *self ^= Self::pow2(pos)
         }
-
-        /// Splits the bistring in two bitstrings
-        pub fn split(&self, pos: usize) -> (Self, Self) {
-            let l = self.0 & LOW_ONES[pos];
-            let h = self.0 & HIGH_ONES[8 - pos];
-            (Bits8::from(l), Bits8::from(h))
-        }
     }
 
     #[cfg(test)]
     mod utests {
         use crate::bits8::*;
-
-        #[test]
-        fn test_combinators_split() {
-            let x = Bits8::from(56u8);
-
-            for i in 0..9 {
-                let (h, t) = x.split(i);
-                assert_eq!(h.0 + t.0, x.0);
-            }
-        }
 
         #[test]
         fn test_combinators_flip() {
@@ -864,7 +862,7 @@ pub mod combinators {
         fn test_combinators_combine() {
             let x = Bits8::from(56u8);
             for i in 0..9 {
-                let (mut h, t) = x.split(i);
+                let (mut h, t) = x.split_at(i);
                 assert_eq!(h.0 + t.0, x.0);
                 h.combine(&t);
                 assert_eq!(h, x);

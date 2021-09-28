@@ -1,5 +1,20 @@
 use super::bit::Bit;
 
+/// A bit-string is a collection of bits
+pub trait Bits {
+    /// Return the total number of bits
+    fn len() -> usize;
+
+    /// Return the value of a bit at a given index
+    fn get(&self, ndx: usize) -> Bit;
+
+    /// Set the value of a bit at a given index
+    fn set(&mut self, ndx: usize);
+
+    /// Reset the value of a bit at a given index
+    fn rst(&mut self, ndx: usize);
+}
+
 /// Defines the constructor functions
 pub trait BitsConstructors {
     /// The output type of the constructor functions
@@ -22,6 +37,9 @@ pub trait BitsConstructors {
 
     /// Build a bit-string value with all high bits set to 1
     fn with_high_ones(len: usize) -> Self::Output;
+
+    /// Split a bitstring in two bit strings
+    fn split_at(&self, pos: usize) -> (Self::Output, Self::Output);
 }
 
 /// Defines operations on ranges
@@ -46,19 +64,4 @@ pub trait BitsRange {
 
     /// Build a bit-string value with the bits within a range set to 0
     fn with_range_zeros(pos: usize, len: usize) -> Self::Output;
-}
-
-/// A bit-string is a collection of bits
-pub trait Bits {
-    /// Return the total number of bits
-    fn len() -> usize;
-
-    /// Return the value of a bit at a given index
-    fn get(&self, ndx: usize) -> Bit;
-
-    /// Set the value of a bit at a given index
-    fn set(&mut self, ndx: usize);
-
-    /// Reset the value of a bit at a given index
-    fn rst(&mut self, ndx: usize);
 }
