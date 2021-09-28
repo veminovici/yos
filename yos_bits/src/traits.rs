@@ -13,6 +13,16 @@ pub trait Bits {
 
     /// Reset the value of a bit at a given index
     fn rst(&mut self, ndx: usize);
+
+    /// Flips a bit at a given index
+    fn flip(&mut self, ndx: usize) {
+        let b = self.get(ndx);
+        if b == Bit::One {
+            self.rst(ndx);
+        } else {
+            self.set(ndx);
+        }
+    }
 }
 
 /// Defines the constructor functions

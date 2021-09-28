@@ -695,14 +695,16 @@ pub mod bits {
             }
         }
 
-        /// Set the bit value at a given index
         fn set(&mut self, ndx: usize) {
             self.0 = helper::set(self.0, ndx);
         }
 
-        /// Reset the bit value at a given index
         fn rst(&mut self, ndx: usize) {
             self.0 = helper::rst(self.0, ndx);
+        }
+
+        fn flip(&mut self, ndx: usize) {
+            *self ^= Self::pow2(ndx)
         }
     }
 
@@ -735,6 +737,16 @@ pub mod bits {
             let mut bstr = Bits8::from(5);
             bstr.rst(2);
             assert_eq!(bstr.0, 1);
+        }
+
+        #[test]
+        fn test_flip() {
+            let mut x = Bits8::from(6u8);
+            x.flip(1);
+            assert_eq!(x.0, 4);
+
+            x.flip(1);
+            assert_eq!(x.0, 6);
         }
     }
 }
@@ -837,26 +849,11 @@ pub mod combinators {
         pub fn combine(&mut self, other: &Self) {
             *self |= *other;
         }
-
-        /// Flips the bit at a given position
-        pub fn flip(&mut self, pos: usize) {
-            *self ^= Self::pow2(pos)
-        }
     }
 
     #[cfg(test)]
     mod utests {
         use crate::bits8::*;
-
-        #[test]
-        fn test_combinators_flip() {
-            let mut x = Bits8::from(6u8);
-            x.flip(1);
-            assert_eq!(x.0, 4);
-
-            x.flip(1);
-            assert_eq!(x.0, 6);
-        }
 
         #[test]
         fn test_combinators_combine() {

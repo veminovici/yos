@@ -782,14 +782,16 @@ pub mod bits {
             }
         }
 
-        /// Set the bit value at a given index
         fn set(&mut self, ndx: usize) {
             self.0 = helper::set(self.0, ndx);
         }
 
-        /// Reset the bit value at a given index
         fn rst(&mut self, ndx: usize) {
             self.0 = helper::rst(self.0, ndx);
+        }
+
+        fn flip(&mut self, ndx: usize) {
+            *self ^= Bits64::pow2(ndx)
         }
     }
 
@@ -822,6 +824,16 @@ pub mod bits {
             let mut bstr = Bits64::from(5);
             bstr.rst(2);
             assert_eq!(bstr.0, 1);
+        }
+
+        #[test]
+        fn test_flip() {
+            let mut x = Bits64::from(6u64);
+            x.flip(1);
+            assert_eq!(x.0, 4);
+
+            x.flip(1);
+            assert_eq!(x.0, 6);
         }
     }
 }
@@ -920,11 +932,6 @@ pub mod combinators {
     use super::*;
 
     impl Bits64 {
-        /// Flips a bit value
-        pub fn flip(&mut self, pos: usize) {
-            *self ^= Bits64::pow2(pos)
-        }
-
         /// Combines two bit strings.
         pub fn combine(&mut self, other: &Bits64) {
             *self |= *other;
@@ -934,16 +941,6 @@ pub mod combinators {
     #[cfg(test)]
     mod utests {
         use crate::bits64::*;
-
-        #[test]
-        fn test_combinators_flip() {
-            let mut x = Bits64::from(6u64);
-            x.flip(1);
-            assert_eq!(x.0, 4);
-
-            x.flip(1);
-            assert_eq!(x.0, 6);
-        }
 
         #[test]
         fn test_combinators_combine() {
