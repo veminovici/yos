@@ -1,5 +1,5 @@
 use super::bit::Bit;
-use super::{BitsConstructors, BitsRange, Bitstring};
+use super::{Bits, BitsConstructors, BitsRange};
 
 /// Different internal constant values
 mod constants {
@@ -143,7 +143,7 @@ mod constants {
 }
 
 /// Different helper function which perform bitwise operations on u8 values.
-mod bits {
+mod helper {
     /// Computes the bitwise representation of a power of 2
     #[inline(always)]
     pub(crate) fn pow2(p: usize) -> u64 {
@@ -701,7 +701,7 @@ pub mod constructors {
         }
 
         fn pow2(power: usize) -> Self::Output {
-            Bits64(bits::pow2(power))
+            Bits64(helper::pow2(power))
         }
 
         fn with_low_ones(len: usize) -> Self::Output {
@@ -750,16 +750,16 @@ pub mod constructors {
     }
 }
 
-pub mod bitstring {
+pub mod bits {
     use super::*;
 
-    impl Bitstring for Bits64 {
+    impl Bits for Bits64 {
         fn len() -> usize {
             64
         }
 
         fn get(&self, ndx: usize) -> Bit {
-            if bits::get(self.0, ndx) == 0 {
+            if helper::get(self.0, ndx) == 0 {
                 Bit::Zero
             } else {
                 Bit::One
@@ -768,12 +768,12 @@ pub mod bitstring {
 
         /// Set the bit value at a given index
         fn set(&mut self, ndx: usize) {
-            self.0 = bits::set(self.0, ndx);
+            self.0 = helper::set(self.0, ndx);
         }
 
         /// Reset the bit value at a given index
         fn rst(&mut self, ndx: usize) {
-            self.0 = bits::rst(self.0, ndx);
+            self.0 = helper::rst(self.0, ndx);
         }
     }
 

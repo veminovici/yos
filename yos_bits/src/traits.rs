@@ -49,7 +49,7 @@ pub trait BitsRange {
 }
 
 /// A bit-string is a collection of bits
-pub trait Bitstring {
+pub trait Bits {
     /// Return the total number of bits
     fn len() -> usize;
 

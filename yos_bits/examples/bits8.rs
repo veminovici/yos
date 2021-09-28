@@ -1,5 +1,5 @@
 use std::iter::FromIterator;
-use yos_bitstring::{Bits8, BitsConstructors, BitsRange, Bitstring};
+use yos_bitstring::{Bits, Bits8, BitsConstructors, BitsRange};
 
 fn main() {
     println!("zero={:?}", Bits8::zero());

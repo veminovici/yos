@@ -16,4 +16,4 @@ mod traits;
 pub use crate::bit::Bit;
 pub use crate::bits64::Bits64;
 pub use crate::bits8::Bits8;
-pub use crate::traits::{BitsConstructors, BitsRange, Bitstring};
+pub use crate::traits::{Bits, BitsConstructors, BitsRange};
