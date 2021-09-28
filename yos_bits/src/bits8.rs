@@ -1,5 +1,5 @@
 use super::bit::Bit;
-use super::Bitstring;
+use super::{BitsConstructors, Bitstring};
 
 /// Different internal constant values
 mod constants {
@@ -125,6 +125,18 @@ mod bits {
 }
 
 /// A bit-string repsented on an u8 value.
+///
+/// # Example
+/// You can create an instance of [Bits8] from an u8 value.
+///
+/// ```
+/// use yos_bitstring::{Bits8, Bitstring, BitsConstructors};
+///
+/// let four = Bits8::pow2(2);
+/// println!("four={:?}", four);
+/// assert_eq!(Bits8::from(4), four);
+///
+///```
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Bits8(u8);
 
@@ -586,56 +598,46 @@ pub mod constructors {
     use super::constants::*;
     use super::*;
 
-    impl Bits8 {
-        /// Build a zero value
-        pub fn zero() -> Bits8 {
+    impl BitsConstructors for Bits8 {
+        type Output = Self;
+
+        fn zero() -> Self::Output {
             Bits8(0)
         }
 
-        /// Builds a one value
-        pub fn one() -> Bits8 {
+        fn one() -> Self::Output {
             Bits8(1)
         }
 
-        /// Builds a bitstring where all bits are set.
-        pub fn ones() -> Bits8 {
+        fn with_all_ones() -> Self::Output {
             Bits8::from(LOW_ONES[8])
         }
 
-        /// Build a power of 2 value
-        pub fn pow2(power: usize) -> Bits8 {
+        fn pow2(power: usize) -> Self::Output {
             Bits8(bits::pow2(power))
         }
 
-        /// Build a vlaue with all lower bits set to 1
-        pub fn low_ones(len: usize) -> Bits8 {
+        fn with_low_ones(len: usize) -> Self::Output {
             Bits8(LOW_ONES[len])
         }
 
-        /// Build a value with all higher bits set to 1
-        pub fn high_ones(len: usize) -> Bits8 {
+        fn with_high_ones(len: usize) -> Self::Output {
             Bits8(HIGH_ONES[len])
         }
 
-        /// Builds a bit-string which has set on 1 the bits
-        /// within a range starting at a given position with
-        /// a given length.
-        pub fn range_ones(pos: usize, len: usize) -> Bits8 {
-            let mut mask = Bits8::low_ones(len);
+        fn with_range_ones(pos: usize, len: usize) -> Self::Output {
+            let mut mask = Bits8::with_low_ones(len);
             mask <<= pos;
             mask
         }
 
-        /// Builds a bit-string which has set on 0 the bts
-        /// within a range starting at a given position with
-        /// a given length.
-        pub fn range_zeros(pos: usize, len: usize) -> Bits8 {
+        fn with_range_zeros(pos: usize, len: usize) -> Self::Output {
             let mut mask = Bits8::zero();
             if pos > 0 {
-                mask = Bits8::low_ones(pos);
+                mask = Bits8::with_low_ones(pos);
             }
 
-            mask |= Bits8::high_ones(8 - pos - len);
+            mask |= Bits8::with_high_ones(8 - pos - len);
             mask
         }
     }
@@ -656,8 +658,8 @@ pub mod constructors {
         }
 
         #[test]
-        fn test_ones() {
-            assert_eq!(Bits8::ones().0, LOW_ONES[8]);
+        fn test_with_all_ones() {
+            assert_eq!(Bits8::with_all_ones().0, LOW_ONES[8]);
         }
 
         #[test]
@@ -666,29 +668,29 @@ pub mod constructors {
         }
 
         #[test]
-        fn test_low_ones() {
-            assert_eq!(Bits8::low_ones(2).0, 3);
+        fn test_with_low_ones() {
+            assert_eq!(Bits8::with_low_ones(2).0, 3);
         }
 
         #[test]
-        fn test_high_ones() {
-            assert_eq!(Bits8::high_ones(7).0, 254);
+        fn test_with_high_ones() {
+            assert_eq!(Bits8::with_high_ones(7).0, 254);
         }
 
         #[test]
-        fn test_range_ones() {
-            assert_eq!(Bits8::range_ones(0, 0).0, 0);
-            assert_eq!(Bits8::range_ones(2, 1).0, 4);
-            assert_eq!(Bits8::range_ones(2, 2).0, 12);
-            assert_eq!(Bits8::range_ones(0, 8).0, 255);
+        fn test_with_range_ones() {
+            assert_eq!(Bits8::with_range_ones(0, 0).0, 0);
+            assert_eq!(Bits8::with_range_ones(2, 1).0, 4);
+            assert_eq!(Bits8::with_range_ones(2, 2).0, 12);
+            assert_eq!(Bits8::with_range_ones(0, 8).0, 255);
         }
 
         #[test]
-        fn test_range_zeros() {
-            assert_eq!(Bits8::range_zeros(0, 8).0, 0);
-            assert_eq!(Bits8::range_zeros(0, 0).0, 255);
-            assert_eq!(Bits8::range_zeros(1, 7).0, 1);
-            assert_eq!(Bits8::range_zeros(1, 6).0, 129);
+        fn test_with_range_zeros() {
+            assert_eq!(Bits8::with_range_zeros(0, 8).0, 0);
+            assert_eq!(Bits8::with_range_zeros(0, 0).0, 255);
+            assert_eq!(Bits8::with_range_zeros(1, 7).0, 1);
+            assert_eq!(Bits8::with_range_zeros(1, 6).0, 129);
         }
     }
 }

@@ -1,4 +1,6 @@
 //! A crate for bitstring operations
+//!
+//! The crate exposes u8 and u64 as bit strings.
 #![deny(missing_docs)]
 #![deny(unreachable_code)]
 
@@ -14,4 +16,4 @@ mod traits;
 pub use crate::bit::Bit;
 pub use crate::bits64::Bits64;
 pub use crate::bits8::Bits8;
-pub use crate::traits::Bitstring;
+pub use crate::traits::{BitsConstructors, Bitstring};
