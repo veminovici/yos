@@ -1,15 +1,20 @@
 use super::bit::Bit;
 use super::Bitstring;
 
-const LOW_ONES: [u8; 9] = [
-    0b00000000, 0b00000001, 0b00000011, 0b00000111, 0b00001111, 0b00011111, 0b00111111, 0b01111111,
-    0b11111111,
-];
+/// Different internal constant values
+mod constants {
+    /// A series of u8 values, where the lower bits are set to 1
+    pub const LOW_ONES: [u8; 9] = [
+        0b00000000, 0b00000001, 0b00000011, 0b00000111, 0b00001111, 0b00011111, 0b00111111,
+        0b01111111, 0b11111111,
+    ];
 
-const HIGH_ONES: [u8; 9] = [
-    0b00000000, 0b10000000, 0b11000000, 0b11100000, 0b11110000, 0b11111000, 0b11111100, 0b11111110,
-    0b11111111,
-];
+    /// A series of u8 values where the higher bugs are set to 1
+    pub const HIGH_ONES: [u8; 9] = [
+        0b00000000, 0b10000000, 0b11000000, 0b11100000, 0b11110000, 0b11111000, 0b11111100,
+        0b11111110, 0b11111111,
+    ];
+}
 
 /// Different helper function which perform bitwise operations on u8 values.
 mod bits {
@@ -123,11 +128,12 @@ mod bits {
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Bits8(u8);
 
-/// Implementation of fmt traits
+/// Implementation of formatting traits
 pub mod formatting {
     use super::Bits8;
     use std::fmt::{Debug, Display};
 
+    /// Implements Display trait for "{}" formatting
     impl Display for Bits8 {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             let s = format!("{:#010b}", self.0);
@@ -135,6 +141,7 @@ pub mod formatting {
         }
     }
 
+    /// Implements Debug trait for "{:?}" formatting
     impl Debug for Bits8 {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             let s = format!("{:#010b}", self.0);
@@ -169,11 +176,16 @@ pub mod formatting {
     }
 }
 
+/// Iterator and IntoIterator implementations
 pub mod iterator {
     use super::*;
 
+    /// Iterator over the bits stored into an Bits8 value.
     pub struct IterBits8 {
+        /// The bit string
         bits: Bits8,
+
+        /// The current index
         ndx: usize,
     }
 
@@ -184,6 +196,7 @@ pub mod iterator {
         }
     }
 
+    /// Iterator trait implementation
     impl Iterator for IterBits8 {
         type Item = Bit;
 
@@ -198,6 +211,7 @@ pub mod iterator {
         }
     }
 
+    /// IntoIterator trait implementation for the Bits8
     impl IntoIterator for Bits8 {
         type Item = Bit;
         type IntoIter = IterBits8;
@@ -266,28 +280,33 @@ pub mod iterator {
     }
 }
 
+/// Implementations for From and FromIterator traits
 pub mod conversions {
     use super::*;
     use std::iter::FromIterator;
 
+    /// Converts from u8 to Bits8
     impl From<u8> for Bits8 {
         fn from(x: u8) -> Self {
             Bits8(x)
         }
     }
 
+    /// Converts from Bits8 to u8
     impl From<Bits8> for u8 {
         fn from(x: Bits8) -> Self {
             x.0
         }
     }
 
+    /// Converts from Bits8 to Vec<u8>
     impl From<Bits8> for Vec<u8> {
         fn from(x: Bits8) -> Self {
             vec![x.0]
         }
     }
 
+    /// Converts from an iterator of Bits to Bits8
     impl FromIterator<Bit> for Bits8 {
         fn from_iter<T: IntoIterator<Item = Bit>>(iter: T) -> Self {
             let mut us: Vec<u8> = Vec::with_capacity(8);
@@ -299,6 +318,7 @@ pub mod conversions {
         }
     }
 
+    /// Converts from an interator of u8 to Bits8
     impl FromIterator<u8> for Bits8 {
         fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
             let xs = iter.into_iter().take(8).collect::<Vec<u8>>();
@@ -337,12 +357,40 @@ pub mod conversions {
     }
 }
 
-pub mod bitwise {
+pub mod operators {
     use super::*;
     use std::ops::{
-        BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Not, Shl, ShlAssign, Shr,
-        ShrAssign,
+        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Not, Shl,
+        ShlAssign, Shr, ShrAssign, Sub, SubAssign,
     };
+
+    impl Add for Bits8 {
+        type Output = Bits8;
+
+        fn add(self, rhs: Self) -> Self::Output {
+            Bits8(self.0 + rhs.0)
+        }
+    }
+
+    impl AddAssign for Bits8 {
+        fn add_assign(&mut self, rhs: Self) {
+            self.0 += rhs.0;
+        }
+    }
+
+    impl Sub for Bits8 {
+        type Output = Bits8;
+
+        fn sub(self, rhs: Self) -> Self::Output {
+            Bits8(self.0 - rhs.0)
+        }
+    }
+
+    impl SubAssign for Bits8 {
+        fn sub_assign(&mut self, rhs: Self) {
+            self.0 -= rhs.0;
+        }
+    }
 
     impl BitAnd for Bits8 {
         type Output = Bits8;
@@ -424,7 +472,36 @@ pub mod bitwise {
 
     #[cfg(test)]
     mod utests {
+        use super::constants::*;
         use crate::bits8::*;
+
+        #[test]
+        fn test_add() {
+            let x = Bits8::from(5);
+            let y = x + Bits8::from(3);
+            assert_eq!(y.0, 8);
+        }
+
+        #[test]
+        fn test_add_and_assign() {
+            let mut x = Bits8::from(5);
+            x += Bits8::from(3);
+            assert_eq!(x.0, 8);
+        }
+
+        #[test]
+        fn test_sub() {
+            let x = Bits8::from(5);
+            let y = x - Bits8::from(3);
+            assert_eq!(y.0, 2);
+        }
+
+        #[test]
+        fn test_sub_and_assign() {
+            let mut x = Bits8::from(5);
+            x -= Bits8::from(3);
+            assert_eq!(x.0, 2);
+        }
 
         #[test]
         fn test_and() {
@@ -506,6 +583,7 @@ pub mod bitwise {
 }
 
 pub mod constructors {
+    use super::constants::*;
     use super::*;
 
     impl Bits8 {
@@ -564,6 +642,7 @@ pub mod constructors {
 
     #[cfg(test)]
     mod utests {
+        use super::constants::*;
         use crate::bits8::*;
 
         #[test]
@@ -675,6 +754,7 @@ pub mod bitstring {
 }
 
 pub mod range {
+    use super::constants::*;
     use super::*;
 
     impl Bits8 {
@@ -734,6 +814,7 @@ pub mod range {
 }
 
 pub mod combinators {
+    use super::constants::*;
     use super::*;
 
     impl Bits8 {
