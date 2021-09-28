@@ -203,11 +203,11 @@ mod bits {
 
 /// A bit-string repsented on an u64 value.
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub struct Bu64(u64);
+pub struct Bits64(u64);
 
 /// Implementation of fmt traits
 pub mod formatting {
-    use crate::bu64::*;
+    use crate::bits64::*;
     use std::fmt::{Debug, Display};
 
     fn u8_debug(u: &u8) -> String {
@@ -215,25 +215,25 @@ pub mod formatting {
         str.strip_prefix("0b").unwrap().to_string()
     }
 
-    impl Display for Bu64 {
+    impl Display for Bits64 {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             let xs: Vec<u8> = (*self).into();
             let us = xs.iter().map(u8_debug).collect::<Vec<String>>();
             write!(
                 f,
-                "Bu64:{:020}|{}|{}|{}|{}|{}|{}|{}|{}|",
+                "Bits64:{:020}|{}|{}|{}|{}|{}|{}|{}|{}|",
                 self.0, us[7], us[6], us[5], us[4], us[3], us[2], us[1], us[0]
             )
         }
     }
 
-    impl Debug for Bu64 {
+    impl Debug for Bits64 {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             let xs: Vec<u8> = (*self).into();
             let us = xs.iter().map(u8_debug).collect::<Vec<String>>();
             write!(
                 f,
-                "Bu64:{:020}|{}|{}|{}|{}|{}|{}|{}|{}|",
+                "Bits64:{:020}|{}|{}|{}|{}|{}|{}|{}|{}|",
                 self.0, us[7], us[6], us[5], us[4], us[3], us[2], us[1], us[0]
             )
         }
@@ -241,17 +241,17 @@ pub mod formatting {
 
     #[cfg(test)]
     mod ptests {
-        use crate::bu64::*;
+        use crate::bits64::*;
         use quickcheck_macros::quickcheck;
 
         #[quickcheck]
-        fn prop_display(x: Bu64) -> bool {
+        fn prop_display(x: Bits64) -> bool {
             let s = format!("{}", x);
             !s.is_empty()
         }
 
         #[quickcheck]
-        fn prop_debug(x: Bu64) -> bool {
+        fn prop_debug(x: Bits64) -> bool {
             let s = format!("{:?}", x);
             !s.is_empty()
         }
@@ -261,20 +261,20 @@ pub mod formatting {
 pub mod conversions {
     use super::*;
 
-    impl From<u64> for Bu64 {
+    impl From<u64> for Bits64 {
         fn from(x: u64) -> Self {
-            Bu64(x)
+            Bits64(x)
         }
     }
 
-    impl From<Bu64> for u64 {
-        fn from(x: Bu64) -> Self {
+    impl From<Bits64> for u64 {
+        fn from(x: Bits64) -> Self {
             x.0
         }
     }
 
-    impl From<Bu64> for Vec<u8> {
-        fn from(x: Bu64) -> Self {
+    impl From<Bits64> for Vec<u8> {
+        fn from(x: Bits64) -> Self {
             let msk = 255u64;
 
             let u0 = (x.0 & msk) as u8;
@@ -290,7 +290,7 @@ pub mod conversions {
         }
     }
 
-    impl From<Vec<u8>> for Bu64 {
+    impl From<Vec<u8>> for Bits64 {
         fn from(xs: Vec<u8>) -> Self {
             let u0 = xs[0] as u64;
             let u1 = (xs[1] as u64) << 8;
@@ -300,11 +300,11 @@ pub mod conversions {
             let u5 = (xs[5] as u64) << 40;
             let u6 = (xs[6] as u64) << 48;
             let u7 = (xs[7] as u64) << 56;
-            Bu64(u0 + u1 + u2 + u3 + u4 + u5 + u6 + u7)
+            Bits64(u0 + u1 + u2 + u3 + u4 + u5 + u6 + u7)
         }
     }
 
-    impl From<&[u8]> for Bu64 {
+    impl From<&[u8]> for Bits64 {
         fn from(xs: &[u8]) -> Self {
             let u0 = xs[0] as u64;
             let u1 = (xs[1] as u64) << 8;
@@ -314,7 +314,7 @@ pub mod conversions {
             let u5 = (xs[5] as u64) << 40;
             let u6 = (xs[6] as u64) << 48;
             let u7 = (xs[7] as u64) << 56;
-            Bu64(u0 + u1 + u2 + u3 + u4 + u5 + u6 + u7)
+            Bits64(u0 + u1 + u2 + u3 + u4 + u5 + u6 + u7)
         }
     }
 
@@ -325,14 +325,14 @@ pub mod conversions {
 
         #[quickcheck]
         fn prop_from_to_u8(x: u64) -> bool {
-            let bstr = Bu64::from(x);
+            let bstr = Bits64::from(x);
             let y: u64 = bstr.into();
             bstr.0 == x && x == y
         }
 
         #[quickcheck]
         fn prop_form_to_vecu8(x: u8) -> bool {
-            let bstr = Bu64::from(vec![x; 8]);
+            let bstr = Bits64::from(vec![x; 8]);
             let y: Vec<u8> = bstr.into();
             (bstr.0 as u8) == x && y.len() == 8 && x == y[0]
         }
@@ -340,7 +340,7 @@ pub mod conversions {
         #[quickcheck]
         fn prop_from_slice_u8(x: u8) -> bool {
             let xs = &*(vec![x; 8]);
-            let bstr = Bu64::from(xs);
+            let bstr = Bits64::from(xs);
             let y: Vec<u8> = bstr.into();
             (bstr.0 as u8) == x && y.len() == 8 && x == y[0]
         }
@@ -354,79 +354,79 @@ pub mod bitwise {
         ShrAssign,
     };
 
-    impl BitAnd for Bu64 {
-        type Output = Bu64;
+    impl BitAnd for Bits64 {
+        type Output = Bits64;
 
         fn bitand(self, rhs: Self) -> Self::Output {
-            Bu64(self.0 & rhs.0)
+            Bits64(self.0 & rhs.0)
         }
     }
 
-    impl BitAndAssign for Bu64 {
+    impl BitAndAssign for Bits64 {
         fn bitand_assign(&mut self, rhs: Self) {
             self.0 = self.0 & rhs.0;
         }
     }
 
-    impl BitOr for Bu64 {
-        type Output = Bu64;
+    impl BitOr for Bits64 {
+        type Output = Bits64;
 
         fn bitor(self, rhs: Self) -> Self::Output {
-            Bu64(self.0 | rhs.0)
+            Bits64(self.0 | rhs.0)
         }
     }
 
-    impl BitOrAssign for Bu64 {
+    impl BitOrAssign for Bits64 {
         fn bitor_assign(&mut self, rhs: Self) {
             self.0 = self.0 | rhs.0;
         }
     }
 
-    impl BitXor for Bu64 {
-        type Output = Bu64;
+    impl BitXor for Bits64 {
+        type Output = Bits64;
 
         fn bitxor(self, rhs: Self) -> Self::Output {
-            Bu64(self.0 ^ rhs.0)
+            Bits64(self.0 ^ rhs.0)
         }
     }
 
-    impl BitXorAssign for Bu64 {
+    impl BitXorAssign for Bits64 {
         fn bitxor_assign(&mut self, rhs: Self) {
             self.0 = self.0 ^ rhs.0;
         }
     }
 
-    impl Not for Bu64 {
-        type Output = Bu64;
+    impl Not for Bits64 {
+        type Output = Bits64;
 
         fn not(self) -> Self::Output {
-            Bu64::from(!self.0)
+            Bits64::from(!self.0)
         }
     }
 
-    impl Shr<usize> for Bu64 {
-        type Output = Bu64;
+    impl Shr<usize> for Bits64 {
+        type Output = Bits64;
 
         fn shr(self, rhs: usize) -> Self::Output {
-            Bu64(self.0 >> rhs)
+            Bits64(self.0 >> rhs)
         }
     }
 
-    impl ShrAssign<usize> for Bu64 {
+    impl ShrAssign<usize> for Bits64 {
         fn shr_assign(&mut self, rhs: usize) {
             self.0 >>= rhs;
         }
     }
 
-    impl Shl<usize> for Bu64 {
-        type Output = Bu64;
+    impl Shl<usize> for Bits64 {
+        type Output = Bits64;
 
         fn shl(self, rhs: usize) -> Self::Output {
-            Bu64(self.0 << rhs)
+            Bits64(self.0 << rhs)
         }
     }
 
-    impl ShlAssign<usize> for Bu64 {
+    impl ShlAssign<usize> for Bits64 {
         fn shl_assign(&mut self, rhs: usize) {
             self.0 <<= rhs;
         }
@@ -434,81 +434,81 @@ pub mod bitwise {
 
     #[cfg(test)]
     mod utests {
-        use crate::bu64::*;
+        use crate::bits64::*;
 
         #[test]
         fn test_and() {
-            let x = Bu64::from(5);
-            let y = x & Bu64::from(3);
+            let x = Bits64::from(5);
+            let y = x & Bits64::from(3);
             assert_eq!(y.0, 1);
         }
 
         #[test]
         fn test_and_assign() {
-            let mut x = Bu64::from(5);
-            x &= Bu64::from(3);
+            let mut x = Bits64::from(5);
+            x &= Bits64::from(3);
             assert_eq!(x.0, 1);
         }
 
         #[test]
         fn test_or() {
-            let x = Bu64::from(5);
-            let y = x | Bu64::from(3);
+            let x = Bits64::from(5);
+            let y = x | Bits64::from(3);
             assert_eq!(y.0, 7);
         }
 
         #[test]
         fn test_or_assign() {
-            let mut x = Bu64::from(5);
-            x |= Bu64::from(3);
+            let mut x = Bits64::from(5);
+            x |= Bits64::from(3);
             assert_eq!(x.0, 7);
         }
 
         #[test]
         fn test_xor() {
-            let x = Bu64::from(5);
-            let y = x ^ Bu64::from(3);
+            let x = Bits64::from(5);
+            let y = x ^ Bits64::from(3);
             assert_eq!(y.0, 6);
         }
 
         #[test]
         fn test_xor_assign() {
-            let mut x = Bu64::from(5);
-            x ^= Bu64::from(3);
+            let mut x = Bits64::from(5);
+            x ^= Bits64::from(3);
             assert_eq!(x.0, 6);
         }
 
         #[test]
         fn test_not_assign() {
-            let x = Bu64::from(LOW_ONES[1]);
+            let x = Bits64::from(LOW_ONES[1]);
             let y = !x;
             assert_eq!(y.0, HIGH_ONES[63])
         }
 
         #[test]
         fn test_shr() {
-            let x = Bu64::from(5);
+            let x = Bits64::from(5);
             let y = x >> 1;
             assert_eq!(y.0, 2);
         }
 
         #[test]
         fn test_shr_assign() {
-            let mut x = Bu64::from(5);
+            let mut x = Bits64::from(5);
             x >>= 1;
             assert_eq!(x.0, 2);
         }
 
         #[test]
         fn test_shl() {
-            let x = Bu64::from(3);
+            let x = Bits64::from(3);
             let y = x << 1;
             assert_eq!(y.0, 6);
         }
 
         #[test]
         fn test_shl_assign() {
-            let mut x = Bu64::from(3);
+            let mut x = Bits64::from(3);
             x <<= 1;
             assert_eq!(x.0, 6);
         }
@@ -518,37 +518,37 @@ pub mod bitwise {
 pub mod constructors {
     use super::*;
 
-    impl Bu64 {
+    impl Bits64 {
         /// Build a zero value
-        pub fn zero() -> Bu64 {
-            Bu64(0)
+        pub fn zero() -> Bits64 {
+            Bits64(0)
         }
 
         /// Builds a one value
-        pub fn one() -> Bu64 {
-            Bu64(1)
+        pub fn one() -> Bits64 {
+            Bits64(1)
         }
 
         /// Build a power of 2 value
-        pub fn pow2(power: usize) -> Bu64 {
-            Bu64(bits::pow2(power))
+        pub fn pow2(power: usize) -> Bits64 {
+            Bits64(bits::pow2(power))
         }
 
         /// Build a vlaue with all lower bits set to 1
-        pub fn low_ones(len: usize) -> Bu64 {
-            Bu64(LOW_ONES[len])
+        pub fn low_ones(len: usize) -> Bits64 {
+            Bits64(LOW_ONES[len])
         }
 
         /// Build a value with all higher bits set to 1
-        pub fn high_ones(len: usize) -> Bu64 {
-            Bu64(HIGH_ONES[len])
+        pub fn high_ones(len: usize) -> Bits64 {
+            Bits64(HIGH_ONES[len])
         }
 
         /// Builds a bit-string which has set on 1 the bits
         /// within a range starting at a given position with
         /// a given length.
-        pub fn range_ones(pos: usize, len: usize) -> Bu64 {
-            let mut mask = Bu64::low_ones(len);
+        pub fn range_ones(pos: usize, len: usize) -> Bits64 {
+            let mut mask = Bits64::low_ones(len);
             mask <<= pos;
             mask
         }
@@ -556,59 +556,59 @@ pub mod constructors {
         /// Builds a bit-string which has set on 0 the bts
         /// within a range starting at a given position with
         /// a given length.
-        pub fn range_zeros(pos: usize, len: usize) -> Bu64 {
-            let mut mask = Bu64::zero();
+        pub fn range_zeros(pos: usize, len: usize) -> Bits64 {
+            let mut mask = Bits64::zero();
             if pos > 0 {
-                mask = Bu64::low_ones(pos);
+                mask = Bits64::low_ones(pos);
             }
 
-            mask |= Bu64::high_ones(64 - pos - len);
+            mask |= Bits64::high_ones(64 - pos - len);
             mask
         }
     }
 
     #[cfg(test)]
     mod utests {
-        use crate::bu64::*;
+        use crate::bits64::*;
 
         #[test]
         fn test_zero() {
-            assert_eq!(Bu64::zero().0, 0);
+            assert_eq!(Bits64::zero().0, 0);
         }
 
         #[test]
         fn test_one() {
-            assert_eq!(Bu64::one().0, 1);
+            assert_eq!(Bits64::one().0, 1);
         }
 
         #[test]
         fn test_pow2() {
-            assert_eq!(Bu64::pow2(2).0, 4);
+            assert_eq!(Bits64::pow2(2).0, 4);
         }
 
         #[test]
         fn test_low_ones() {
-            assert_eq!(Bu64::low_ones(2).0, 3);
+            assert_eq!(Bits64::low_ones(2).0, 3);
         }
 
         #[test]
         fn test_high_ones() {
-            assert_eq!(Bu64::high_ones(63).0, HIGH_ONES[63]);
+            assert_eq!(Bits64::high_ones(63).0, HIGH_ONES[63]);
         }
 
         #[test]
         fn test_range_ones() {
-            assert_eq!(Bu64::range_ones(0, 0).0, 0);
-            assert_eq!(Bu64::range_ones(2, 1).0, 4);
-            assert_eq!(Bu64::range_ones(2, 2).0, 12);
-            assert_eq!(Bu64::range_ones(0, 8).0, 255);
+            assert_eq!(Bits64::range_ones(0, 0).0, 0);
+            assert_eq!(Bits64::range_ones(2, 1).0, 4);
+            assert_eq!(Bits64::range_ones(2, 2).0, 12);
+            assert_eq!(Bits64::range_ones(0, 8).0, 255);
         }
 
         #[test]
         fn test_range_zeros() {
-            assert_eq!(Bu64::range_zeros(0, 64).0, 0);
-            assert_eq!(Bu64::range_zeros(0, 0).0, LOW_ONES[64]);
-            assert_eq!(Bu64::range_zeros(1, 62).0, 2u64.pow(63) + 1);
+            assert_eq!(Bits64::range_zeros(0, 64).0, 0);
+            assert_eq!(Bits64::range_zeros(0, 0).0, LOW_ONES[64]);
+            assert_eq!(Bits64::range_zeros(1, 62).0, 2u64.pow(63) + 1);
         }
     }
 }
@@ -616,7 +616,7 @@ pub mod constructors {
 pub mod bitstring {
     use super::*;
 
-    impl Bitstring for Bu64 {
+    impl Bitstring for Bits64 {
         fn len() -> usize {
             64
         }
@@ -642,16 +642,16 @@ pub mod bitstring {
 
     #[cfg(test)]
     mod utests {
-        use crate::bu64::*;
+        use crate::bits64::*;
 
         #[test]
         fn test_len() {
-            assert_eq!(Bu64::len(), 64);
+            assert_eq!(Bits64::len(), 64);
         }
 
         #[test]
         fn test_get() {
-            let bstr = Bu64::from(5);
+            let bstr = Bits64::from(5);
             assert_eq!(bstr.get(0), Bit::One);
             assert_eq!(bstr.get(1), Bit::Zero);
             assert_eq!(bstr.get(2), Bit::One);
@@ -659,14 +659,14 @@ pub mod bitstring {
 
         #[test]
         fn test_set() {
-            let mut bstr = Bu64::from(5);
+            let mut bstr = Bits64::from(5);
             bstr.set(1);
             assert_eq!(bstr.0, 7);
         }
 
         #[test]
         fn test_rst() {
-            let mut bstr = Bu64::from(5);
+            let mut bstr = Bits64::from(5);
             bstr.rst(2);
             assert_eq!(bstr.0, 1);
         }
@@ -676,7 +676,7 @@ pub mod bitstring {
 pub mod range {
     use super::*;
 
-    impl Bu64 {
+    impl Bits64 {
         /// Reset the low bits
         pub fn rst_low(&mut self, len: usize) {
             self.0 &= HIGH_ONES[64 - len]
@@ -700,32 +700,32 @@ pub mod range {
 
     #[cfg(test)]
     mod utests {
-        use crate::bu64::*;
+        use crate::bits64::*;
 
         #[test]
         fn test_rst_low() {
-            let mut x = Bu64::from(5);
+            let mut x = Bits64::from(5);
             x.rst_low(1);
             assert_eq!(x.0, 4);
         }
 
         #[test]
         fn test_rst_high() {
-            let mut x = Bu64::from(5);
+            let mut x = Bits64::from(5);
             x.rst_high(62);
             assert_eq!(x.0, 1);
         }
 
         #[test]
         fn test_set_low() {
-            let mut x = Bu64::from(5);
+            let mut x = Bits64::from(5);
             x.set_low(2);
             assert_eq!(x.0, 7);
         }
 
         #[test]
         fn test_set_high() {
-            let mut x = Bu64::from(6);
+            let mut x = Bits64::from(6);
             x.set_high(63);
             assert_eq!(x.0, HIGH_ONES[63]);
         }
@@ -735,32 +735,32 @@ pub mod range {
 pub mod combinators {
     use super::*;
 
-    impl Bu64 {
+    impl Bits64 {
         /// Splits a bitstring
-        pub fn split(&self, pos: usize) -> (Bu64, Bu64) {
+        pub fn split(&self, pos: usize) -> (Bits64, Bits64) {
             let l = self.0 & LOW_ONES[pos];
             let h = self.0 & HIGH_ONES[64 - pos];
-            (Bu64::from(l), Bu64::from(h))
+            (Bits64::from(l), Bits64::from(h))
         }
 
         /// Flips a bit value
         pub fn flip(&mut self, pos: usize) {
-            *self ^= Bu64::pow2(pos)
+            *self ^= Bits64::pow2(pos)
         }
 
         /// Combines two bit strings.
-        pub fn combine(&mut self, other: &Bu64) {
+        pub fn combine(&mut self, other: &Bits64) {
             *self |= *other;
         }
     }
 
     #[cfg(test)]
     mod utests {
-        use crate::bu64::*;
+        use crate::bits64::*;
 
         #[test]
         fn test_combinators_split() {
-            let x = Bu64::from(56u64);
+            let x = Bits64::from(56u64);
 
             for i in 0..65 {
                 let (h, t) = x.split(i);
@@ -770,7 +770,7 @@ pub mod combinators {
 
         #[test]
         fn test_combinators_flip() {
-            let mut x = Bu64::from(6u64);
+            let mut x = Bits64::from(6u64);
             x.flip(1);
             assert_eq!(x.0, 4);
 
@@ -780,7 +780,7 @@ pub mod combinators {
 
         #[test]
         fn test_combinators_combine() {
-            let x = Bu64::from(56u64);
+            let x = Bits64::from(56u64);
 
             for i in 0..65 {
                 let (mut h, t) = x.split(i);
@@ -798,15 +798,15 @@ mod arbitrary {
 
     use quickcheck::{Arbitrary, Gen};
 
-    impl Arbitrary for Bu64 {
+    impl Arbitrary for Bits64 {
         fn arbitrary(g: &mut Gen) -> Self {
-            Bu64::from(u64::arbitrary(g))
+            Bits64::from(u64::arbitrary(g))
         }
 
         fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
             let mut shrunk_vals = Vec::new();
             if self.0 > 0 {
-                shrunk_vals.push(Bu64::from(self.0 - 1));
+                shrunk_vals.push(Bits64::from(self.0 - 1));
             }
             Box::new(shrunk_vals.into_iter())
         }
@@ -818,9 +818,9 @@ mod arbitrary {
 
         #[test]
         fn test_shrink() {
-            let x = Bu64::from(2);
+            let x = Bits64::from(2);
             let mut xs = x.shrink();
-            assert_eq!((*xs).next().unwrap(), Bu64::from(1));
+            assert_eq!((*xs).next().unwrap(), Bits64::from(1));
         }
     }
 }

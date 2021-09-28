@@ -1,17 +1,19 @@
-use yos_bitstring::{Bitstring, Bu8};
+use yos_bitstring::{Bitstring, Bits8};
 
 fn main() {
-    let mut x = Bu8::from(5u8);
+    println!("zero={:?}", Bits8::zero());
+
+    let mut x = Bits8::from(5u8);
     println!("x={:?}", x);
 
-    let y = Bu8::from(3u8);
+    let y = Bits8::from(3u8);
     println!("y={}", y);
 
     let z = x & y;
     println!("z={:?}", z);
 
-    println!("0={:?}", Bu8::zero());
-    println!("1={:?}", Bu8::one());
+    println!("0={:?}", Bits8::zero());
+    println!("1={:?}", Bits8::one());
 
     x.set(1);
     println!("x={:?}", x);
@@ -34,9 +36,9 @@ fn main() {
     x.rst_high(1);
     println!("x={:?}", x);
 
-    let x = Bu8::range_ones(2, 4);
+    let x = Bits8::range_ones(2, 4);
     println!("x={:?}", x);
 
-    let x = Bu8::range_zeros(1, 6);
+    let x = Bits8::range_zeros(1, 6);
     println!("x={:?}", x);
 }
