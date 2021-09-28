@@ -22,6 +22,24 @@ pub trait BitsConstructors {
 
     /// Build a bit-string value with all high bits set to 1
     fn with_high_ones(len: usize) -> Self::Output;
+}
+
+/// Defines operations on ranges
+pub trait BitsRange {
+    /// The output type of the constructor functions
+    type Output;
+
+    /// Reset the low range of bits
+    fn rst_low_range(&mut self, len: usize);
+
+    /// Reset the high range of bits
+    fn rst_high_range(&mut self, len: usize);
+
+    /// Set the low range of bits
+    fn set_low_range(&mut self, len: usize);
+
+    /// Set the high range of bits
+    fn set_high_range(&mut self, len: usize);
 
     /// Build a bit-string value with the bits within a range set to 1
     fn with_range_ones(pos: usize, len: usize) -> Self::Output;
@@ -29,6 +47,7 @@ pub trait BitsConstructors {
     /// Build a bit-string value with the bits within a range set to 0
     fn with_range_zeros(pos: usize, len: usize) -> Self::Output;
 }
+
 
 /// A bit-string is a collection of bits
 pub trait Bitstring {

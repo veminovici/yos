@@ -1,5 +1,5 @@
 use std::iter::FromIterator;
-use yos_bitstring::{Bits8, BitsConstructors, Bitstring};
+use yos_bitstring::{Bits8, BitsConstructors, BitsRange, Bitstring};
 
 fn main() {
     println!("zero={:?}", Bits8::zero());
@@ -32,16 +32,16 @@ fn main() {
     let z1 = x << 1;
     println!("z={:?}", z1);
 
-    x.set_low(1);
+    x.set_low_range(1);
     println!("x={:?}", x);
 
-    x.rst_low(2);
+    x.rst_low_range(2);
     println!("x={:?}", x);
 
-    x.set_high(3);
+    x.set_high_range(3);
     println!("x={:?}", x);
 
-    x.rst_high(1);
+    x.rst_high_range(1);
     println!("x={:?}", x);
 
     let x = Bits8::with_range_ones(2, 4);

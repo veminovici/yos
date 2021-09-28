@@ -1,5 +1,5 @@
 use super::bit::Bit;
-use super::{BitsConstructors, Bitstring};
+use super::{BitsConstructors, BitsRange, Bitstring};
 
 /// Different internal constant values
 mod constants {
@@ -711,22 +711,6 @@ pub mod constructors {
         fn with_high_ones(len: usize) -> Self::Output {
             Bits64(HIGH_ONES[len])
         }
-
-        fn with_range_ones(pos: usize, len: usize) -> Self::Output {
-            let mut mask = Bits64::with_low_ones(len);
-            mask <<= pos;
-            mask
-        }
-
-        fn with_range_zeros(pos: usize, len: usize) -> Self::Output {
-            let mut mask = Bits64::zero();
-            if pos > 0 {
-                mask = Bits64::with_low_ones(pos);
-            }
-
-            mask |= Bits64::with_high_ones(64 - pos - len);
-            mask
-        }
     }
 
     #[cfg(test)]
@@ -762,21 +746,6 @@ pub mod constructors {
         #[test]
         fn test_with_high_ones() {
             assert_eq!(Bits64::with_high_ones(63).0, HIGH_ONES[63]);
-        }
-
-        #[test]
-        fn test_with_range_ones() {
-            assert_eq!(Bits64::with_range_ones(0, 0).0, 0);
-            assert_eq!(Bits64::with_range_ones(2, 1).0, 4);
-            assert_eq!(Bits64::with_range_ones(2, 2).0, 12);
-            assert_eq!(Bits64::with_range_ones(0, 8).0, 255);
-        }
-
-        #[test]
-        fn test_with_range_zeros() {
-            assert_eq!(Bits64::with_range_zeros(0, 64).0, 0);
-            assert_eq!(Bits64::with_range_zeros(0, 0).0, LOW_ONES[64]);
-            assert_eq!(Bits64::with_range_zeros(1, 62).0, 2u64.pow(63) + 1);
         }
     }
 }
@@ -845,25 +814,39 @@ pub mod range {
     use super::constants::*;
     use super::*;
 
-    impl Bits64 {
-        /// Reset the low bits
-        pub fn rst_low(&mut self, len: usize) {
+    impl BitsRange for Bits64 {
+        type Output = Self;
+
+        fn rst_low_range(&mut self, len: usize) {
             self.0 &= HIGH_ONES[64 - len]
         }
 
-        /// Reset the high bits
-        pub fn rst_high(&mut self, len: usize) {
+        fn rst_high_range(&mut self, len: usize) {
             self.0 &= LOW_ONES[64 - len]
         }
 
-        /// Set the low bits
-        pub fn set_low(&mut self, len: usize) {
+        fn set_low_range(&mut self, len: usize) {
             self.0 |= LOW_ONES[len]
         }
 
-        /// Set tehe high bits
-        pub fn set_high(&mut self, len: usize) {
+        fn set_high_range(&mut self, len: usize) {
             self.0 |= HIGH_ONES[len]
+        }
+
+        fn with_range_ones(pos: usize, len: usize) -> Self::Output {
+            let mut mask = Bits64::with_low_ones(len);
+            mask <<= pos;
+            mask
+        }
+
+        fn with_range_zeros(pos: usize, len: usize) -> Self::Output {
+            let mut mask = Bits64::zero();
+            if pos > 0 {
+                mask = Bits64::with_low_ones(pos);
+            }
+
+            mask |= Bits64::with_high_ones(64 - pos - len);
+            mask
         }
     }
 
@@ -873,31 +856,46 @@ pub mod range {
         use crate::bits64::*;
 
         #[test]
-        fn test_rst_low() {
+        fn test_rst_low_range() {
             let mut x = Bits64::from(5);
-            x.rst_low(1);
+            x.rst_low_range(1);
             assert_eq!(x.0, 4);
         }
 
         #[test]
-        fn test_rst_high() {
+        fn test_rst_high_range() {
             let mut x = Bits64::from(5);
-            x.rst_high(62);
+            x.rst_high_range(62);
             assert_eq!(x.0, 1);
         }
 
         #[test]
-        fn test_set_low() {
+        fn test_set_low_range() {
             let mut x = Bits64::from(5);
-            x.set_low(2);
+            x.set_low_range(2);
             assert_eq!(x.0, 7);
         }
 
         #[test]
-        fn test_set_high() {
+        fn test_set_high_range() {
             let mut x = Bits64::from(6);
-            x.set_high(63);
+            x.set_high_range(63);
             assert_eq!(x.0, HIGH_ONES[63]);
+        }
+
+        #[test]
+        fn test_with_range_ones() {
+            assert_eq!(Bits64::with_range_ones(0, 0).0, 0);
+            assert_eq!(Bits64::with_range_ones(2, 1).0, 4);
+            assert_eq!(Bits64::with_range_ones(2, 2).0, 12);
+            assert_eq!(Bits64::with_range_ones(0, 8).0, 255);
+        }
+
+        #[test]
+        fn test_with_range_zeros() {
+            assert_eq!(Bits64::with_range_zeros(0, 64).0, 0);
+            assert_eq!(Bits64::with_range_zeros(0, 0).0, LOW_ONES[64]);
+            assert_eq!(Bits64::with_range_zeros(1, 62).0, 2u64.pow(63) + 1);
         }
     }
 }
