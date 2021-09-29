@@ -47,9 +47,10 @@ pub fn u128_to_bytes(u: &u128) -> [u8; 16] {
 /// Extract the difficulty bytes
 pub fn difficulty_bytes(xs: &[u8], len: usize) -> u128 {
     let mut u = 0u128;
+    let m = xs.len() - 1;
 
     for i in 0..len {
-        let mut x = xs[31 - i] as u128;
+        let mut x = xs[m - i] as u128;
         x <<= (len - i - 1) * 8;
         u |= x;
     }
