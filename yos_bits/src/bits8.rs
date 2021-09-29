@@ -125,18 +125,6 @@ mod helper {
 }
 
 /// A bit-string repsented on an u8 value.
-///
-/// # Example
-/// You can create an instance of [Bits8] from an u8 value.
-///
-/// ```
-/// use yos_bitstring::{Bits, Bits8, BitsConstructors};
-///
-/// let four = Bits8::pow2(2);
-/// println!("four={:?}", four);
-/// assert_eq!(Bits8::from(4), four);
-///
-///```
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Bits8(u8);
 
