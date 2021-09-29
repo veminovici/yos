@@ -6,6 +6,7 @@
 
 // Nested modules
 
+mod arb;
 mod bit;
 mod bits64;
 mod bits8;
