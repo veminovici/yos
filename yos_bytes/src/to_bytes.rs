@@ -58,6 +58,11 @@ pub fn difficulty_bytes(xs: &[u8], len: usize) -> u128 {
     u
 }
 
+/// Extract the difficulty 16 bytes
+pub fn difficulty_16(xs: &[u8]) -> u128 {
+    difficulty_bytes(xs, 16)
+}
+
 #[cfg(test)]
 mod utests {
     use super::*;
@@ -128,6 +133,17 @@ mod utests {
         ];
 
         let v = difficulty_bytes(xs.as_slice(), 16);
+        assert_eq!((3 << 16) + (2 << 8) + 1, v);
+    }
+
+    #[test]
+    fn test_difficulty_16() {
+        let xs: Vec<u8> = vec![
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+        ];
+
+        let v = difficulty_16(xs.as_slice());
         assert_eq!((3 << 16) + (2 << 8) + 1, v);
     }
 }
