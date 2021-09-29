@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: Code Coverage
+name: Coverall Coverage
 
 jobs:
   Tests:
