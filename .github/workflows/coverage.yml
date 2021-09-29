@@ -43,6 +43,7 @@ jobs:
         with:
           args: --ignore "../*, /../../../../../usr/*"
 
+      # upload the coverage report to codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
@@ -54,7 +55,8 @@ jobs:
           flags: unittests
           name: github-codecov
 
-      - name: Coveralls upload
+      # upload the coverage report to coveralls
+      - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
