@@ -63,6 +63,14 @@ pub fn difficulty_16(xs: &[u8]) -> u128 {
     difficulty_bytes(xs, 16)
 }
 
+/// Converts to hex string
+pub fn to_hex<'a, A>(xs: A) -> String
+where
+    A: Iterator<Item = &'a u8>,
+{
+    xs.fold("".to_string(), |acc, x| acc + &format!("{}", x))
+}
+
 #[cfg(test)]
 mod utests {
     use super::*;
