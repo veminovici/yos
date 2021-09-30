@@ -22,6 +22,11 @@ impl DifficultHash {
         }
     }
 
+    /// Builds a new instance, where the difficult length is 16
+    pub fn new16(data: Vec<u8>) -> DifficultHash {
+        DifficultHash::new(data, 16)
+    }
+
     /// Returns the dificult section as u128
     pub fn diff128(&self) -> u128 {
         difficulty_bytes(self.data.as_slice(), self.diff_len)
@@ -45,5 +50,21 @@ impl Debug for DifficultHash {
             let ys = self.data.iter().skip(self.regular_len);
             write!(f, "{}.{}|{}", to_hex(xs), to_hex(ys), self.diff128())
         }
+    }
+}
+
+#[cfg(test)]
+mod utests {
+    use super::*;
+
+    #[test]
+    fn test_new16() {
+        let xs: Vec<u8> = vec![
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0,
+        ];
+
+        let h = DifficultHash::new16(xs);
+        assert_eq!((3 << 16) + (2 << 8) + 1, h.diff128());
     }
 }
