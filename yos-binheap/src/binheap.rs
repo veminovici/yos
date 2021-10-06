@@ -96,6 +96,7 @@ impl<T: Copy + PartialOrd> BinHeap<T> {
         }
 
         let parent = bheap_parent_ndx(pos);
+
         if self.data[parent] >= self.data[pos] {
             return;
         }
@@ -107,5 +108,7 @@ impl<T: Copy + PartialOrd> BinHeap<T> {
 
         self.data[pos] = a;
         self.data[parent] = b;
+
+        self.bubble_up(parent);
     }
 }

@@ -13,3 +13,10 @@ fn test_binheap_new() {
     assert_eq!(h.len(), 0);
     assert!(h.is_empty());
 }
+
+#[test]
+fn test_binheap_push() {
+    let mut h = BinHeap::new();
+    h.push(10);
+    assert_eq!(1, h.len());
+}

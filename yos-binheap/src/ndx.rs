@@ -1,6 +1,6 @@
 /// Determines the index of the parent node into a heap vector
 /// given the index of the current node and the size of the nodes.
-pub(super) fn heap_parent_ndx(pos: usize, sz: usize) -> usize {
+fn heap_parent_ndx(pos: usize, sz: usize) -> usize {
     debug_assert!(sz != 0);
 
     if pos == 0 {
@@ -12,7 +12,7 @@ pub(super) fn heap_parent_ndx(pos: usize, sz: usize) -> usize {
 
 /// Determines the index of a chlid node into a heap vector
 /// given the index of the current node, the order of the child, and the size of the nodes.
-pub(super) fn heap_child_ndx(pos: usize, c: usize, sz: usize) -> usize {
+fn heap_child_ndx(pos: usize, c: usize, sz: usize) -> usize {
     pos * sz + c + 1
 }
 
