@@ -12,13 +12,13 @@ Just another rust crate, this one implements some bit-strings.
 
 </br>
 
-## Yos.Distances
+## yos_distances
 A rust crate which exposes different distance functions.
 For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-distances/README.md) page.
 
 </br>
 
-## Yos.MemCursor
+## yos_memcursor
 A rust crate which exposes a cursor which can move and update in place the values in a slide of memory.
 For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-memcursor/README.md) page.
 
