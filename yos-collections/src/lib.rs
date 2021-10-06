@@ -1,7 +1,9 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+//! A rust library for collection data structures.
+
+#![deny(missing_docs)]
+#![deny(unreachable_pub)]
+
+mod binheap;
+mod binheap_iter;
+
+pub use crate::binheap_iter::*;
