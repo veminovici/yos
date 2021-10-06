@@ -19,6 +19,7 @@ jobs:
 
   build:
     name: Build
+    needs: [check]
     runs-on: ubuntu-latest
     steps:
 
@@ -34,6 +35,7 @@ jobs:
 
   clippy:
     name: Clippy
+    needs: [check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -50,6 +52,7 @@ jobs:
 
   fmt:
     name: Rustfmt
+    needs: [check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -66,7 +69,7 @@ jobs:
 
   test:
     name: Test
-    needs: [build, check, fmt]
+    needs: [build, fmt, clippy]
     env:
       PROJECT_NAME_UNDERSCORE: yos
       CARGO_INCREMENTAL: 0
