@@ -1,6 +1,5 @@
 [workspace]
 members = [
-    "yos-binheap",
     "yos_bits",
     "yos_bytes",
     "yos-collections",
