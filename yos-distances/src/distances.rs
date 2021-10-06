@@ -268,4 +268,32 @@ mod tests {
         let e: f32 = 0.5;
         assert!((e - d).abs() < std::f32::EPSILON);
     }
+
+    #[test]
+    fn sift3_empty_empty() {
+        let d = sift3("".as_bytes(), "".as_bytes(), 5);
+        let e: f32 = 0.0;
+        assert!((e - d).abs() < std::f32::EPSILON);
+    }
+
+    #[test]
+    fn sift3_str_empty() {
+        let d = sift3("hannah".as_bytes(), "".as_bytes(), 5);
+        let e: f32 = "hannah".as_bytes().len() as f32;
+        assert!((e - d).abs() < std::f32::EPSILON);
+    }
+
+    #[test]
+    fn sift3_empty_str() {
+        let d = sift3("".as_bytes(), "hanna".as_bytes(), 5);
+        let e: f32 = "hanna".as_bytes().len() as f32;
+        assert!((e - d).abs() < std::f32::EPSILON);
+    }
+
+    #[test]
+    fn sift3_offset() {
+        let d = sift3("hannah".as_bytes(), "ahanna".as_bytes(), 5);
+        let e: f32 = 3.;
+        assert!((e - d).abs() < std::f32::EPSILON);
+    }
 }
