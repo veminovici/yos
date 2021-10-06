@@ -1,7 +1,8 @@
+/// An iterator over the elements in a binary heap.
 use std::fmt::Debug;
 use std::slice;
 
-/// An iterator over the elements in a binary heap.
+/// Iterator
 pub struct Iter<'a, T: 'a> {
     iter: slice::Iter<'a, T>,
 }

@@ -3,7 +3,4 @@
 #![deny(missing_docs)]
 #![deny(unreachable_pub)]
 
-mod binheap;
-mod binheap_iter;
-
-pub use crate::binheap_iter::*;
+pub mod binheap;
