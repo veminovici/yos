@@ -5,6 +5,5 @@
 #![doc = include_str!("../README.md")]
 
 mod binheap;
-mod ndx;
 
 pub use crate::binheap::*;
