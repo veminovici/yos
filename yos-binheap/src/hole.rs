@@ -5,7 +5,7 @@ use std::mem::ManuallyDrop;
 /// (because it was moved from or duplicated).
 /// In drop, `Hole` will restore the slice by filling the hole
 /// position with the value that was originally removed.
-pub(crate) struct Hole<'a, T: 'a> {
+pub struct Hole<'a, T: 'a> {
     data: &'a mut [T],
     elt: ManuallyDrop<T>,
     pos: usize,
@@ -17,7 +17,7 @@ impl<'a, T> Hole<'a, T> {
     /// # Safety
     /// The position must be within the length of the memory slice.
     #[inline]
-    pub(crate) unsafe fn new(data: &'a mut [T], pos: usize) -> Self {
+    pub unsafe fn new(data: &'a mut [T], pos: usize) -> Self {
         debug_assert!(pos < data.len());
 
         // SAFE: pos should be inside the slice
@@ -31,13 +31,13 @@ impl<'a, T> Hole<'a, T> {
 
     /// Returns the position of the hole.
     #[inline]
-    pub(crate) fn pos(&self) -> usize {
+    pub fn pos(&self) -> usize {
         self.pos
     }
 
     /// The element that could fill in the hole.
     #[inline]
-    pub(crate) fn element(&self) -> &T {
+    pub fn element(&self) -> &T {
         &self.elt
     }
 
@@ -47,7 +47,7 @@ impl<'a, T> Hole<'a, T> {
     /// # Safety
     /// The index must be within the data slice and different than the current position.
     #[inline]
-    pub(crate) unsafe fn get(&self, index: usize) -> &T {
+    pub unsafe fn get(&self, index: usize) -> &T {
         debug_assert!(index != self.pos);
         debug_assert!(index < self.data.len());
 
@@ -60,7 +60,7 @@ impl<'a, T> Hole<'a, T> {
     /// # Safety
     /// The index must be withing the data slice and different than the current position.
     #[inline]
-    pub(crate) unsafe fn move_to(&mut self, index: usize) {
+    pub unsafe fn move_to(&mut self, index: usize) {
         debug_assert!(index != self.pos);
         debug_assert!(index < self.data.len());
 
