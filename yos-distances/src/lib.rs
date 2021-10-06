@@ -1,8 +1,7 @@
-//! A rust library for distances.
+//! A rust library for distance functions.
 
 #![deny(missing_docs)]
 #![deny(unreachable_pub)]
-#![doc = include_str!("../README.md")]
 
 mod distances;
 
