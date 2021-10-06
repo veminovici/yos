@@ -126,6 +126,7 @@ jobs:
       RUSTDOCFLAGS: -Cpanic=abort
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Upload to CodeCov
         uses: codecov/codecov-action@v1
         with:
@@ -139,6 +140,7 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Upload to Coveralls
         # upload only if push
         if: ${{ github.event_name == 'push' }}
