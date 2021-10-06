@@ -2,9 +2,9 @@ use yos_distances::*;
 
 #[test]
 fn test_square_euclidean() {
-    let xs = vec![0., 0.];
-    let ys = vec![3., 4.];
-    let d = square_euclidean(xs.as_slice(), ys.as_slice());
+    let xs = [0., 0.];
+    let ys = [3., 4.];
+    let d = square_euclidean(&xs, &ys);
 
     let e: f32 = 25.;
     assert!((e - d).abs() < std::f32::EPSILON);
@@ -12,18 +12,18 @@ fn test_square_euclidean() {
 
 #[test]
 fn test_manhatann() {
-    let xs = vec![0., 0.];
-    let ys = vec![3., 4.];
-    let d = manhatann(xs.as_slice(), ys.as_slice());
+    let xs = [0., 0.];
+    let ys = [3., 4.];
+    let d = manhatann(&xs, &ys);
     let e: f32 = 7.;
     assert!((e - d).abs() < std::f32::EPSILON);
 }
 
 #[test]
 fn test_chebyshev() {
-    let xs = vec![0., 0.];
-    let ys = vec![3., 4.];
-    let d = chebyshev(xs.as_slice(), ys.as_slice());
+    let xs = [0., 0.];
+    let ys = [3., 4.];
+    let d = chebyshev(&xs, &ys);
     let e: f32 = 4.;
     assert!((e - d).abs() < std::f32::EPSILON);
 }
