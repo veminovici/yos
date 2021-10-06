@@ -99,9 +99,9 @@ jobs:
       - name: Generate test result and coverage report
         run: |
           cargo install cargo2junit grcov;
-          cargo test $CARGO_OPTIONS -- -Z unstable-options --format json | cargo2junit > results.xml;
+          cargo test $CARGO_OPTIONS -- -Z unstable-options --format json | cargo2junit > ./results.xml;
           zip -0 ccov.zip `find . \( -name "$PROJECT_NAME_UNDERSCORE*.gc*" \) -print`;
-          grcov ccov.zip -s . -t lcov --llvm --ignore-not-existing --ignore "/*" --ignore "tests/*" -o lcov.info;
+          grcov ccov.zip -s . -t lcov --llvm --ignore-not-existing --ignore "/*" --ignore "tests/*" -o ./lcov.info;
 
   pubresults:
     name: Publish Tests Results
@@ -126,7 +126,6 @@ jobs:
       RUSTDOCFLAGS: -Cpanic=abort
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - name: Upload to CodeCov
         uses: codecov/codecov-action@v1
         with:
@@ -140,8 +139,6 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
       - name: Upload to Coveralls
         # upload only if push
         if: ${{ github.event_name == 'push' }}
