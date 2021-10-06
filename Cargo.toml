@@ -3,6 +3,7 @@ members = [
     "yos-binheap",
     "yos_bits",
     "yos_bytes",
+    "yos-collections",
     "yos-memcursor",
     "yos-distances",
 ]

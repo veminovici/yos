@@ -12,6 +12,12 @@ Just another rust crate, this one implements some bit-strings.
 
 </br>
 
+## yos_collections
+A rust crate which implements different collection data structures.
+For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-collections/README.md) page.
+
+</br>
+
 ## yos_distances
 A rust crate which exposes different distance functions.
 For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-distances/README.md) page.
@@ -24,7 +30,6 @@ For more details check out the create [readme](https://github.com/veminovici/yos
 
 </br>
 
-
-### Thank you!!!
+### A *thank you* note !!!
 
 > You can contact me at veminovici@hotmail.com. Code designed and written in Päädu, on the beautiful island of [**Saaremaa**](https://goo.gl/maps/DmB9ewY2R3sPGFnTA), Estonia.
