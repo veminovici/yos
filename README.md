@@ -4,6 +4,7 @@ Just another rust crate, this one implements some bit-strings.
 
 [![CI Pipeline](https://github.com/veminovici/yos/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/veminovici/yos/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/veminovici/yos/branch/main/graph/badge.svg?token=1QV7SGC7B7)](https://codecov.io/gh/veminovici/yos)
+[![Coverage Status](https://coveralls.io/repos/github/veminovici/yos/badge.svg)](https://coveralls.io/github/veminovici/yos)
 [![Last commit](https://img.shields.io/github/last-commit/veminovici/yos)](https://github.com/veminovici/yos)
 [![Repo size](https://img.shields.io/github/repo-size/veminovici/yos)](https://github.com/veminovici/yos)
 
