@@ -185,4 +185,37 @@ mod tests {
 
         assert_eq!([1, 5, 3, 4, 2], xs);
     }
+
+    #[test]
+    fn pos_pass() {
+        let mut xs = [1, 2, 3, 4, 5];
+
+        unsafe {
+            let mut h = Hole::new(&mut xs, 4);
+            h.move_to(1);
+            assert_eq!(1, h.pos());
+        }
+    }
+
+    #[test]
+    fn pos_element() {
+        let mut xs = [1, 2, 3, 4, 5];
+
+        unsafe {
+            let mut h = Hole::new(&mut xs, 4);
+            h.move_to(1);
+            assert_eq!(5, *h.element());
+        }
+    }
+
+    #[test]
+    fn pos_get() {
+        let mut xs = [1, 2, 3, 4, 5];
+
+        unsafe {
+            let mut h = Hole::new(&mut xs, 4);
+            h.move_to(1);
+            assert_eq!(2, *h.get(4));
+        }
+    }
 }
