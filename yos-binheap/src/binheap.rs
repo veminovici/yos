@@ -1,8 +1,9 @@
+use super::hole::Hole;
+use super::iter::*;
+
 use core::iter::FromIterator;
-use core::ptr;
+use core::mem::swap;
 use std::fmt::Debug;
-use std::mem::ManuallyDrop;
-use std::slice;
 
 //
 // BinHeap
@@ -25,7 +26,8 @@ impl<T: Clone> Clone for BinHeap<T> {
     }
 }
 
-impl<T: Ord> Default for BinHeap<T> {
+// VLD Revert the debug
+impl<T: Debug + Ord> Default for BinHeap<T> {
     fn default() -> Self {
         Self::new()
     }
@@ -37,7 +39,8 @@ impl<T: Debug> Debug for BinHeap<T> {
     }
 }
 
-impl<T: Ord> BinHeap<T> {
+// VLD Revert the debug
+impl<T: Debug + Ord> BinHeap<T> {
     /// Creates a new new instance of the binary heap.
     pub fn new() -> Self {
         Self {
@@ -50,6 +53,18 @@ impl<T: Ord> BinHeap<T> {
         Self {
             data: Vec::<T>::with_capacity(capacity),
         }
+    }
+
+    /// Removes the greatest item from the binary heap and returns it,
+    /// or `None` if it is empty.
+    pub fn pop(&mut self) -> Option<T> {
+        self.data.pop().map(|mut item| {
+            if !self.is_empty() {
+                swap(&mut item, &mut self.data[0]);
+                self.sift_down_to_bottom(0);
+            }
+            item
+        })
     }
 
     /// Pushes a value into the binary heap.
@@ -66,6 +81,7 @@ impl<T: Ord> BinHeap<T> {
 
             while hole.pos() > start {
                 let parent = (hole.pos() - 1) / 2;
+
                 if hole.element() <= hole.get(parent) {
                     break;
                 }
@@ -104,6 +120,27 @@ impl<T: Ord> BinHeap<T> {
         self.sift_down_range(pos, len);
     }
 
+    fn sift_down_to_bottom(&mut self, mut pos: usize) {
+        let end = self.len();
+        let start = pos;
+        unsafe {
+            let mut hole = Hole::new(&mut self.data, pos);
+            let mut child = 2 * pos + 1;
+            while child < end {
+                let right = child + 1;
+                // compare with the greater of the two children
+                if right < end && !(hole.get(child) > hole.get(right)) {
+                    child = right;
+                }
+                hole.move_to(child);
+                child = 2 * hole.pos() + 1;
+            }
+
+            pos = hole.pos();
+        }
+        self.sift_up(start, pos);
+    }
+
     fn rebuild(&mut self) {
         let mut n = self.len() / 2;
         while n > 0 {
@@ -116,9 +153,7 @@ impl<T: Ord> BinHeap<T> {
 impl<T> BinHeap<T> {
     /// Returns an iterator that is visiting all values in the binary heap.
     pub fn iter(&self) -> Iter<'_, T> {
-        Iter {
-            iter: self.data.iter(),
-        }
+        Iter::new(self.data.iter())
     }
 
     /// Retruns the greatest element in the binary heap.
@@ -159,156 +194,10 @@ impl<T> BinHeap<T> {
 }
 
 //
-// Hole
-//
-
-/// Hole represents a hole in a slice i.e., an index without valid value
-/// (because it was moved from or duplicated).
-/// In drop, `Hole` will restore the slice by filling the hole
-/// position with the value that was originally removed.
-struct Hole<'a, T: 'a> {
-    data: &'a mut [T],
-    elt: ManuallyDrop<T>,
-    pos: usize,
-}
-
-impl<'a, T> Hole<'a, T> {
-    #[inline]
-    unsafe fn new(data: &'a mut [T], pos: usize) -> Self {
-        debug_assert!(pos < data.len());
-
-        // SAFE: pos should be inside the slice
-        let elt = ptr::read(data.get_unchecked(pos));
-        Hole {
-            data,
-            elt: ManuallyDrop::new(elt),
-            pos,
-        }
-    }
-
-    #[inline]
-    fn pos(&self) -> usize {
-        self.pos
-    }
-
-    #[inline]
-    fn element(&self) -> &T {
-        &self.elt
-    }
-
-    /// Returns a reference to the element at `index`.
-    /// Unsafe because index must be within the data slice and not equal to pos.
-    #[inline]
-    unsafe fn get(&self, index: usize) -> &T {
-        debug_assert!(index != self.pos);
-        debug_assert!(index < self.data.len());
-
-        self.data.get_unchecked(index)
-    }
-
-    /// Move hole to new location
-    /// Unsafe because index must be within the data slice and not equal to pos.
-    #[inline]
-    unsafe fn move_to(&mut self, index: usize) {
-        debug_assert!(index != self.pos);
-        debug_assert!(index < self.data.len());
-
-        let index_ptr: *const _ = self.data.get_unchecked(index);
-        let hole_ptr = self.data.get_unchecked_mut(self.pos);
-        ptr::copy_nonoverlapping(index_ptr, hole_ptr, 1);
-        self.pos = index;
-    }
-}
-
-//
-// Iterators
-//
-
-/// An iterator over the elements in a binary heap.
-pub struct Iter<'a, T: 'a> {
-    iter: slice::Iter<'a, T>,
-}
-
-impl<T: Debug> Debug for Iter<'_, T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("Iter").field(&self.iter.as_slice()).finish()
-    }
-}
-
-impl<T> Clone for Iter<'_, T> {
-    fn clone(&self) -> Self {
-        Iter {
-            iter: self.iter.clone(),
-        }
-    }
-}
-
-impl<'a, T> Iterator for Iter<'a, T> {
-    type Item = &'a T;
-
-    #[inline]
-    fn next(&mut self) -> Option<&'a T> {
-        self.iter.next()
-    }
-
-    #[inline]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        self.iter.size_hint()
-    }
-
-    #[inline]
-    fn last(self) -> Option<&'a T> {
-        self.iter.last()
-    }
-}
-
-impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
-    #[inline]
-    fn next_back(&mut self) -> Option<&'a T> {
-        self.iter.next_back()
-    }
-}
-
-/// An owning iterator over the elements of a `BinaryHeap`.
-#[derive(Clone)]
-pub struct IntoIter<T> {
-    iter: std::vec::IntoIter<T>,
-}
-
-impl<T: Debug> Debug for IntoIter<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("IntoIter")
-            .field(&self.iter.as_slice())
-            .finish()
-    }
-}
-
-impl<T> Iterator for IntoIter<T> {
-    type Item = T;
-
-    #[inline]
-    fn next(&mut self) -> Option<T> {
-        self.iter.next()
-    }
-
-    #[inline]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        self.iter.size_hint()
-    }
-}
-
-impl<T> DoubleEndedIterator for IntoIter<T> {
-    #[inline]
-    fn next_back(&mut self) -> Option<T> {
-        self.iter.next_back()
-    }
-}
-
-//
 // Converters
 //
-
-impl<T: Ord> From<Vec<T>> for BinHeap<T> {
+// VLD Revert the debug
+impl<T: Debug + Ord> From<Vec<T>> for BinHeap<T> {
     /// Converts a `Vec<T>` into a `BinaryHeap<T>`.
     ///
     /// This conversion happens in-place, and has `O(n)` time complexity.
@@ -325,7 +214,8 @@ impl<T> From<BinHeap<T>> for Vec<T> {
     }
 }
 
-impl<T: Ord> FromIterator<T> for BinHeap<T> {
+// VLD Revert te debug
+impl<T: Debug + Ord> FromIterator<T> for BinHeap<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> BinHeap<T> {
         BinHeap::from(iter.into_iter().collect::<Vec<_>>())
     }
@@ -336,9 +226,7 @@ impl<T> IntoIterator for BinHeap<T> {
     type IntoIter = IntoIter<T>;
 
     fn into_iter(self) -> IntoIter<T> {
-        IntoIter {
-            iter: self.data.into_iter(),
-        }
+        IntoIter::new(self.data.into_iter())
     }
 }
 
