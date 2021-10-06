@@ -20,7 +20,7 @@ For more details check out the create [readme](https://github.com/veminovici/yos
 
 ## Yos.MemCursor
 A rust crate which exposes a cursor which can move and update in place the values in a slide of memory.
-For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-memcache/README.md) page.
+For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-memcursor/README.md) page.
 
 </br>
 
