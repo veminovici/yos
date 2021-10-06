@@ -207,7 +207,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn distances_square_euclidean() {
+    fn square_euclidean_pass() {
         let xs = [0., 0.];
         let ys = [3., 4.];
         let d = square_euclidean(&xs, &ys);
@@ -217,7 +217,7 @@ mod tests {
     }
 
     #[test]
-    fn distances_manhatann() {
+    fn manhatann_pass() {
         let xs = [0., 0.];
         let ys = [3., 4.];
         let d = manhatann(&xs, &ys);
@@ -226,7 +226,7 @@ mod tests {
     }
 
     #[test]
-    fn distances_chebyshev() {
+    fn chebyshev_pass() {
         let xs = [0., 0.];
         let ys = [3., 4.];
         let d = chebyshev(&xs, &ys);
@@ -235,7 +235,7 @@ mod tests {
     }
 
     #[test]
-    fn distances_levenshtein() {
+    fn levenshtein_pass() {
         let a = "kitten".as_bytes();
         let b = "sitting".as_bytes();
 
@@ -247,7 +247,7 @@ mod tests {
     }
 
     #[test]
-    fn distances_hamming() {
+    fn hamming_pass() {
         let a = "karolin".as_bytes();
         let b = "kathrin".as_bytes();
         let d = hamming(a, b);
@@ -255,7 +255,7 @@ mod tests {
     }
 
     #[test]
-    fn distances_lee() {
+    fn lee_pass() {
         let xs = [3., 1., 4., 0.];
         let ys = [2., 5., 4., 3.];
         let d = lee(&xs, &ys, 6);
@@ -263,7 +263,7 @@ mod tests {
     }
 
     #[test]
-    fn distances_sift3() {
+    fn sift3_pass() {
         let d = sift3("hannah".as_bytes(), "hanna".as_bytes(), 5);
         let e: f32 = 0.5;
         assert!((e - d).abs() < std::f32::EPSILON);

@@ -85,3 +85,30 @@ impl<T> Drop for Hole<'_, T> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_pass() {
+        let mut xs = [1, 2, 3, 4, 5];
+        unsafe {
+            let _ = Hole::new(&mut xs, 4);
+        }
+
+        assert_eq!([1, 2, 3, 4, 5], xs);
+    }
+
+    #[test]
+    fn move_to_pass() {
+        let mut xs = [1, 2, 3, 4, 5];
+
+        unsafe {
+            let mut h = Hole::new(&mut xs, 4);
+            h.move_to(1);
+        }
+
+        assert_eq!([1, 5, 3, 4, 2], xs);
+    }
+}
