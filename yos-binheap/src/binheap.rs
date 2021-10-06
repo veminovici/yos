@@ -147,11 +147,6 @@ impl<T> BinHeap<T> {
         self.data.shrink_to_fit();
     }
 
-    /// Shrinks to a minimum capacity.
-    pub fn shrink_to(&mut self, min_capacity: usize) {
-        self.data.shrink_to(min_capacity);
-    }
-
     /// Returns the number of elements in the binary heap.
     pub fn len(&self) -> usize {
         self.data.len()
