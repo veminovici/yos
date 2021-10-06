@@ -12,13 +12,15 @@ Just another rust crate, this one implements some bit-strings.
 
 </br>
 
-## Simplee.Yos.Distances
-A rust create that exposes different distance functions. For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-distances/README.md) page.
+## Yos.Distances
+A rust crate which exposes different distance functions.
+For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-distances/README.md) page.
 
 </br>
 
-## Simplee.Yos.MemCursor
-A rust create that exposes a cursor which can move and update in place the values in a slide of memory. For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-memcache/README.md) page.
+## Yos.MemCursor
+A rust crate which exposes a cursor which can move and update in place the values in a slide of memory.
+For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-memcache/README.md) page.
 
 </br>
 
