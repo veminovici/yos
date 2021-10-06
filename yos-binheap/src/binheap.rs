@@ -1,6 +1,8 @@
 use crate::ndx::{bheap_is_root, bheap_parent_ndx};
 use std::fmt::Debug;
 
+use self::iterator::IterBinHeap;
+
 /// Implementation of the binary heap.
 pub struct BinHeap<T> {
     data: Vec<T>,
@@ -110,5 +112,60 @@ impl<T: Copy + PartialOrd> BinHeap<T> {
         self.data[parent] = b;
 
         self.bubble_up(parent);
+    }
+
+    /// Returns the greates value in the bin heap.
+    pub fn peek(&self) -> Option<T> {
+        if self.data.is_empty() {
+            None
+        } else {
+            Some(self.data[0])
+        }
+    }
+}
+
+/// Iterator for binary heap
+pub mod iterator {
+    use super::*;
+
+    /// Iterator for binary heap
+    pub struct IterBinHeap<T> {
+        /// The binary heap
+        heap: BinHeap<T>,
+
+        /// The current position
+        pos: usize,
+    }
+
+    impl<T> IterBinHeap<T> {
+        /// Builds a new instance of the Bits8 iterator
+        pub fn new(heap: BinHeap<T>) -> Self {
+            Self { heap, pos: 0 }
+        }
+    }
+
+    /// Iterator trait implementation
+    impl<T: Copy + PartialOrd> Iterator for IterBinHeap<T> {
+        type Item = T;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            if self.pos == self.heap.len() {
+                None
+            } else {
+                let v = self.heap.data[self.pos];
+                self.pos += 1;
+                Some(v)
+            }
+        }
+    }
+
+    /// IntoIterator trait implementation for the Bits8
+    impl<T: Copy + PartialOrd> IntoIterator for BinHeap<T> {
+        type Item = T;
+        type IntoIter = IterBinHeap<T>;
+
+        fn into_iter(self) -> Self::IntoIter {
+            IterBinHeap::new(self)
+        }
     }
 }
