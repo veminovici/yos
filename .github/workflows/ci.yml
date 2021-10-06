@@ -69,7 +69,7 @@ jobs:
 
   test:
     name: Test
-    needs: [build, fmt, clippy]
+    needs: [build, clippy, fmt]
     env:
       PROJECT_NAME_UNDERSCORE: yos
       CARGO_INCREMENTAL: 0
@@ -118,7 +118,7 @@ jobs:
 
   coverage:
     name: Coveralls
-    needs: [build, check, fmt]
+    needs: [build, clippy, fmt]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
