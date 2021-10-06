@@ -11,8 +11,13 @@ Just another rust crate, this one implements some bit-strings.
 
 </br>
 
-## Bitstring Trait
-The **Bitstring** trait defines the behavior that controls a sequence of bits, such *OR*, *AND*, *XOR* bitewise operations. For a complete list of functions, see the [source](https://github.com/veminovici/yos/blob/main/src/traits.rs) code.
+## Simplee.Yos.Distances
+A rust create that exposes different distance functions. For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-distances/README.md) page.
+
+</br>
+
+## Simplee.Yos.Binheap
+A rust create that exposes a binary heap implementation. For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-binheap/README.md) page.
 
 </br>
 
