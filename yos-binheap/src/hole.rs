@@ -14,6 +14,20 @@ pub struct Hole<'a, T: 'a> {
 impl<'a, T> Hole<'a, T> {
     /// Creates a new hole into a slice of memory.
     ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_binheap::Hole;
+    ///
+    /// let mut xs = [1, 2, 3, 4, 5];
+    /// unsafe {
+    ///     let mut h = Hole::new(&mut xs, 4);
+    ///     h.move_to(1);
+    /// }
+    ///
+    /// assert_eq!([1, 5, 3, 4, 2], xs);
+    /// ```
+    ///
     /// # Safety
     /// The position must be within the length of the memory slice.
     #[inline]
@@ -30,12 +44,42 @@ impl<'a, T> Hole<'a, T> {
     }
 
     /// Returns the position of the hole.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_binheap::Hole;
+    ///
+    /// let mut xs = [1, 2, 3, 4, 5];
+    /// unsafe {
+    ///     let mut h = Hole::new(&mut xs, 4);
+    ///     h.move_to(1);
+    ///     assert_eq!(1, h.pos());
+    /// }
+    ///
+    /// assert_eq!([1, 5, 3, 4, 2], xs);
+    /// ```
     #[inline]
     pub fn pos(&self) -> usize {
         self.pos
     }
 
     /// The element that could fill in the hole.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_binheap::Hole;
+    ///
+    /// let mut xs = [1, 2, 3, 4, 5];
+    /// unsafe {
+    ///     let mut h = Hole::new(&mut xs, 4);
+    ///     h.move_to(1);
+    ///     assert_eq!(5, *h.element());
+    /// }
+    ///
+    /// assert_eq!([1, 5, 3, 4, 2], xs);
+    /// ```
     #[inline]
     pub fn element(&self) -> &T {
         &self.elt
@@ -43,6 +87,21 @@ impl<'a, T> Hole<'a, T> {
 
     /// Returns a reference to the element at `index`.
     /// Unsafe because index must be within the data slice and not equal to pos.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_binheap::Hole;
+    ///
+    /// let mut xs = [1, 2, 3, 4, 5];
+    /// unsafe {
+    ///     let mut h = Hole::new(&mut xs, 4);
+    ///     h.move_to(1);
+    ///     assert_eq!(3, *h.get(2));
+    /// }
+    ///
+    /// assert_eq!([1, 5, 3, 4, 2], xs);
+    /// ```
     ///
     /// # Safety
     /// The index must be within the data slice and different than the current position.
@@ -56,6 +115,21 @@ impl<'a, T> Hole<'a, T> {
 
     /// Move hole to new location
     /// Unsafe because index must be within the data slice and not equal to pos.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_binheap::Hole;
+    ///
+    /// let mut xs = [1, 2, 3, 4, 5];
+    /// unsafe {
+    ///     let mut h = Hole::new(&mut xs, 4);
+    ///     h.move_to(2);
+    ///     h.move_to(1);
+    /// }
+    ///
+    /// assert_eq!([1, 5, 2, 4, 3], xs);
+    /// ```
     ///
     /// # Safety
     /// The index must be withing the data slice and different than the current position.
