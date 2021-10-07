@@ -51,13 +51,11 @@ pub fn peek<T: Ord>(root: &Option<Box<Node<T>>>) -> Option<&T> {
 pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
     loop {
         let a_ = a;
-        eprintln!("a_order={} b_order={}", a_.order, b.order);
 
         // the node 'a' will always be the one with the smallest order value,
         // while the node 'b' will always have the greater order value.
         if a_.order > b.order {
             mem::swap(a_, &mut b);
-            eprintln!("swapped a_order={} b_order={}", a_.order, b.order);
         }
 
         match a_.sibling {
@@ -73,8 +71,6 @@ pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
                 a = next
             }
         }
-
-        eprintln!("a_order={}", a_.order);
     }
 }
 
@@ -113,8 +109,10 @@ mod tests {
 
     #[test]
     fn test_merge() {
-        let a = Node::with_order(1, 20);
+        let mut a = Node::with_order(1, 20);
         let b = Node::with_order(2, 10);
+        let c = Node::with_order(3, 30);
+        a.sibling = Some(Box::new(c));
 
         let mut box_a = Box::new(a);
         let box_b = Box::new(b);
@@ -123,9 +121,13 @@ mod tests {
         assert_eq!(2, box_a.item);
         assert_eq!(10, box_a.order);
 
-        let x = box_a.sibling.as_ref().unwrap();
-        assert_eq!(1, x.item);
-        assert_eq!(20, x.order);
+        let box_x = box_a.sibling.as_ref().unwrap();
+        assert_eq!(1, box_x.item);
+        assert_eq!(20, box_x.order);
+
+        let box_y = box_x.sibling.as_ref().unwrap();
+        assert_eq!(3, box_y.item);
+        assert_eq!(30, box_y.order);
     }
 
     #[test]
