@@ -215,4 +215,42 @@ mod tests {
         let s = format!("{:?}", h);
         assert!(!s.is_empty());
     }
+
+    #[test]
+    fn push_pass() {
+        let mut h = BinHeap::<u8>::new();
+        h.push(4);
+        h.push(2);
+        h.push(3);
+        h.push(5);
+
+        assert_eq!(h.len(), 4);
+
+        let v = h.peek().unwrap();
+        assert_eq!(*v, 5);
+    }
+
+    #[test]
+    fn pop_pass() {
+        let mut h = BinHeap::<u8>::new();
+        h.push(4);
+        h.push(2);
+        h.push(3);
+        h.push(5);
+
+        let v = h.pop().unwrap();
+        assert_eq!(5, v);
+
+        let v = h.pop().unwrap();
+        assert_eq!(4, v);
+
+        let v = h.pop().unwrap();
+        assert_eq!(3, v);
+
+        let v = h.pop().unwrap();
+        assert_eq!(2, v);
+
+        let v = h.pop();
+        assert_eq!(None, v);
+    }
 }
