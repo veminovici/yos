@@ -1,4 +1,6 @@
 /// An iterator over the elements in a binary heap.
+use super::BinHeap;
+
 use std::fmt::Debug;
 use std::slice;
 
@@ -93,5 +95,23 @@ impl<T> DoubleEndedIterator for IntoIter<T> {
     #[inline]
     fn next_back(&mut self) -> Option<T> {
         self.iter.next_back()
+    }
+}
+
+impl<T> IntoIterator for BinHeap<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+
+    fn into_iter(self) -> IntoIter<T> {
+        IntoIter::new(self.data.into_iter())
+    }
+}
+
+impl<'a, T> IntoIterator for &'a BinHeap<T> {
+    type Item = &'a T;
+    type IntoIter = Iter<'a, T>;
+
+    fn into_iter(self) -> Iter<'a, T> {
+        self.iter()
     }
 }

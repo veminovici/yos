@@ -181,6 +181,7 @@ impl<T: Ord> BinHeap<T> {
     fn sift_down_range(&mut self, pos: usize, end: usize) {
         unsafe {
             let mut mc = MemCursor::new(&mut self.data, pos);
+
             let mut child = 2 * pos + 1;
             while child < end {
                 let right = child + 1;
@@ -188,8 +189,9 @@ impl<T: Ord> BinHeap<T> {
                 if right < end && (mc.get(child) <= mc.get(right)) {
                     child = right;
                 }
+
                 // if we are already in order, stop.
-                if mc.element() >= mc.get(child) {
+                if mc.get(child) < mc.element() {
                     break;
                 }
                 mc.move_to(child);
@@ -198,16 +200,13 @@ impl<T: Ord> BinHeap<T> {
         }
     }
 
-    fn sift_down(&mut self, pos: usize) {
-        let len = self.len();
-        self.sift_down_range(pos, len);
-    }
-
+    /// Rebuilds the whole heap, from scratch.
     pub(crate) fn rebuild(&mut self) {
         let mut n = self.len() / 2;
         while n > 0 {
             n -= 1;
-            self.sift_down(n);
+            //self.sift_down(n);
+            self.sift_down_range(n, self.len());
         }
     }
 }
@@ -263,6 +262,7 @@ mod tests {
     fn new_pass() {
         let h = BinHeap::<u8>::new();
         assert_eq!(h.len(), 0);
+        assert!(h.is_empty());
     }
 
     #[test]
@@ -275,6 +275,7 @@ mod tests {
     fn default_pass() {
         let h = BinHeap::<u8>::default();
         assert_eq!(h.len(), 0);
+        assert!(h.is_empty());
     }
 
     #[test]
@@ -293,6 +294,7 @@ mod tests {
         h.push(5);
 
         assert_eq!(h.len(), 4);
+        assert!(!h.is_empty());
 
         let v = h.peek().unwrap();
         assert_eq!(*v, 5);
@@ -317,6 +319,30 @@ mod tests {
 
         let v = h.pop().unwrap();
         assert_eq!(2, v);
+
+        let v = h.pop();
+        assert_eq!(None, v);
+    }
+
+    #[test]
+    fn rebuild_pass() {
+        let mut h = BinHeap::from(vec![1, 3, 5, 2, 4]);
+        assert_eq!(5, h.len());
+
+        let v = h.pop().unwrap();
+        assert_eq!(5, v);
+
+        let v = h.pop().unwrap();
+        assert_eq!(4, v);
+
+        let v = h.pop().unwrap();
+        assert_eq!(3, v);
+
+        let v = h.pop().unwrap();
+        assert_eq!(2, v);
+
+        let v = h.pop().unwrap();
+        assert_eq!(1, v);
 
         let v = h.pop();
         assert_eq!(None, v);
