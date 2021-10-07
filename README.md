@@ -16,13 +16,20 @@ Just another rust crate, this one implements some bit-strings.
 A rust crate which implements different collection data structures.
 For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-collections/README.md) page.
 Here are some of the implemented collections:
-- Binary Heap
+- [Binary Heap](https://github.com/veminovici/yos/blob/main/yos-collections/README.md#binaryheap)
 
 </br>
 
 ## yos_distances
 A rust crate which exposes different distance functions.
-For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-distances/README.md) page.
+For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-distances/README.md) page. Here are some of the distance functions implemented in the crate:
+- [Squared Euclidean](https://github.com/veminovici/yos/tree/main/yos-distances#square-euclidean) distance
+- [Manhatann](https://github.com/veminovici/yos/tree/main/yos-distances#manhatann-distance) distance
+- [Chebyshev](https://github.com/veminovici/yos/tree/main/yos-distances#chebyshev-distance) distance
+- [Levenshtein](https://github.com/veminovici/yos/tree/main/yos-distances#levenshtein-distance) distance
+- [Hamming](https://github.com/veminovici/yos/tree/main/yos-distances#hamming-distance) distance
+- [Lee](https://github.com/veminovici/yos/tree/main/yos-distances#lee-distance) distance
+- [Sift3](https://github.com/veminovici/yos/tree/main/yos-distances#sift3-distance) distance
 
 </br>
 
