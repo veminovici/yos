@@ -186,3 +186,33 @@ impl<T> BinHeap<T> {
         self.data.is_empty()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_pass() {
+        let h = BinHeap::<u8>::new();
+        assert_eq!(h.len(), 0);
+    }
+
+    #[test]
+    fn with_capacity_pass() {
+        let h = BinHeap::<u8>::with_capacity(10);
+        assert_eq!(h.capacity(), 10);
+    }
+
+    #[test]
+    fn default_pass() {
+        let h = BinHeap::<u8>::default();
+        assert_eq!(h.len(), 0);
+    }
+
+    #[test]
+    fn debug_pass() {
+        let h = BinHeap::<u8>::new();
+        let s = format!("{:?}", h);
+        assert!(!s.is_empty());
+    }
+}
