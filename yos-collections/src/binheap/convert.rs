@@ -23,3 +23,29 @@ impl<T: Ord> FromIterator<T> for BinHeap<T> {
         BinHeap::from(iter.into_iter().collect::<Vec<_>>())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::binheap::BinHeap;
+
+    #[test]
+    fn from_vec_to_vec() {
+        let mut h = BinHeap::from(vec![3, 1, 4]);
+        h.push(2);
+
+        let xs: Vec<i32> = h.into();
+        assert_eq!(xs.len(), 4);
+    }
+
+    #[test]
+    fn from_iterator() {
+        let xs = vec![3, 1, 4];
+        let mut h = BinHeap::from_iter(xs.into_iter());
+
+        h.push(2);
+
+        let xs: Vec<i32> = h.into();
+        assert_eq!(xs.len(), 4);
+    }
+}
