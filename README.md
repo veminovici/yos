@@ -15,6 +15,8 @@ Just another rust crate, this one implements some bit-strings.
 ## yos_collections
 A rust crate which implements different collection data structures.
 For more details check out the create [readme](https://github.com/veminovici/yos/blob/main/yos-collections/README.md) page.
+Here are some of the implemented collections:
+- Binary Heap
 
 </br>
 
