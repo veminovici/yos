@@ -4,3 +4,4 @@
 #![deny(unreachable_pub)]
 
 pub mod binary_heap;
+pub mod binomial_heap;
