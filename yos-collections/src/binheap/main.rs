@@ -36,6 +36,19 @@ impl<T: Debug> Debug for BinHeap<T> {
 
 impl<T: Ord> BinHeap<T> {
     /// Creates a new new instance of the binary heap.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_collections::binheap::BinHeap;
+    ///
+    /// let mut heap = BinHeap::new();
+    /// heap.push(1);
+    /// heap.push(3);
+    /// heap.push(2);
+    ///
+    /// assert_eq!(3, heap.len());
+    /// ```
     pub fn new() -> Self {
         Self {
             data: Vec::<T>::new(),
@@ -43,6 +56,19 @@ impl<T: Ord> BinHeap<T> {
     }
 
     /// Creates a new instance of the binary heap with a given capacity.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_collections::binheap::BinHeap;
+    ///
+    /// let mut heap = BinHeap::with_capacity(3);
+    /// heap.push(1);
+    /// heap.push(3);
+    /// heap.push(2);
+    ///
+    /// assert_eq!(3, heap.len());
+    /// ```
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             data: Vec::<T>::with_capacity(capacity),
@@ -51,6 +77,24 @@ impl<T: Ord> BinHeap<T> {
 
     /// Removes the greatest item from the binary heap and returns it,
     /// or `None` if it is empty.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_collections::binheap::BinHeap;
+    ///
+    /// let mut heap = BinHeap::with_capacity(3);
+    ///
+    /// let v = heap.pop();
+    /// assert_eq!(None, v);
+    ///
+    /// heap.push(1);
+    /// heap.push(3);
+    /// heap.push(2);
+    ///
+    /// let v = heap.pop().unwrap();
+    /// assert_eq!(3, v);
+    /// ```
     pub fn pop(&mut self) -> Option<T> {
         // Get the last element, a small one.
         self.data.pop().map(|mut item| {
@@ -69,6 +113,20 @@ impl<T: Ord> BinHeap<T> {
     }
 
     /// Pushes a value into the binary heap.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yos_collections::binheap::BinHeap;
+    ///
+    /// let mut heap = BinHeap::with_capacity(3);
+    /// heap.push(1);
+    /// heap.push(3);
+    /// heap.push(2);
+    ///
+    /// let v = heap.pop().unwrap();
+    /// assert_eq!(3, v);
+    /// ```
     pub fn push(&mut self, value: T) {
         let old_len = self.len();
         self.data.push(value);
