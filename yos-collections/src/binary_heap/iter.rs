@@ -1,5 +1,5 @@
 /// An iterator over the elements in a binary heap.
-use super::BinHeap;
+use super::BinaryHeap;
 
 use std::fmt::Debug;
 use std::slice;
@@ -98,7 +98,7 @@ impl<T> DoubleEndedIterator for IntoIter<T> {
     }
 }
 
-impl<T> IntoIterator for BinHeap<T> {
+impl<T> IntoIterator for BinaryHeap<T> {
     type Item = T;
     type IntoIter = IntoIter<T>;
 
@@ -107,7 +107,7 @@ impl<T> IntoIterator for BinHeap<T> {
     }
 }
 
-impl<'a, T> IntoIterator for &'a BinHeap<T> {
+impl<'a, T> IntoIterator for &'a BinaryHeap<T> {
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
 

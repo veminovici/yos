@@ -3,4 +3,4 @@
 #![deny(missing_docs)]
 #![deny(unreachable_pub)]
 
-pub mod binheap;
+pub mod binary_heap;

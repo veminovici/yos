@@ -6,11 +6,11 @@ use core::mem::swap;
 use std::fmt::Debug;
 
 /// Implementation of the binary heap.
-pub struct BinHeap<T> {
+pub struct BinaryHeap<T> {
     pub(crate) data: Vec<T>,
 }
 
-impl<T: Clone> Clone for BinHeap<T> {
+impl<T: Clone> Clone for BinaryHeap<T> {
     fn clone(&self) -> Self {
         Self {
             data: self.data.clone(),
@@ -22,27 +22,27 @@ impl<T: Clone> Clone for BinHeap<T> {
     }
 }
 
-impl<T: Ord> Default for BinHeap<T> {
+impl<T: Ord> Default for BinaryHeap<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T: Debug> Debug for BinHeap<T> {
+impl<T: Debug> Debug for BinaryHeap<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_list().entries(self.iter()).finish()
     }
 }
 
-impl<T: Ord> BinHeap<T> {
+impl<T: Ord> BinaryHeap<T> {
     /// Creates a new new instance of the binary heap.
     ///
     /// # Example
     ///
     /// ```
-    /// use yos_collections::binheap::BinHeap;
+    /// use yos_collections::binary_heap::BinaryHeap;
     ///
-    /// let mut heap = BinHeap::new();
+    /// let mut heap = BinaryHeap::new();
     /// heap.push(1);
     /// heap.push(3);
     /// heap.push(2);
@@ -60,9 +60,9 @@ impl<T: Ord> BinHeap<T> {
     /// # Example
     ///
     /// ```
-    /// use yos_collections::binheap::BinHeap;
+    /// use yos_collections::binary_heap::BinaryHeap;
     ///
-    /// let mut heap = BinHeap::with_capacity(3);
+    /// let mut heap = BinaryHeap::with_capacity(3);
     /// heap.push(1);
     /// heap.push(3);
     /// heap.push(2);
@@ -81,9 +81,9 @@ impl<T: Ord> BinHeap<T> {
     /// # Example
     ///
     /// ```
-    /// use yos_collections::binheap::BinHeap;
+    /// use yos_collections::binary_heap::BinaryHeap;
     ///
-    /// let mut heap = BinHeap::with_capacity(3);
+    /// let mut heap = BinaryHeap::with_capacity(3);
     ///
     /// let v = heap.pop();
     /// assert_eq!(None, v);
@@ -117,9 +117,9 @@ impl<T: Ord> BinHeap<T> {
     /// # Example
     ///
     /// ```
-    /// use yos_collections::binheap::BinHeap;
+    /// use yos_collections::binary_heap::BinaryHeap;
     ///
-    /// let mut heap = BinHeap::with_capacity(3);
+    /// let mut heap = BinaryHeap::with_capacity(3);
     /// heap.push(1);
     /// heap.push(3);
     /// heap.push(2);
@@ -211,7 +211,7 @@ impl<T: Ord> BinHeap<T> {
     }
 }
 
-impl<T> BinHeap<T> {
+impl<T> BinaryHeap<T> {
     /// Returns an iterator that is visiting all values in the binary heap.
     pub fn iter(&self) -> Iter<'_, T> {
         Iter::new(self.data.iter())
@@ -260,34 +260,34 @@ mod tests {
 
     #[test]
     fn new_pass() {
-        let h = BinHeap::<u8>::new();
+        let h = BinaryHeap::<u8>::new();
         assert_eq!(h.len(), 0);
         assert!(h.is_empty());
     }
 
     #[test]
     fn with_capacity_pass() {
-        let h = BinHeap::<u8>::with_capacity(10);
+        let h = BinaryHeap::<u8>::with_capacity(10);
         assert_eq!(h.capacity(), 10);
     }
 
     #[test]
     fn default_pass() {
-        let h = BinHeap::<u8>::default();
+        let h = BinaryHeap::<u8>::default();
         assert_eq!(h.len(), 0);
         assert!(h.is_empty());
     }
 
     #[test]
     fn debug_pass() {
-        let h = BinHeap::<u8>::new();
+        let h = BinaryHeap::<u8>::new();
         let s = format!("{:?}", h);
         assert!(!s.is_empty());
     }
 
     #[test]
     fn push_pass() {
-        let mut h = BinHeap::<u8>::new();
+        let mut h = BinaryHeap::<u8>::new();
         h.push(4);
         h.push(2);
         h.push(3);
@@ -302,7 +302,7 @@ mod tests {
 
     #[test]
     fn pop_pass() {
-        let mut h = BinHeap::<u8>::new();
+        let mut h = BinaryHeap::<u8>::new();
         h.push(4);
         h.push(2);
         h.push(3);
@@ -326,7 +326,7 @@ mod tests {
 
     #[test]
     fn rebuild_pass() {
-        let mut h = BinHeap::from(vec![1, 3, 5, 2, 4]);
+        let mut h = BinaryHeap::from(vec![1, 3, 5, 2, 4]);
         assert_eq!(5, h.len());
 
         let v = h.pop().unwrap();
