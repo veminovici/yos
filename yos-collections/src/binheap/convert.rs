@@ -1,7 +1,8 @@
 use super::{BinHeap, IntoIter, Iter};
 use core::iter::FromIterator;
 
-impl<T: Ord> From<Vec<T>> for BinHeap<T> {
+// $$VLD - Remove debug
+impl<T: std::fmt::Debug + Ord> From<Vec<T>> for BinHeap<T> {
     /// Converts a `Vec<T>` into a `BinaryHeap<T>`.
     ///
     /// This conversion happens in-place, and has `O(n)` time complexity.
@@ -18,7 +19,8 @@ impl<T> From<BinHeap<T>> for Vec<T> {
     }
 }
 
-impl<T: Ord> FromIterator<T> for BinHeap<T> {
+// $$VLD - Remove debug
+impl<T: std::fmt::Debug + Ord> FromIterator<T> for BinHeap<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> BinHeap<T> {
         BinHeap::from(iter.into_iter().collect::<Vec<_>>())
     }

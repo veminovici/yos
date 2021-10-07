@@ -52,11 +52,18 @@ impl<T: Ord> BinHeap<T> {
     /// Removes the greatest item from the binary heap and returns it,
     /// or `None` if it is empty.
     pub fn pop(&mut self) -> Option<T> {
+        // Get the last element, a small one.
         self.data.pop().map(|mut item| {
             if !self.is_empty() {
+                // Swap the small element with the head of the heap.
                 swap(&mut item, &mut self.data[0]);
-                self.sift_down_to_bottom(0);
+
+                // Now the item will have the largest value and the
+                // small value will be at the head of the heap.
+                // Bubble down the head to fix the heap.
+                self.bubble_down(0);
             }
+
             item
         })
     }
@@ -65,10 +72,12 @@ impl<T: Ord> BinHeap<T> {
     pub fn push(&mut self, value: T) {
         let old_len = self.len();
         self.data.push(value);
-        self.sift_up(0, old_len);
+
+        self.bubble_up(0, old_len);
     }
 
-    fn sift_up(&mut self, start: usize, pos: usize) -> usize {
+    /// Bubbles up into the heap the value at 'pos' up to the 'start' index.
+    fn bubble_up(&mut self, start: usize, pos: usize) {
         unsafe {
             // take out the value at 'pos' and create a hole.
             let mut mc = MemCursor::new(&mut self.data, pos);
@@ -82,8 +91,30 @@ impl<T: Ord> BinHeap<T> {
 
                 mc.move_to(parent);
             }
+        }
+    }
 
-            mc.pos()
+    /// Bubbles down into the heap the value at 'pos'
+    fn bubble_down(&mut self, pos: usize) {
+        let end = self.len();
+
+        unsafe {
+            let mut mc = MemCursor::new(&mut self.data, pos);
+            let mut child = 2 * pos + 1;
+            while child < end {
+                let child1 = child + 1;
+                // compare with the greater of the two children
+                if child1 < end && (mc.get(child) <= mc.get(child1)) {
+                    child = child1;
+                }
+
+                if mc.get(child) < mc.element() {
+                    break;
+                }
+
+                mc.move_to(child);
+                child = 2 * mc.pos() + 1;
+            }
         }
     }
 
@@ -112,27 +143,6 @@ impl<T: Ord> BinHeap<T> {
     fn sift_down(&mut self, pos: usize) {
         let len = self.len();
         self.sift_down_range(pos, len);
-    }
-
-    fn sift_down_to_bottom(&mut self, mut pos: usize) {
-        let end = self.len();
-        let start = pos;
-        unsafe {
-            let mut mc = MemCursor::new(&mut self.data, pos);
-            let mut child = 2 * pos + 1;
-            while child < end {
-                let right = child + 1;
-                // compare with the greater of the two children
-                if right < end && (mc.get(child) <= mc.get(right)) {
-                    child = right;
-                }
-                mc.move_to(child);
-                child = 2 * mc.pos() + 1;
-            }
-
-            pos = mc.pos();
-        }
-        self.sift_up(start, pos);
     }
 
     pub(crate) fn rebuild(&mut self) {

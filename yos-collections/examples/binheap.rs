@@ -1,18 +1,45 @@
 use yos_collections::binheap::BinHeap;
 
 fn main() {
-    let mut heap = BinHeap::<u8>::new();
+    let mut h = BinHeap::<u8>::new();
 
-    heap.push(4);
-    heap.push(5);
-    heap.push(8);
-    heap.push(11);
-    heap.push(3);
-    println!("heap={:?}", heap);
+    // h.push(4);
+    // h.push(2);
+    // h.push(3);
+    // h.push(5);
+    // println!("heap={:?}", h);
 
-    heap.push(15);
-    println!("heap={:?}", heap);
+    // let v = h.pop();
+    // println!("v={:?} heap={:?}", v, h);
 
-    let v = heap.pop();
-    println!("v={:?} heap={:?}", v, heap);
+    // let v = h.pop();
+    // println!("v={:?} heap={:?}", v, h);
+
+    h.push(4);
+    h.push(5);
+    h.push(3);
+    h.push(11);
+    h.push(8);
+    h.push(15);
+
+    let v = h.pop();
+    println!("v={:?} heap={:?}", v, h);
+
+    let v = h.pop();
+    println!("v={:?} heap={:?}", v, h);
+
+    let v = h.pop();
+    println!("v={:?} heap={:?}", v, h);
+
+    let v = h.pop();
+    println!("v={:?} heap={:?}", v, h);
+
+    let v = h.pop();
+    println!("v={:?} heap={:?}", v, h);
+
+    let v = h.pop();
+    println!("v={:?} heap={:?}", v, h);
+
+    let v = h.pop();
+    println!("v={:?} heap={:?}", v, h);
 }
