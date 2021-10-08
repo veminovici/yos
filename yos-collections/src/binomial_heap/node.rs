@@ -74,6 +74,16 @@ pub fn peek<T: Ord>(root: &Option<Box<Node<T>>>) -> Option<&T> {
     })
 }
 
+/// Pushes a new value into the biinomial heap.
+pub fn push<T: Ord>(root: &mut Option<Box<Node<T>>>, item: T) {
+    let node = Some(Box::new(Node::with_order(item, 0)));
+
+    match *root {
+        None => *root = node,
+        Some(ref mut root) => append(root, node),
+    }
+}
+
 /// Merges two nodes. We are operating within the sibling chain, trying
 /// to insert 'b' into the chain in such way that we preserve the order.
 pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
@@ -403,4 +413,26 @@ mod tests {
         assert_eq!(bxy.order, 0);
     }
 
+    #[test]
+    fn test_push_empty_root() {
+        let item = 10;
+        let mut root: Option<Box<Node<i32>>> = None;
+        push(&mut root, item);
+
+        let bx = root.as_ref().unwrap();
+        assert_eq!(bx.item, item);
+        assert_eq!(bx.order, 0);
+    }
+
+    #[test]
+    fn test_push_item() {
+        let item = 10;
+        let a = Node::with_order(5, 0);
+        let mut root = Some(Box::new(a));
+        push(&mut root, item);
+
+        let bx = root.as_ref().unwrap();
+        assert_eq!(bx.item, 10);
+        assert_eq!(bx.order, 1);
+    }
 }
