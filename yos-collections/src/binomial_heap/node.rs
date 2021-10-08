@@ -3,9 +3,10 @@ use std::mem;
 /// The node for the binomial heap
 #[derive(Clone)]
 pub struct Node<T> {
-    /// The stored value
+    /// The stored value.
     pub item: T,
-    /// The order of the node
+    /// The order of the node, we have 2^order elements
+    /// in the tree with the root in this node.
     pub order: usize,
     /// Optional sibling node
     pub sibling: Option<Box<Node<T>>>,
@@ -47,31 +48,59 @@ pub fn peek<T: Ord>(root: &Option<Box<Node<T>>>) -> Option<&T> {
     })
 }
 
-/// Merges two nodes.
+/// Merges two nodes. We are operating within the sibling chain, trying
+/// to insert 'b' into the chain in such way that we preserve the order.
 pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
-    loop {
-        let a_ = a;
 
-        // the node 'a' will always be the one with the smallest order value,
-        // while the node 'b' will always have the greater order value.
-        if a_.order > b.order {
-            mem::swap(a_, &mut b);
+    loop {
+        let current = a;
+
+        // we try to presenr the order, so if 'b' is smaller than 'current'
+        // we will swap the two nodes.
+        if current.order > b.order {
+            mem::swap(current, &mut b);
         }
 
-        match a_.sibling {
+        match current.sibling {
             None =>
-            // 'a' does not have any siblings, b will be its sibling.
+            // 'current' does not have any siblings, add 'b' as its sibling.
             {
-                return a_.sibling = Some(b)
+                debug_assert!(current.order < b.order);
+                return current.sibling = Some(b)
             }
-            Some(ref mut next) =>
-            // we continue walking along the chain of siblings
-            // the sibling becomes the new 'a'
+            Some(ref mut sibling) =>
+            // 'current' have a sibling, we keep walking in the chain
+            // by going to the sibling.
             {
-                a = next
+                a = sibling
             }
         }
     }
+}
+
+/// Remove the max element in the binomial max-heap
+pub fn remove_max<T: Ord>(mut a: &mut Option<Box<Node<T>>>) -> Option<Box<Node<T>>> {
+    a.take().map(|mut max| {
+        *a = max.sibling.take();
+
+        loop {
+            let a_ = a;
+
+            match *a_ {
+                None => {
+                    return max
+                }
+                Some(ref mut b) => {
+                    if b.item > max.item {
+                        max.sibling = b.sibling.take();
+                        mem::swap(&mut max, b);
+                    }
+                }
+            }
+
+            a = &mut a_.as_mut().unwrap().sibling;
+        }
+    })
 }
 
 /// Makes `b` a child of `a`.
@@ -108,26 +137,71 @@ mod tests {
     }
 
     #[test]
-    fn test_merge() {
-        let mut a = Node::with_order(1, 20);
-        let b = Node::with_order(2, 10);
-        let c = Node::with_order(3, 30);
-        a.sibling = Some(Box::new(c));
+    fn test_merge_0_with_1() {
+        let a = Node::with_order(1, 0);
+        let b = Node::with_order(2, 1);
 
         let mut box_a = Box::new(a);
         let box_b = Box::new(b);
 
         merge(&mut box_a, box_b);
-        assert_eq!(2, box_a.item);
-        assert_eq!(10, box_a.order);
+
+        assert_eq!(1, box_a.item);
+        assert_eq!(0, box_a.order);
 
         let box_x = box_a.sibling.as_ref().unwrap();
-        assert_eq!(1, box_x.item);
-        assert_eq!(20, box_x.order);
+        assert_eq!(2, box_x.item);
+        assert_eq!(1, box_x.order);
+    }
 
-        let box_y = box_x.sibling.as_ref().unwrap();
-        assert_eq!(3, box_y.item);
-        assert_eq!(30, box_y.order);
+    #[test]
+    fn test_merge_1_with_0() {
+        let a = Node::with_order(2, 1);
+        let b = Node::with_order(1, 0);
+
+        let mut box_a = Box::new(a);
+        let box_b = Box::new(b);
+
+        merge(&mut box_a, box_b);
+
+        assert_eq!(1, box_a.item);
+        assert_eq!(0, box_a.order);
+
+        let box_x = box_a.sibling.as_ref().unwrap();
+        assert_eq!(2, box_x.item);
+        assert_eq!(1, box_x.order);
+    }
+
+    #[test]
+    fn test_merge_02_with_13() {
+        let mut a = Node::with_order(0, 0);
+        let b = Node::with_order(2, 2);
+        a.sibling = Some(Box::new(b));
+
+        let mut c = Node::with_order(1, 1);
+        let d = Node::with_order(3, 3);
+        c.sibling = Some(Box::new(d));
+
+        let mut box_a = Box::new(a);
+        let box_c = Box::new(c);
+        merge(&mut box_a, box_c);
+
+        assert_eq!(0, box_a.item);
+        assert_eq!(0, box_a.order);
+
+        let box_1 = box_a.sibling.as_ref().unwrap();
+        assert_eq!(1, box_1.item);
+        assert_eq!(1, box_1.order);
+
+        let box_2 = box_1.sibling.as_ref().unwrap();
+        assert_eq!(2, box_2.item);
+        assert_eq!(2, box_2.order);
+
+        let box_3 = box_2.sibling.as_ref().unwrap();
+        assert_eq!(3, box_3.item);
+        assert_eq!(3, box_3.order);
+
+        assert!(box_3.sibling.is_none());
     }
 
     #[test]
