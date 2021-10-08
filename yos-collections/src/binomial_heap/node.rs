@@ -77,40 +77,6 @@ pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
     }
 }
 
-/// Remove the max element in the binomial max-heap
-pub fn remove_max<T: Ord>(mut a: &mut Option<Box<Node<T>>>) -> Option<Box<Node<T>>> {
-    a.take().map(|mut max| {
-        *a = max.sibling.take();
-
-        loop {
-            let a_ = a;
-
-            match *a_ {
-                None => return max,
-                Some(ref mut b) => {
-                    if b.item > max.item {
-                        max.sibling = b.sibling.take();
-                        mem::swap(&mut max, b);
-                    }
-                }
-            }
-
-            a = &mut a_.as_mut().unwrap().sibling;
-        }
-    })
-}
-
-/// Makes `b` a child of `a`.
-pub fn add_child<T: Ord>(a: &mut Node<T>, mut b: Box<Node<T>>) {
-    debug_assert!(a.order == b.order);
-    debug_assert!(b.sibling.is_none());
-    debug_assert!(a.item >= b.item);
-
-    b.sibling = a.child.take();
-    a.child = Some(b);
-    a.order += 1;
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -199,19 +165,5 @@ mod tests {
         assert_eq!(3, box_3.order);
 
         assert!(box_3.sibling.is_none());
-    }
-
-    #[test]
-    fn test_add_child() {
-        let mut a = Node::with_order(20, 1);
-        let b = Node::with_order(10, 1);
-        let box_b = Box::new(b);
-
-        add_child(&mut a, box_b);
-
-        assert_eq!(20, a.item);
-        assert_eq!(2, a.order);
-        assert_eq!(10, a.child.as_ref().unwrap().item);
-        assert_eq!(1, a.child.as_ref().unwrap().order);
     }
 }
