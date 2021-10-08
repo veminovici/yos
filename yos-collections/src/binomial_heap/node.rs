@@ -26,22 +26,22 @@ impl<T> Node<T> {
     }
 }
 
-/// Peek into a max-binomial-tree.
+/// Peek into the max-heap. Each of the nodes in the chain of siblings
+/// is a max-heap, so we just need to walk the chain and find the node
+/// with the max value.
 pub fn peek<T: Ord>(root: &Option<Box<Node<T>>>) -> Option<&T> {
     root.as_ref().map(|mut max| {
-        // Keep going to the next sibling to find the maximum value among all sibling values.
-
         // Get the next sibling
-        let mut a = &max.sibling;
+        let mut sibling_o = &max.sibling;
 
-        while let Some(ref b) = *a {
+        while let Some(ref current) = *sibling_o {
             // Compare the sibling's value with the current max.
-            if b.item > max.item {
-                max = b;
+            if current.item > max.item {
+                max = current;
             }
 
             // Go to the next sibling
-            a = &b.sibling;
+            sibling_o = &current.sibling;
         }
 
         &max.item
@@ -51,7 +51,6 @@ pub fn peek<T: Ord>(root: &Option<Box<Node<T>>>) -> Option<&T> {
 /// Merges two nodes. We are operating within the sibling chain, trying
 /// to insert 'b' into the chain in such way that we preserve the order.
 pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
-
     loop {
         let current = a;
 
@@ -66,7 +65,7 @@ pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
             // 'current' does not have any siblings, add 'b' as its sibling.
             {
                 debug_assert!(current.order < b.order);
-                return current.sibling = Some(b)
+                return current.sibling = Some(b);
             }
             Some(ref mut sibling) =>
             // 'current' have a sibling, we keep walking in the chain
@@ -87,9 +86,7 @@ pub fn remove_max<T: Ord>(mut a: &mut Option<Box<Node<T>>>) -> Option<Box<Node<T
             let a_ = a;
 
             match *a_ {
-                None => {
-                    return max
-                }
+                None => return max,
                 Some(ref mut b) => {
                     if b.item > max.item {
                         max.sibling = b.sibling.take();
@@ -119,21 +116,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_peek() {
-        let n3 = Node::with_order(3, 1);
-
-        let mut n2 = Node::with_order(2, 1);
+    fn test_peek_last() {
+        // build the chain of siblings
+        let n3 = Node::with_order(3, 3);
+        let mut n2 = Node::with_order(20, 2);
         n2.sibling = Some(Box::new(n3));
 
         let mut n1 = Node::with_order(1, 1);
         n1.sibling = Some(Box::new(n2));
 
-        let mut n0 = Node::with_order(0, 1);
+        let mut n0 = Node::with_order(0, 0);
         n0.sibling = Some(Box::new(n1));
 
         let x = Some(Box::new(n0));
         let v = peek(&x).unwrap();
-        assert_eq!(3, *v);
+        assert_eq!(20, *v);
     }
 
     #[test]
