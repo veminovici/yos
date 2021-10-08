@@ -206,6 +206,30 @@ pub fn append<T: Ord>(root: &mut Box<Node<T>>, other: Option<Box<Node<T>>>) {
     }
 }
 
+/// Removes the max value in the heap. We are walking the chain of siblings
+/// to find the node with maximum value.
+pub fn remove_max<T: Ord>(mut a: &mut Option<Box<Node<T>>>) -> Option<Box<Node<T>>> {
+    a.take().map(|mut max| {
+        *a = max.sibling.take();
+
+        loop {
+            let a_ = a;
+
+            match *a_ {
+                None => return max,
+                Some(ref mut b) => {
+                    if b.item > max.item {
+                        max.sibling = b.sibling.take();
+                        mem::swap(&mut max, b);
+                    }
+                }
+            }
+
+            a = &mut a_.as_mut().unwrap().sibling;
+        }
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -452,5 +476,37 @@ mod tests {
         let bx = root.as_ref().unwrap();
         assert_eq!(bx.item, 10);
         assert_eq!(bx.order, 1);
+    }
+
+    #[test]
+    fn test_remove_max() {
+        let c = Node::with_order(5, 2);
+
+        let mut b = Node::with_order(10, 1);
+        b.set_sibling(c);
+
+        let mut a = Node::with_order(1, 0);
+        a.set_sibling(b);
+
+        let mut bx = Some(Box::new(a));
+
+        let r = remove_max(&mut bx).unwrap();
+        assert_eq!(r.item, 10);
+        assert_eq!(r.order, 1);
+
+        let r = bx.as_ref().unwrap();
+        assert_eq!(r.item, 1);
+        assert_eq!(r.order, 0);
+
+        let r = r.sibling.as_ref().unwrap();
+        assert_eq!(r.item, 5);
+        assert_eq!(r.order, 2);
+    }
+
+    #[test]
+    fn test_remove_max_none() {
+        let mut bx: Option<Box<Node<i32>>> = None;
+        let r = remove_max(&mut bx);
+        assert!(r.is_none());
     }
 }
