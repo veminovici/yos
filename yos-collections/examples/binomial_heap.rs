@@ -1,23 +1,26 @@
 use yos_collections::binomial_heap::*;
 
 fn main() {
-    let a = Node {
-        item: 1,
-        order: 20,
-        sibling: None,
-        child: None,
-    };
+    // The nodes are represented: (order, item)
+    // Build a chain (1, 10) -> (2, 20) -> (2, 30) -> (4, 40)
+    let d = Node::with_order(40, 4);
 
-    let b = Node {
-        item: 2,
-        order: 10,
-        sibling: None,
-        child: None,
-    };
+    let mut c = Node::with_order(20, 2);
+    c.set_sibling(d);
+
+    let mut b = Node::with_order(30, 2);
+    b.set_sibling(c);
+
+    let mut a = Node::with_order(10, 1);
+    a.set_sibling(b);
 
     let mut box_a = Box::new(a);
-    let box_b = Box::new(b);
+    coalesce(&mut box_a);
 
-    merge(&mut box_a, box_b);
-    eprintln!("a_sibling={}", box_a.sibling.unwrap().order);
+    assert_eq!(10, box_a.item);
+    assert_eq!(1, box_a.order);
+
+    let box_x = box_a.sibling.as_ref().unwrap();
+    assert_eq!(30, box_x.item);
+    assert_eq!(3, box_x.order);
 }
