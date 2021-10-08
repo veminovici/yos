@@ -1,7 +1,7 @@
 # ![rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white) Simplee...yos_collections
 A rust crate for ddifferent collection data structures.
 
-## BinaryHeap
+## Binary Heap
 An implementation of a binary heap. For some details please check the wikipedia [page](https://en.wikipedia.org/wiki/Binary_heap).
 
 | Operations | Average | Worst case
