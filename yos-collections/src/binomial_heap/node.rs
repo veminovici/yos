@@ -84,6 +84,26 @@ pub fn push<T: Ord>(root: &mut Option<Box<Node<T>>>, item: T) {
     }
 }
 
+/// Pops the maximum value form the heap.
+pub fn pop<T: Ord>(root: &mut Option<Box<Node<T>>>) -> Option<T> {
+    remove_max(root).map(|max| {
+        let max = *max;
+        let Node {
+            item,
+            child,
+            order: _,
+            sibling: _,
+        } = max;
+
+        match *root {
+            None => *root = child,
+            Some(ref mut root) => append(root, child),
+        }
+
+        item
+    })
+}
+
 /// Merges two nodes. We are operating within the sibling chain, trying
 /// to insert 'b' into the chain in such way that we preserve the order.
 pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
