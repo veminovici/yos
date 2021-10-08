@@ -26,9 +26,14 @@ impl<T> Node<T> {
         }
     }
 
-    /// Set the sibling
-    pub fn set_sibling(&mut self, b: Node<T>) {
-        self.sibling = Some(Box::new(b))
+    /// Set the sibling node.
+    pub fn set_sibling(&mut self, sibling: Node<T>) {
+        self.sibling = Some(Box::new(sibling))
+    }
+
+    /// Set the child node.
+    pub fn set_child(&mut self, child: Node<T>) {
+        self.child = Some(Box::new(child))
     }
 }
 
@@ -85,7 +90,6 @@ pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
             None =>
             // 'current' does not have any siblings, add 'b' as its sibling.
             {
-                debug_assert!(current.order < b.order);
                 return current.sibling = Some(b);
             }
             Some(ref mut sibling) =>
@@ -110,7 +114,7 @@ fn link<T: Ord>(a: &mut Node<T>, mut b: Box<Node<T>>) {
 
 /// Coalesce any two nodes in the siblings chain such that we
 /// retors the binomial property of the heap.
-pub fn coalesce<T: Debug + Ord>(mut a: &mut Box<Node<T>>) {
+pub fn coalesce<T: Ord>(mut a: &mut Box<Node<T>>) {
     loop {
         //let current = a;
         match a.sibling {
@@ -163,6 +167,14 @@ pub fn coalesce<T: Debug + Ord>(mut a: &mut Box<Node<T>>) {
                 }
             }
         }
+    }
+}
+
+/// Apends to the root node another node.
+pub fn append<T: Ord>(root: &mut Box<Node<T>>, other: Option<Box<Node<T>>>) {
+    if let Some(other) = other {
+        merge(root, other);
+        coalesce(root);
     }
 }
 
@@ -344,5 +356,23 @@ mod tests {
         let r4 = r3.sibling.as_ref().unwrap();
         assert_eq!(r4.item, 70);
         assert_eq!(r4.order, 5);
+    }
+
+    #[test]
+    fn test_append() {
+        let a = Node::with_order(10, 1);
+        let b = Node::with_order(20, 1);
+
+        let mut bxa = Box::new(a);
+        let bxb = Box::new(b);
+
+        append(&mut bxa, Some(bxb));
+
+        assert_eq!(bxa.item, 20);
+        assert_eq!(bxa.order, 2);
+
+        let bxx = bxa.child.as_ref().unwrap();
+        assert_eq!(bxx.item, 10);
+        assert_eq!(bxx.order, 1);
     }
 }
