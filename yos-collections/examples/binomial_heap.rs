@@ -18,10 +18,10 @@ fn main() {
     assert_eq!(bxa.order, 2);
 
     let bxx = bxa.child.as_ref().unwrap();
-    assert_eq!(bxx.item, 10);
-    assert_eq!(bxx.order, 1);
+    assert_eq!(bxx.item, 19);
+    assert_eq!(bxx.order, 0);
 
     let bxy = bxx.sibling.as_ref().unwrap();
-    assert_eq!(bxy.item, 19);
-    assert_eq!(bxy.order, 0);
+    assert_eq!(bxy.item, 10);
+    assert_eq!(bxy.order, 1);
 }

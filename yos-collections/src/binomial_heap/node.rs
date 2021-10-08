@@ -112,13 +112,31 @@ pub fn merge<T>(mut a: &mut Box<Node<T>>, mut b: Box<Node<T>>) {
     }
 }
 
-fn link<T: Ord>(a: &mut Node<T>, mut b: Box<Node<T>>) {
+// fn link<T: Ord>(a: &mut Node<T>, mut b: Box<Node<T>>) {
+//     debug_assert!(a.order == b.order);
+//     debug_assert!(b.sibling.is_none());
+//     debug_assert!(a.item >= b.item);
+
+//     b.sibling = a.child.take();
+//     a.child = Some(b);
+//     a.order += 1;
+// }
+
+fn link<T: Ord>(a: &mut Node<T>, b: Box<Node<T>>) {
     debug_assert!(a.order == b.order);
     debug_assert!(b.sibling.is_none());
     debug_assert!(a.item >= b.item);
 
-    b.sibling = a.child.take();
-    a.child = Some(b);
+    match a.child {
+        None => {
+            a.child = Some(b);
+        }
+        Some(ref mut child) => {
+            //let mut c = child.as_mut();
+            merge(child, b);
+        }
+    }
+
     a.order += 1;
 }
 
@@ -405,12 +423,12 @@ mod tests {
         assert_eq!(bxa.order, 2);
 
         let bxx = bxa.child.as_ref().unwrap();
-        assert_eq!(bxx.item, 10);
-        assert_eq!(bxx.order, 1);
+        assert_eq!(bxx.item, 19);
+        assert_eq!(bxx.order, 0);
 
         let bxy = bxx.sibling.as_ref().unwrap();
-        assert_eq!(bxy.item, 19);
-        assert_eq!(bxy.order, 0);
+        assert_eq!(bxy.item, 10);
+        assert_eq!(bxy.order, 1);
     }
 
     #[test]
