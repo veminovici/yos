@@ -27,3 +27,14 @@ let v = h.pop().unwrap();
 assert_eq!(5, v);
 ```
 
+## Binomial Heap
+An implementation of a binomial heap. For mode details please check the wikipedia [page](https://en.wikipedia.org/wiki/Binomial_heap).
+
+| Operations | Average
+---|---
+Find-min | O(1)
+Delete-min | O(log n)
+Insert | O(1)
+Decrease-key | O(log n)
+Meld | O(log n)
+
