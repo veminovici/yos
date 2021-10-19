@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "yos-collections",
-    "yos-memcursor",
     "yos-distances",
+    "yos-memcursor",
+    "yos-probdts",
 ]
