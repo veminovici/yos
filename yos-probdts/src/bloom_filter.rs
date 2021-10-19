@@ -9,9 +9,9 @@ use std::hash::{Hash, Hasher};
 /// one of the 'm' array positions, generating a uniform random distribution. 'k' is a small constant
 /// which depends on the desired false error rate, while m is proportional to 'k' and to the number of
 /// elements to be added.
-pub struct Bloom {
+pub struct BloomFilter {
     /// The bit-array
-    bitvec: BitVec,
+    bits: BitVec,
     /// The number of bits
     m: usize,
     /// The number of hash functions.
@@ -20,14 +20,14 @@ pub struct Bloom {
     sips: [SipHasher13; 2],
 }
 
-impl Bloom {
+impl BloomFilter {
     /// Creates a new bloom-filter.
     pub fn with_seed(bytes_count: usize, items_count: usize, seed: &[u8; 32]) -> Self {
         debug_assert!(bytes_count > 0 && items_count > 0);
 
         let m = bytes_count * 8;
         let k = Self::optimal_k(bytes_count, items_count);
-        let bitvec = BitVec::from_elem(m, false);
+        let bits = BitVec::from_elem(m, false);
 
         let mut k1 = [0u8; 16];
         let mut k2 = [0u8; 16];
@@ -37,7 +37,7 @@ impl Bloom {
 
         let sips = [Self::new_sip(&k1), Self::new_sip(&k2)];
 
-        Self { bitvec, m, k, sips }
+        Self { bits, m, k, sips }
     }
 
     /// Creates a new bloom-filter structure.
@@ -69,7 +69,7 @@ impl Bloom {
         let mut hashes = [0u64, 0u64];
         for i in 0..self.k {
             let bit_offset = (self.bloom_hash(&mut hashes, item, i) % self.m) as usize;
-            self.bitvec.set(bit_offset, true);
+            self.bits.set(bit_offset, true);
         }
     }
 
@@ -82,7 +82,7 @@ impl Bloom {
         let mut hashes = [0u64, 0u64];
         for i in 0..self.k {
             let bit_offset = (self.bloom_hash(&mut hashes, item, i) % self.m) as usize;
-            if !self.bitvec.get(bit_offset).unwrap() {
+            if !self.bits.get(bit_offset).unwrap() {
                 return false;
             }
         }
@@ -99,9 +99,9 @@ impl Bloom {
         let mut found = true;
         for k_i in 0..self.k {
             let bit_offset = (self.bloom_hash(&mut hashes, item, k_i) % self.m) as usize;
-            if !self.bitvec.get(bit_offset).unwrap() {
+            if !self.bits.get(bit_offset).unwrap() {
                 found = false;
-                self.bitvec.set(bit_offset, true);
+                self.bits.set(bit_offset, true);
             }
         }
         found
@@ -151,7 +151,7 @@ mod tests {
 
     #[test]
     fn test_set_check() {
-        let mut b = Bloom::new(10, 100);
+        let mut b = BloomFilter::new(10, 100);
 
         let mut item = vec![0u8, 16];
         getrandom(&mut item).unwrap();
