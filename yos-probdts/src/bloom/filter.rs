@@ -9,7 +9,7 @@ use std::hash::{Hash, Hasher};
 /// one of the 'm' array positions, generating a uniform random distribution. 'k' is a small constant
 /// which depends on the desired false error rate, while m is proportional to 'k' and to the number of
 /// elements to be added.
-pub struct BloomFilter {
+pub struct Filter {
     /// The bit-array
     bits: BitVec,
     /// The number of bits
@@ -20,7 +20,7 @@ pub struct BloomFilter {
     sips: [SipHasher13; 2],
 }
 
-impl BloomFilter {
+impl Filter {
     /// Creates a new bloom-filter.
     pub fn with_seed(bytes_count: usize, items_count: usize, seed: &[u8; 32]) -> Self {
         debug_assert!(bytes_count > 0 && items_count > 0);
@@ -151,12 +151,12 @@ mod tests {
 
     #[test]
     fn test_set_check() {
-        let mut b = BloomFilter::new(10, 100);
+        let mut filter = Filter::new(10, 100);
 
         let mut item = vec![0u8, 16];
         getrandom(&mut item).unwrap();
 
-        b.set(&item);
-        assert!(b.check(&item));
+        filter.set(&item);
+        assert!(filter.check(&item));
     }
 }
