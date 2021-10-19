@@ -2,6 +2,8 @@
 
 mod counting;
 mod filter;
+mod ucounter;
 
 pub use counting::*;
 pub use filter::*;
+pub use ucounter::*;
