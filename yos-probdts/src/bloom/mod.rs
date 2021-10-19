@@ -2,6 +2,7 @@
 
 mod counting;
 mod filter;
+mod sips;
 mod ucounter;
 
 pub use counting::*;
