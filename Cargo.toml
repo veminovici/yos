@@ -3,5 +3,6 @@ members = [
     "yos-collections",
     "yos-distances",
     "yos-memcursor",
+    "yos-num",
     "yos-probdts",
 ]

@@ -2,11 +2,30 @@ use getrandom::getrandom;
 use siphasher::sip::SipHasher13;
 use std::f64;
 use std::hash::{Hash, Hasher};
+use std::ops::AddAssign;
+
+use yos_num::*;
+
+/// Implements a positive counter
+pub trait UCounter: AddAssign + One + PartialOrd + Zero {}
+
+macro_rules! ucounter_impl {
+    ($t:ty) => {
+        impl UCounter for $t {}
+    };
+}
+
+ucounter_impl!(usize);
+ucounter_impl!(u8);
+ucounter_impl!(u16);
+ucounter_impl!(u32);
+ucounter_impl!(u64);
+ucounter_impl!(u128);
 
 /// Counting-bloom-filter
-pub struct CountingFilter {
+pub struct CountingFilter<T: UCounter> {
     /// The bit-array
-    storage: Vec<u8>,
+    storage: Vec<T>,
     /// The number of bits
     m: usize,
     /// The number of hash functions.
@@ -15,7 +34,7 @@ pub struct CountingFilter {
     sips: [SipHasher13; 2],
 }
 
-impl CountingFilter {
+impl<T: UCounter> CountingFilter<T> {
     /// Creates a new counting-bloom-filter.
     pub fn with_seed(counters_count: usize, items_count: usize, seed: &[u8; 32]) -> Self {
         debug_assert!(counters_count > 0 && items_count > 0);
@@ -24,7 +43,7 @@ impl CountingFilter {
         let k = Self::optimal_k(counters_count, items_count);
         let mut storage = Vec::with_capacity(m);
         for _i in 0..m {
-            storage.push(0u8);
+            storage.push(T::zero());
         }
 
         let mut k1 = [0u8; 16];
@@ -65,28 +84,28 @@ impl CountingFilter {
     }
 
     /// Records the presence of an item
-    pub fn set<T>(&mut self, item: &T)
+    pub fn set<I>(&mut self, item: &I)
     where
-        T: Hash,
+        I: Hash,
     {
         let mut hashes = [0u64, 0u64];
         for i in 0..self.k {
             let ndx = (self.bloom_hash(&mut hashes, item, i) % self.m) as usize;
-            self.storage[ndx] += 1;
+            self.storage[ndx] += T::one();
         }
     }
 
     /// Check if an item is present in the set.
     /// There can be false positives, but no false negatives.
-    pub fn check<T>(&self, item: &T, threshold: u8) -> bool
+    pub fn check<I>(&self, item: &I, threshold: T) -> bool
     where
-        T: Hash,
+        I: Hash,
     {
         let mut hashes = [0u64, 0u64];
         for i in 0..self.k {
             let ndx = (self.bloom_hash(&mut hashes, item, i) % self.m) as usize;
-            let current = self.storage[ndx];
-            if current < threshold {
+            let current = &self.storage[ndx];
+            if current < &threshold {
                 return false;
             }
         }
@@ -95,19 +114,19 @@ impl CountingFilter {
 
     /// Record the presence of an item in the set,
     /// and return the previous state of this item.
-    pub fn check_and_set<T>(&mut self, item: &T, threshold: u8) -> bool
+    pub fn check_and_set<I>(&mut self, item: &I, threshold: T) -> bool
     where
-        T: Hash,
+        I: Hash,
     {
         let mut hashes = [0u64, 0u64];
         let mut found = true;
         for k_i in 0..self.k {
             let ndx = (self.bloom_hash(&mut hashes, item, k_i) % self.m) as usize;
-            let current = self.storage[ndx];
-            if current < threshold {
+            let current = &self.storage[ndx];
+            if current < &threshold {
                 found = false;
             }
-            self.storage[ndx] += 1;
+            self.storage[ndx] += T::one();
         }
         found
     }
@@ -134,9 +153,9 @@ impl CountingFilter {
         ((items_count as f64) * f64::ln(fp) / (-8. * log2)).ceil() as usize
     }
 
-    fn bloom_hash<T>(&self, hashes: &mut [u64; 2], item: &T, i: usize) -> usize
+    fn bloom_hash<I>(&self, hashes: &mut [u64; 2], item: &I, i: usize) -> usize
     where
-        T: Hash,
+        I: Hash,
     {
         if i < 2 {
             let sip = &mut self.sips[i].clone();
@@ -157,7 +176,7 @@ mod tests {
 
     #[test]
     fn test_set_check() {
-        let mut filter = CountingFilter::new(10, 100);
+        let mut filter = CountingFilter::<u8>::new(10, 100);
 
         let mut item = vec![0u8, 16];
         getrandom(&mut item).unwrap();
