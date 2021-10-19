@@ -7,6 +7,10 @@ pub(crate) struct Sips {
 }
 
 impl Sips {
+    pub(crate) fn new(hashers: [SipHasher13; 2]) -> Self {
+        Self { hashers }
+    }
+
     pub(crate) fn iter<'a, I: Hash>(&self, item: &'a I) -> IterSips<'a, I> {
         IterSips::new(*self, item)
     }
