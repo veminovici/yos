@@ -64,3 +64,4 @@ assert!(filter.check(&item, 2));
 - [SipHash](https://en.wikipedia.org/wiki/SipHash)
 - [Bloom Filter](https://en.wikipedia.org/wiki/Bloom_filter)
 - [Counting Bloom Filter](https://en.wikipedia.org/wiki/Counting_Bloom_filter)
+- [Linked Lists in Rust](https://rust-unofficial.github.io/too-many-lists/index.html)
