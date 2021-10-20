@@ -64,14 +64,9 @@ impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
     where
         I: Hash,
     {
-        let k = self.k;
-        let m = self.m;
-
-        self.hasher
-            .iter(item)
-            .take(k)
-            .map(|n| n % m)
-            .for_each(|ndx| self.storage[ndx] += T::one());
+        self.indexes(item)
+            .iter()
+            .for_each(|ndx| self.storage[*ndx] += T::one());
     }
 
     /// Check if an item is present in the set.
@@ -80,20 +75,13 @@ impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
     where
         I: Hash,
     {
-        let k = self.k;
-        let m = self.m;
-
-        self.hasher
-            .iter(item)
-            .take(k)
-            .map(|n| n % m)
-            .fold(true, |acc, ndx| {
-                if self.storage[ndx] < threshold {
-                    false
-                } else {
-                    acc
-                }
-            })
+        self.indexes(item).iter().fold(true, |acc, ndx| {
+            if self.storage[*ndx] < threshold {
+                false
+            } else {
+                acc
+            }
+        })
     }
 
     /// Record the presence of an item in the set,
@@ -102,24 +90,23 @@ impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
     where
         I: Hash,
     {
-        let k = self.k;
-        let m = self.m;
-
         let mut found = true;
-        self.hasher
-            .iter(item)
-            .take(k)
-            .map(|n| n % m)
-            .for_each(|ndx| {
-                if self.storage[ndx] < threshold {
-                    found = false;
-                }
-                self.storage[ndx] += T::one();
-            });
-
+        self.indexes(item).iter().for_each(|ndx| {
+            if self.storage[*ndx] < threshold {
+                found = false;
+            }
+            self.storage[*ndx] += T::one();
+        });
         found
     }
 
+    fn indexes<I: Hash>(&self, item: &I) -> Vec<usize> {
+        self.hasher
+            .iter(item)
+            .take(self.k)
+            .map(|n| n % self.m)
+            .collect()
+    }
     /// Returns the optimal value for 'k' computed based on the number of bytes and items.
     fn optimal_k(counters_count: usize, items_count: usize) -> usize {
         let m = counters_count as f64;
