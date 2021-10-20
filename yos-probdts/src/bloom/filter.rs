@@ -87,6 +87,7 @@ impl Filter {
         found
     }
 
+    /// Returns the bit offsets for a given item.
     fn bit_offsets<T: Hash>(&self, item: &T) -> Vec<usize> {
         self.hasher
             .iter(item)
