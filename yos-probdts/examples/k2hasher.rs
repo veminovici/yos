@@ -1,4 +1,4 @@
-extern  crate getrandom;
+extern crate getrandom;
 
 use getrandom::getrandom;
 use yos_probdts::bloom::*;
@@ -11,5 +11,8 @@ fn main() {
 
     println!("Round 1");
     let hash_iter = khasher.iter(&item);
-    hash_iter.take(10).enumerate().for_each(|(i, h)| println!("{}, {}", i, h));
+    hash_iter
+        .take(10)
+        .enumerate()
+        .for_each(|(i, h)| println!("{}, {}", i, h));
 }

@@ -1,5 +1,5 @@
-use super::UCounter;
 use super::K2Hasher;
+use super::UCounter;
 
 use getrandom::getrandom;
 use std::f64;
@@ -22,15 +22,13 @@ impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
     pub fn with_seed(counters_count: usize, items_count: usize, seed: &[u8; 32]) -> Self {
         debug_assert!(counters_count > 0 && items_count > 0);
 
-        let m = counters_count;
         let k = Self::optimal_k(counters_count, items_count);
-        //let k = 2;
+        let m = counters_count;
+        let hasher = K2Hasher::with_seed(seed);
         let mut storage = Vec::with_capacity(m);
         for _i in 0..m {
             storage.push(T::zero());
         }
-
-        let hasher = K2Hasher::with_seed(seed);
 
         Self {
             storage,
@@ -89,7 +87,13 @@ impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
             .iter(item)
             .take(k)
             .map(|n| n % m)
-            .fold(true, |acc, ndx| if self.storage[ndx] < threshold { false } else { acc })
+            .fold(true, |acc, ndx| {
+                if self.storage[ndx] < threshold {
+                    false
+                } else {
+                    acc
+                }
+            })
     }
 
     /// Record the presence of an item in the set,

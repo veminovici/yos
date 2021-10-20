@@ -19,8 +19,8 @@ impl Default for K2Hasher {
 
 impl Clone for K2Hasher {
     fn clone(&self) -> Self {
-        Self { 
-            hashers: [self.hashers[0], self.hashers[1]]
+        Self {
+            hashers: [self.hashers[0], self.hashers[1]],
         }
     }
 }
@@ -60,7 +60,6 @@ impl K2Hasher {
 //
 // Iterators
 //
-
 
 /// An iterators which returns the next hash
 /// for a given item.
