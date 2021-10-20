@@ -100,6 +100,7 @@ impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
         found
     }
 
+    /// Returns the indexes for a given item.
     fn indexes<I: Hash>(&self, item: &I) -> Vec<usize> {
         self.hasher
             .iter(item)
@@ -107,6 +108,7 @@ impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
             .map(|n| n % self.m)
             .collect()
     }
+
     /// Returns the optimal value for 'k' computed based on the number of bytes and items.
     fn optimal_k(counters_count: usize, items_count: usize) -> usize {
         let m = counters_count as f64;
