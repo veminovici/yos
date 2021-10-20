@@ -2,9 +2,10 @@
 
 mod counting;
 mod filter;
-mod sips;
+mod k2hasher;
 mod ucounter;
 
 pub use counting::*;
 pub use filter::*;
+pub use k2hasher::*;
 pub use ucounter::*;

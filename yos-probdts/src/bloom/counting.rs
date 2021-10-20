@@ -1,9 +1,9 @@
 use super::UCounter;
+use super::K2Hasher;
 
 use getrandom::getrandom;
-use siphasher::sip::SipHasher13;
 use std::f64;
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
 
 /// Counting-bloom-filter
 pub struct CountingFilter<T: UCounter> {
@@ -13,35 +13,30 @@ pub struct CountingFilter<T: UCounter> {
     m: usize,
     /// The number of hash functions.
     k: usize,
-    /// The number of sip hashers
-    sips: [SipHasher13; 2],
+    /// The hasher which can generate k hashes
+    hasher: K2Hasher,
 }
 
-impl<T: UCounter> CountingFilter<T> {
+impl<T: std::fmt::Debug + UCounter> CountingFilter<T> {
     /// Creates a new counting-bloom-filter.
     pub fn with_seed(counters_count: usize, items_count: usize, seed: &[u8; 32]) -> Self {
         debug_assert!(counters_count > 0 && items_count > 0);
 
         let m = counters_count;
         let k = Self::optimal_k(counters_count, items_count);
+        //let k = 2;
         let mut storage = Vec::with_capacity(m);
         for _i in 0..m {
             storage.push(T::zero());
         }
 
-        let mut k1 = [0u8; 16];
-        let mut k2 = [0u8; 16];
-
-        k1.copy_from_slice(&seed[0..16]);
-        k2.copy_from_slice(&seed[16..32]);
-
-        let sips = [Self::new_sip(&k1), Self::new_sip(&k2)];
+        let hasher = K2Hasher::with_seed(seed);
 
         Self {
             storage,
             m,
             k,
-            sips,
+            hasher,
         }
     }
 
@@ -71,11 +66,14 @@ impl<T: UCounter> CountingFilter<T> {
     where
         I: Hash,
     {
-        let mut hashes = [0u64, 0u64];
-        for i in 0..self.k {
-            let ndx = (self.bloom_hash(&mut hashes, item, i) % self.m) as usize;
-            self.storage[ndx] += T::one();
-        }
+        let k = self.k;
+        let m = self.m;
+
+        self.hasher
+            .iter(item)
+            .take(k)
+            .map(|n| n % m)
+            .for_each(|ndx| self.storage[ndx] += T::one());
     }
 
     /// Check if an item is present in the set.
@@ -84,15 +82,14 @@ impl<T: UCounter> CountingFilter<T> {
     where
         I: Hash,
     {
-        let mut hashes = [0u64, 0u64];
-        for i in 0..self.k {
-            let ndx = (self.bloom_hash(&mut hashes, item, i) % self.m) as usize;
-            let current = &self.storage[ndx];
-            if current < &threshold {
-                return false;
-            }
-        }
-        true
+        let k = self.k;
+        let m = self.m;
+
+        self.hasher
+            .iter(item)
+            .take(k)
+            .map(|n| n % m)
+            .fold(true, |acc, ndx| if self.storage[ndx] < threshold { false } else { acc })
     }
 
     /// Record the presence of an item in the set,
@@ -101,16 +98,21 @@ impl<T: UCounter> CountingFilter<T> {
     where
         I: Hash,
     {
-        let mut hashes = [0u64, 0u64];
+        let k = self.k;
+        let m = self.m;
+
         let mut found = true;
-        for k_i in 0..self.k {
-            let ndx = (self.bloom_hash(&mut hashes, item, k_i) % self.m) as usize;
-            let current = &self.storage[ndx];
-            if current < &threshold {
-                found = false;
-            }
-            self.storage[ndx] += T::one();
-        }
+        self.hasher
+            .iter(item)
+            .take(k)
+            .map(|n| n % m)
+            .for_each(|ndx| {
+                if self.storage[ndx] < threshold {
+                    found = false;
+                }
+                self.storage[ndx] += T::one();
+            });
+
         found
     }
 
@@ -122,12 +124,6 @@ impl<T: UCounter> CountingFilter<T> {
         std::cmp::max(k, 1)
     }
 
-    /// Creates the SipHasher13 hasher with a given key.
-    #[inline]
-    fn new_sip(seed: &[u8; 16]) -> SipHasher13 {
-        SipHasher13::new_with_key(seed)
-    }
-
     fn compute_counters_count(items_count: usize, fp: f64) -> usize {
         debug_assert!(items_count > 0);
         debug_assert!(fp > 0. && fp < 1.);
@@ -135,21 +131,11 @@ impl<T: UCounter> CountingFilter<T> {
         let log2 = f64::consts::LN_2 * f64::consts::LN_2;
         ((items_count as f64) * f64::ln(fp) / (-8. * log2)).ceil() as usize
     }
+}
 
-    fn bloom_hash<I>(&self, hashes: &mut [u64; 2], item: &I, i: usize) -> usize
-    where
-        I: Hash,
-    {
-        if i < 2 {
-            let sip = &mut self.sips[i].clone();
-            item.hash(sip);
-            let hash = sip.finish();
-            hashes[i] = hash;
-            hash as usize
-        } else {
-            (hashes[0] as u128).wrapping_add((i as u128).wrapping_mul(hashes[1] as u128)) as usize
-                % 0xffffffffffffffc5
-        }
+impl<T: std::fmt::Debug + UCounter> std::fmt::Debug for CountingFilter<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "storage={:?}", self.storage)
     }
 }
 
@@ -159,7 +145,8 @@ mod tests {
 
     #[test]
     fn test_set_check() {
-        let mut filter = CountingFilter::<u8>::new(10, 100);
+        let mut filter = CountingFilter::<u8>::new(1000, 100000);
+        println!("filter={:?}", filter);
 
         let mut item = vec![0u8, 16];
         getrandom(&mut item).unwrap();
